@@ -8,6 +8,7 @@ public class BookifyApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BookifyApplication.class, args);
+
 	}
 
 }
