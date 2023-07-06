@@ -16,20 +16,24 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name="ApplicationUser")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    @Column(name="user_ID")
     private Integer userID;
 
-    private String name;
+    private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private String phoneNumber;
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user-role",
-            joinColumns = {@JoinColumn(name="userID")},
-            inverseJoinColumns = {@JoinColumn(name="roleID")})
+            joinColumns = {@JoinColumn(name="user_ID")},
+            inverseJoinColumns = {@JoinColumn(name="role_ID")})
     private Set<Role> roles;
 
     public User(){
@@ -44,7 +48,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return name;
+        return username;
     }
 
     @Override

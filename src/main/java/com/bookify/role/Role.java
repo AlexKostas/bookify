@@ -1,9 +1,6 @@
 package com.bookify.role;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,17 +8,22 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
+@Table(name="ApplicationRole")
 public class Role implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy= GenerationType.AUTO)
+    @Column(name="role_ID")
     private Integer roleID;
 
     private String authority;
+
+    public Role(){
+        super();
+    }
 
     public Role(String authority){
         this.authority = authority;
