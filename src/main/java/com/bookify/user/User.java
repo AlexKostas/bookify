@@ -31,7 +31,7 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user-role-relationship",
+    @JoinTable(name = "user_role_relationship",
             joinColumns = {@JoinColumn(name="app_user_ID")},
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
@@ -43,7 +43,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles;
     }
 
     @Override
