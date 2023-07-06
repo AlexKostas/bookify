@@ -33,7 +33,7 @@ public class BookifyApplication {
 
 			String encodedAdminPassword = passwordEncoder.encode("1234");
 
-			userRepository.save(new User(1, "admin", "admin", "admin",
+			userRepository.save(new User(1L, "admin", "admin", "admin",
 					"admin@gmail.com", "", encodedAdminPassword, adminRoles));
 		};
 	}

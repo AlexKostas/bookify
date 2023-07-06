@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -46,10 +47,15 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/admin/**").hasRole("admin");
                     auth.requestMatchers("/api/user/**").hasAnyRole("admin", "user");
                     auth.anyRequest().authenticated();
-                });
-
-        http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+                }).
+//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt )
+//                .oauth2ResourceServer((oauth2ResourceServer) ->
+//                        oauth2ResourceServer.jwt((jwt) ->
+//                                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
+//                                ))
+            oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
         http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return http.build();
     }

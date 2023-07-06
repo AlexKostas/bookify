@@ -11,13 +11,13 @@ import org.springframework.security.core.GrantedAuthority;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name="ApplicationRole")
+@Table(name="roles")
 public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name="role_ID")
-    private Integer roleID;
+    @Column(name="app_role_ID")
+    private Long roleID;
 
     private String authority;
 

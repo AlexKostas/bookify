@@ -16,12 +16,12 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-@Table(name="ApplicationUser")
+@Table(name="users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column(name="user_ID")
-    private Integer userID;
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="app_user_ID")
+    private Long userID;
 
     private String username;
     private String firstName;
@@ -31,9 +31,9 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user-role",
-            joinColumns = {@JoinColumn(name="user_ID")},
-            inverseJoinColumns = {@JoinColumn(name="role_ID")})
+    @JoinTable(name = "user-role-relationship",
+            joinColumns = {@JoinColumn(name="app_user_ID")},
+            inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
     public User(){

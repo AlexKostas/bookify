@@ -36,7 +36,7 @@ public class RegistrationService {
         roles.add(userRole);
 
         //TODO: do not return the whole user
-        return userRepository.save(new User(0, registrationDTO.username(),
+        return userRepository.save(new User(0L, registrationDTO.username(),
                 registrationDTO.firstName(),
                 registrationDTO.lastName(),
                 registrationDTO.email(),
