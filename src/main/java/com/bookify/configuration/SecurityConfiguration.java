@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 @AllArgsConstructor
 public class SecurityConfiguration {
@@ -41,9 +42,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable()).
                 authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/registration/**").permitAll();
-                    auth.requestMatchers("/admin/**").hasRole("admin");
-                    auth.requestMatchers("/user/**").hasAnyRole("admin", "user");
+                    auth.requestMatchers("/api/registration/**").permitAll();
+                    auth.requestMatchers("/api/admin/**").hasRole("admin");
+                    auth.requestMatchers("/api/user/**").hasAnyRole("admin", "user");
                     auth.anyRequest().authenticated();
                 });
 

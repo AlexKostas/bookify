@@ -1,5 +1,6 @@
 package com.bookify.registration;
 
+import com.bookify.authentication.TokenService;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
