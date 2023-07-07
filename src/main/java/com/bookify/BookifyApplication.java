@@ -26,7 +26,9 @@ public class BookifyApplication {
 			if(roleRepository.findByAuthority("admin").isPresent()) return;
 
 			Role adminRole = roleRepository.save(new Role("admin"));
-			Role userRole = roleRepository.save(new Role("user"));
+			roleRepository.save(new Role("tenant"));
+			roleRepository.save(new Role("host"));
+			roleRepository.save(new Role("inactive-host"));
 
 			Set<Role> adminRoles = new HashSet<>();
 			adminRoles.add(adminRole);

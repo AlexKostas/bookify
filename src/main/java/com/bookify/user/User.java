@@ -55,9 +55,20 @@ public class User implements UserDetails {
     }
 
     public boolean isAdmin(){
-        for(Role role : roles)
-            if(role.getAuthority().equals("admin")) return true;
-        return false;
+        return hasRole("admin");
+    }
+
+    public boolean isInactiveHost(){
+        return hasRole("inactive-host");
+    }
+
+    public void activateHost(Role hostRole){
+        assert(isInactiveHost());
+        assert(hostRole.getAuthority() == "host");
+
+        //TODO: remove strings
+        roles.removeIf(role -> role.getAuthority().equals("inactive-host"));
+        roles.add(hostRole);
     }
 
     @Override
@@ -88,5 +99,12 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    private boolean hasRole(String roleName){
+        roleName.trim().toLowerCase();
+        for(Role role : roles)
+            if(role.getAuthority().toLowerCase().equals(roleName)) return true;
+        return false;
     }
 }

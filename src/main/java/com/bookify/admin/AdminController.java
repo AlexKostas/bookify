@@ -23,12 +23,21 @@ public class AdminController {
         return adminService.getAllUsers();
     }
 
-    @DeleteMapping("/deleteUser/{name}")
+    @DeleteMapping("/deleteUser/{username}")
     public ResponseEntity deleteUser(@PathVariable String username){
         //TODO: error handling
         userService.deleteUser(username);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/approveHost/{username}")
+    public ResponseEntity approveHost(@PathVariable String username){
+        //TODO: error handling
+        adminService.approveHost(username);
+        return ResponseEntity.ok().build();
+    }
+
+    //TODO: Add rejectHost endpoint
 
     @GetMapping("/getUsersXML")
     public String getUserFileXML() throws Exception {

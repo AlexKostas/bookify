@@ -51,12 +51,12 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void deleteUser(String username) throws UsernameNotFoundException, IllegalStateException {
+    public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {
         username.trim();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
-        if(user.isAdmin()) throw new IllegalStateException("Can not delete admin user");
+        if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
 
         userRepository.delete(user);
     }

@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,12 +29,24 @@ public class RegistrationService {
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    public User registerUser(RegistrationDTO registrationDTO){
+    public User registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
         String encodedPassword = passwordEncoder.encode(registrationDTO.password());
-        Role userRole = roleRepository.findByAuthority("user").get();
+        //TODO: convert strings to constants
+        Role tenantRole = roleRepository.findByAuthority("tenant").get();
+        Role inactiveHostRole = roleRepository.findByAuthority("inactive-host").get();
 
         Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
+
+        if(registrationDTO.preferredRoles().equals("tenant"))
+            roles.add(tenantRole);
+        else if(registrationDTO.preferredRoles().equals("host"))
+            roles.add(inactiveHostRole);
+        else if(registrationDTO.preferredRoles().equals("host_tenant")){
+            roles.add(tenantRole);
+            roles.add(inactiveHostRole);
+        }
+        else
+            throw new OperationNotSupportedException("Unknown preferred role");
 
         //TODO: do not return the whole user
         return userRepository.save(new User(0L, registrationDTO.username(),
