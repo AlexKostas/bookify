@@ -41,6 +41,25 @@ public class User implements UserDetails {
         this.roles = new HashSet<>();
     }
 
+    public String getRolesAsString(){
+        StringBuilder builder = new StringBuilder();
+        String delimiter = ", ";
+
+        for(Role role : roles) {
+            builder.append(role.getAuthority());
+            builder.append(delimiter);
+        }
+
+
+        return builder.length() > 0 ? builder.substring(0, builder.length() - delimiter.length()) : "";
+    }
+
+    public boolean isAdmin(){
+        for(Role role : roles)
+            if(role.getAuthority().equals("admin")) return true;
+        return false;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
