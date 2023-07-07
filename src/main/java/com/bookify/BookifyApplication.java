@@ -1,5 +1,6 @@
 package com.bookify;
 
+import com.bookify.configuration.Configuration;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
@@ -23,7 +24,7 @@ public class BookifyApplication {
 	@Bean
 	CommandLineRunner run(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder){
 		return args -> {
-			if(roleRepository.findByAuthority("admin").isPresent()) return;
+			if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
 
 			Role adminRole = roleRepository.save(new Role("admin"));
 			roleRepository.save(new Role("tenant"));
@@ -33,10 +34,10 @@ public class BookifyApplication {
 			Set<Role> adminRoles = new HashSet<>();
 			adminRoles.add(adminRole);
 
-			String encodedAdminPassword = passwordEncoder.encode("1234");
+			String encodedAdminPassword = passwordEncoder.encode(Configuration.ADMIN_PASSWORD);
 
-			userRepository.save(new User(1L, "admin", "admin", "admin",
-					"admin@gmail.com", "", encodedAdminPassword, adminRoles));
+			userRepository.save(new User(1L, Configuration.ADMIN_USERNAME, Configuration.ADMIN_USERNAME,
+					Configuration.ADMIN_USERNAME,"admin@gmail.com", "", encodedAdminPassword, adminRoles));
 		};
 	}
 }

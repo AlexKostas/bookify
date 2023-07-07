@@ -1,5 +1,6 @@
 package com.bookify.authentication;
 
+import com.bookify.utils.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +25,7 @@ public class TokenService {
         String scope = authentication.getAuthorities().stream().
                 map(GrantedAuthority::getAuthority).collect(Collectors.joining(" "));
 
-        JwtClaimsSet claims = JwtClaimsSet.builder().issuer("self").issuedAt(now).subject(authentication.getName()).
+        JwtClaimsSet claims = JwtClaimsSet.builder().issuer(Constants.JWT_ISSUER).issuedAt(now).subject(authentication.getName()).
                 claim("roles", scope).build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

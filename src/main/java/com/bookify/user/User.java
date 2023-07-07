@@ -1,6 +1,7 @@
 package com.bookify.user;
 
 import com.bookify.role.Role;
+import com.bookify.utils.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -55,19 +56,18 @@ public class User implements UserDetails {
     }
 
     public boolean isAdmin(){
-        return hasRole("admin");
+        return hasRole(Constants.ADMIN_ROLE);
     }
 
     public boolean isInactiveHost(){
-        return hasRole("inactive-host");
+        return hasRole(Constants.INACTIVE_HOST_ROLE);
     }
 
     public void activateHost(Role hostRole){
         assert(isInactiveHost());
-        assert(hostRole.getAuthority() == "host");
+        assert(hostRole.getAuthority().equals(Constants.HOST_ROLE));
 
-        //TODO: remove strings
-        roles.removeIf(role -> role.getAuthority().equals("inactive-host"));
+        roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
         roles.add(hostRole);
     }
 
@@ -102,9 +102,8 @@ public class User implements UserDetails {
     }
 
     private boolean hasRole(String roleName){
-        roleName.trim().toLowerCase();
         for(Role role : roles)
-            if(role.getAuthority().toLowerCase().equals(roleName)) return true;
+            if(role.getAuthority().equals(roleName)) return true;
         return false;
     }
 }
