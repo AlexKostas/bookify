@@ -1,6 +1,7 @@
 package com.bookify.user;
 
 import com.bookify.role.Role;
+import com.bookify.utils.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,35 @@ public class User implements UserDetails {
         this.roles = new HashSet<>();
     }
 
+    public String getRolesAsString(){
+        StringBuilder builder = new StringBuilder();
+        String delimiter = ", ";
+
+        for(Role role : roles) {
+            builder.append(role.getAuthority());
+            builder.append(delimiter);
+        }
+
+
+        return builder.length() > 0 ? builder.substring(0, builder.length() - delimiter.length()) : "";
+    }
+
+    public boolean isAdmin(){
+        return hasRole(Constants.ADMIN_ROLE);
+    }
+
+    public boolean isInactiveHost(){
+        return hasRole(Constants.INACTIVE_HOST_ROLE);
+    }
+
+    public void activateHost(Role hostRole){
+        assert(isInactiveHost());
+        assert(hostRole.getAuthority().equals(Constants.HOST_ROLE));
+
+        roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
+        roles.add(hostRole);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -69,5 +99,11 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    private boolean hasRole(String roleName){
+        for(Role role : roles)
+            if(role.getAuthority().equals(roleName)) return true;
+        return false;
     }
 }
