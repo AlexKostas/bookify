@@ -5,6 +5,7 @@ import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Constants;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,10 +27,10 @@ public class BookifyApplication {
 		return args -> {
 			if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
 
-			Role adminRole = roleRepository.save(new Role("admin"));
-			roleRepository.save(new Role("tenant"));
-			roleRepository.save(new Role("host"));
-			roleRepository.save(new Role("inactive-host"));
+			Role adminRole = roleRepository.save(new Role(Constants.ADMIN_ROLE));
+			roleRepository.save(new Role(Constants.TENANT_ROLE));
+			roleRepository.save(new Role(Constants.HOST_ROLE));
+			roleRepository.save(new Role(Constants.INACTIVE_HOST_ROLE));
 
 			Set<Role> adminRoles = new HashSet<>();
 			adminRoles.add(adminRole);

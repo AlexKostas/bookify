@@ -37,7 +37,14 @@ public class RegistrationController {
     }
 
     @GetMapping("/login")
-    public LoginResponseDTO Login(@RequestBody LoginDTO loginDTO){
-        return registrationService.loginUser(loginDTO);
+    public LoginResponseDTO login(@RequestBody LoginDTO loginDTO) {
+        try {
+            LoginResponseDTO result = registrationService.loginUser(loginDTO);
+            return result;
+        } catch (BadCredentialsException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
+        }
     }
 }

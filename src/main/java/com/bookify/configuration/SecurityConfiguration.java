@@ -1,6 +1,7 @@
 package com.bookify.configuration;
 
 import com.bookify.authentication.KeyProperties;
+import com.bookify.utils.Constants;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -44,15 +45,11 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.disable()).
                 authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/registration/**").permitAll();
-                    auth.requestMatchers("/api/admin/**").hasRole("admin");
-                    auth.requestMatchers("/api/user/**").hasAnyRole("admin", "user");
+                    auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
+                    auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
+                            Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);
                     auth.anyRequest().authenticated();
                 }).
-//                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt )
-//                .oauth2ResourceServer((oauth2ResourceServer) ->
-//                        oauth2ResourceServer.jwt((jwt) ->
-//                                        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())
-//                                ))
             oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
         http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

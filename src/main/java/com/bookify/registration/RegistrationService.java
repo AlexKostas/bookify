@@ -6,6 +6,8 @@ import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Constants;
+import com.bookify.utils.InappropriatePasswordException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,21 +46,19 @@ public class RegistrationService {
             throw new InappropriatePasswordException("Password too short");
 
         String encodedPassword = passwordEncoder.encode(registrationDTO.password());
-        //TODO: convert strings to constants
-        Role tenantRole = roleRepository.findByAuthority("tenant").get();
-        Role inactiveHostRole = roleRepository.findByAuthority("inactive-host").get();
+        Role tenantRole = roleRepository.findByAuthority(Constants.TENANT_ROLE).get();
+        Role inactiveHostRole = roleRepository.findByAuthority(Constants.INACTIVE_HOST_ROLE).get();
 
         Set<Role> roles = new HashSet<>();
 
-        if(registrationDTO.preferredRoles().equals("tenant"))
+        if (registrationDTO.preferredRoles().equals(Constants.TENANT_ROLE))
             roles.add(tenantRole);
-        else if(registrationDTO.preferredRoles().equals("host"))
+        else if (registrationDTO.preferredRoles().equals(Constants.HOST_ROLE))
             roles.add(inactiveHostRole);
-        else if(registrationDTO.preferredRoles().equals("host_tenant")){
+        else if (registrationDTO.preferredRoles().equals(Constants.HOST_TENANT_PREF_ROLE)) {
             roles.add(tenantRole);
             roles.add(inactiveHostRole);
-        }
-        else
+        } else
             throw new OperationNotSupportedException("Unknown preferred role");
 
         userRepository.save(new User(0L, username,
