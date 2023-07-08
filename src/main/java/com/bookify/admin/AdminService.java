@@ -4,6 +4,7 @@ import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Constants;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class AdminService {
         if(!user.isInactiveHost()) throw new UnsupportedOperationException("Can not approve an already active host or" +
                 "a tenant");
 
-        Role hostRole = roleRepository.findByAuthority("host").get();
+        Role hostRole = roleRepository.findByAuthority(Constants.HOST_ROLE).get();
         user.activateHost(hostRole);
         userRepository.save(user);
     }
