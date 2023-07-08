@@ -1,6 +1,7 @@
 package com.bookify.user;
 
 import com.bookify.role.Role;
+import com.bookify.room.Room;
 import com.bookify.utils.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,10 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name="app_user_ID")},
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
+
+    // TODO: these below are for rooms
+//    @OneToMany(mappedBy = "host", fetch = FetchType.EAGER)
+//    private Set<Room> rooms;
 
     public User(){
         super();
