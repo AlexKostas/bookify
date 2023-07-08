@@ -1,4 +1,7 @@
 package com.bookify.room;
 
-public record RoomDTO (int nBeds, int nBaths, String rCategory, int nBedrooms, String password,
-                       boolean livingRoom, int spaceArea, String description) {}
+import com.bookify.user.User;
+
+public record RoomDTO (int nBeds, int nBaths, int nBedrooms, boolean livingRoom,
+                       int sArea, String descr, String rCategory,
+                       String addr, User rHost) {}

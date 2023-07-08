@@ -17,7 +17,7 @@ public class Room {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="app_room_ID")
-    private Long roomID;
+    private int roomID;
 
     // general info
     private int numOfBeds;
@@ -33,9 +33,10 @@ public class Room {
     // set of rules
     // TODO: make is as entity?
 
+    // TODO: geographical coordinates?
     // address and geographical coordinates
-    private Float latitude;
-    private Float longitude;
+//    private Float latitude;
+//    private Float longitude;
     private String address;
 
 
@@ -43,7 +44,8 @@ public class Room {
     @JoinColumn(name = "app_user_id", nullable = false)
     private User host;
 
-    public Long getRoomID() {
+    public int getRoomID() {
         return roomID;
     }
+
 }

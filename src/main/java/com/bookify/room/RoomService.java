@@ -1,10 +1,10 @@
 package com.bookify.room;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityNotFoundException;
 
-@Service
-@AllArgsConstructor
-public class RoomService {
-    private RoomRepository roomRepository;
+import javax.naming.OperationNotSupportedException;
+
+public interface RoomService {
+    public int registerRoom(RoomDTO roomDTO) throws OperationNotSupportedException;
+    public RoomResponseDTO loadRoomData(int roomId) throws EntityNotFoundException;
 }
