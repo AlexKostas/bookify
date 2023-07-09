@@ -24,7 +24,7 @@ public class RoomService{
         return newR.getRoomID();
     }
     public Room loadRoomDataById(int roomId) throws EntityNotFoundException {
-        return roomRepository.findRoom(roomId).orElseThrow(() -> new EntityNotFoundException("Room does" +
+        return roomRepository.findRoomByRoomID(roomId).orElseThrow(() -> new EntityNotFoundException("Room does" +
                 "not exist"));
     }
 
