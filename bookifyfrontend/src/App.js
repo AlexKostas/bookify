@@ -1,10 +1,20 @@
+import React, { useState } from "react";
 import './App.css';
-import Appbar from './components/AppBar';
+import { Login } from "./components/auth/Login";
+import { Register } from "./components/auth/Register";
 
 function App() {
+  const [currentForm, setCurrentForm] = useState('login');
+
+  const toggleForm = (formName) => {
+    setCurrentForm(formName);
+  }
+
   return (
     <div className="App">
-    <Appbar/>
+      {
+        currentForm === "login" ? <Login onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm} />
+      }
     </div>
   );
 }
