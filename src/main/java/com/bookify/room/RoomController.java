@@ -12,11 +12,11 @@ import javax.naming.OperationNotSupportedException;
 @AllArgsConstructor
 public class RoomController {
 
-    private RoomServiceImp roomService;
+    private RoomService roomService;
 
     @GetMapping("/getRoom")
-    public RoomResponseDTO getRoom(@RequestParam(name = "roomId") int roomId){
-        //TODO: return appropriate response when id not exists
+    public RoomDTO getRoom(@RequestParam(name = "roomId") int roomId){
+        // TODO: return appropriate response when id not exists
         return roomService.loadRoomData(roomId);
     }
 
