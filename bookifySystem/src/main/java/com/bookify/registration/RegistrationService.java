@@ -36,6 +36,7 @@ public class RegistrationService {
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
 
+    //TODO: maybe move the main logic to the user service
     public String registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
             IllegalArgumentException, InappropriatePasswordException {
         String username = registrationDTO.username();

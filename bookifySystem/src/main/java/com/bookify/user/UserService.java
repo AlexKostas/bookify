@@ -34,8 +34,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User loadUserDataByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username does" +
-                "not exist"));
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist"));
     }
 
     public UserResponseDTO loadUserData(String username) throws UsernameNotFoundException {
@@ -50,12 +50,18 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    //TODO: add support to change preferred roles
     public void updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(newProfile.username())
-                .orElseThrow(() -> new UsernameNotFoundException("Username does not exist"));
+        User user = userRepository.findByUsername(newProfile.oldUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User " + newProfile.oldUsername() + " does not exist"));
 
-        //TODO: check new usernameOrEmail is valid and handle this case appropriately
-        user.setUsername(newProfile.username());
+        if(userRepository.findByUsername(newProfile.newUsername()).isPresent())
+            throw new IllegalArgumentException("Username " + newProfile.newUsername() + " is taken");
+
+        if(userRepository.findByEmail(newProfile.email()).isPresent())
+            throw new IllegalArgumentException("Email " + newProfile.email() + " is taken");
+
+        user.setUsername(newProfile.newUsername());
         user.setFirstName(newProfile.firstName());
         user.setLastName(newProfile.lastName());
         user.setEmail(newProfile.email());
@@ -65,9 +71,8 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {
-        username.trim();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist"));
 
         if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
 
