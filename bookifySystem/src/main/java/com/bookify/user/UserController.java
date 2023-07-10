@@ -1,5 +1,7 @@
 package com.bookify.user;
 
+import com.bookify.registration.LoginRegistrationResponseDTO;
+import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +36,8 @@ public class UserController {
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
     public ResponseEntity<String> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
-            String token = userService.updateUser(updateUserProfileDTO);
-            return ResponseEntity.ok(token);
+            String newToken = userService.updateUser(updateUserProfileDTO);
+            return ResponseEntity.ok(newToken);
         }
         catch (UsernameNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -51,5 +53,21 @@ public class UserController {
         }
     }
 
-    //TODO: Change password endpoint
+    @PostMapping("/changePassword")
+    @PreAuthorize("#changePasswordDTO.username() == authentication.name")
+    public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO){
+        try {
+            LoginRegistrationResponseDTO responseDTO = userService.changePassword(changePasswordDTO);
+            return ResponseEntity.ok(responseDTO);
+        }
+        catch (InappropriatePasswordException | OperationNotSupportedException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (IllegalAccessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 }

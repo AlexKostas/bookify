@@ -2,6 +2,7 @@ package com.bookify.user;
 
 import com.bookify.authentication.TokenService;
 import com.bookify.configuration.Configuration;
+import com.bookify.registration.LoginRegistrationResponseDTO;
 import com.bookify.registration.RegistrationDTO;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
@@ -35,9 +36,7 @@ public class UserService implements UserDetailsService {
         String username = registrationDTO.username();
 
         checkUsernameAndEmailValidity(username, registrationDTO.email(), "", "");
-
-        if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
-            throw new InappropriatePasswordException("Password too short");
+        checkPasswordValidity(registrationDTO.password());
 
         String encodedPassword = passwordEncoder.encode(registrationDTO.password());
 
@@ -104,11 +103,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         // Generate and return a new token as user info is updated
-        //TODO: maybe move this to a more appropriate place
-
-        Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(updatedAuth);
-        return tokenService.generateJWTToken(updatedAuth);
+        return generateNewJWTToken(user);
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {
@@ -118,6 +113,28 @@ public class UserService implements UserDetailsService {
         if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
 
         userRepository.delete(user);
+    }
+
+    public LoginRegistrationResponseDTO changePassword(ChangePasswordDTO changePasswordDTO)
+            throws UsernameNotFoundException, OperationNotSupportedException, IllegalAccessException {
+        User user = userRepository.findByUsername(changePasswordDTO.username())
+                .orElseThrow(() -> new UsernameNotFoundException("User " + changePasswordDTO.username() + " does not exist"));
+
+        String encodedOldPassword = passwordEncoder.encode(changePasswordDTO.oldPassword());
+        String encodedNewPassword = passwordEncoder.encode(changePasswordDTO.newPassword());
+
+        if(!passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword()))
+            throw new IllegalAccessException("Old password is not correct");
+
+        if(changePasswordDTO.newPassword().equals(changePasswordDTO.oldPassword()))
+            throw new OperationNotSupportedException("New password can not be the same as old password");
+
+        checkPasswordValidity(changePasswordDTO.newPassword());
+
+        user.setPassword(encodedNewPassword);
+        userRepository.save(user);
+
+        return new LoginRegistrationResponseDTO(changePasswordDTO.username(), generateNewJWTToken(user));
     }
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
@@ -157,5 +174,17 @@ public class UserService implements UserDetailsService {
         }
 
         return roles;
+    }
+
+    private void checkPasswordValidity(String password){
+        if(password.length() < Configuration.MIN_PASSWORD_LENGTH)
+            throw new InappropriatePasswordException("Password too short");
+    }
+
+    //TODO: maybe move this to a more appropriate place
+    private String generateNewJWTToken(User user){
+        Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(updatedAuth);
+        return tokenService.generateJWTToken(updatedAuth);
     }
 }
