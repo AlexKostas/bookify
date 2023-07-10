@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
@@ -15,9 +17,20 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username does" +
-                "not exist"));
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        Optional<User> user = userRepository.findByUsername(usernameOrEmail);
+
+        if(user.isPresent()) return user.get();
+
+        return userRepository.findByEmail(usernameOrEmail).orElseThrow(() -> new UsernameNotFoundException(
+                "Username/Email " + usernameOrEmail +" does not exist"));
+    }
+
+    public Optional<User> loadUserOptionalByUsernameOrEmail(String usernameOrEmail){
+        Optional<User> user = userRepository.findByUsername(usernameOrEmail);
+
+        if(user.isPresent()) return user;
+        return userRepository.findByEmail(usernameOrEmail);
     }
 
     public User loadUserDataByUsername(String username) throws UsernameNotFoundException {
@@ -41,7 +54,7 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(newProfile.username())
                 .orElseThrow(() -> new UsernameNotFoundException("Username does not exist"));
 
-        //TODO: check new username is valid and handle this case appropriately
+        //TODO: check new usernameOrEmail is valid and handle this case appropriately
         user.setUsername(newProfile.username());
         user.setFirstName(newProfile.firstName());
         user.setLastName(newProfile.lastName());

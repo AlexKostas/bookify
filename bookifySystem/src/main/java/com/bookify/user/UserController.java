@@ -13,14 +13,14 @@ public class UserController {
 
     @GetMapping("/getUser")
     public UserResponseDTO getUser(@RequestParam(name = "name") String username){
-        //TODO: return appropriate response when username not exists
+        //TODO: return appropriate response when usernameOrEmail not exists
         //TODO: restrict access to admin or appropriate user
         return userService.loadUserData(username);
     }
 
     @PostMapping("/updateProfile")
     public ResponseEntity updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
-        //TODO: handle errors with username
+        //TODO: handle errors with usernameOrEmail
         //TODO: restrict access
         userService.updateUser(updateUserProfileDTO);
 

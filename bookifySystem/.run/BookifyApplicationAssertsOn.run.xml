@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BookifyApplicationAssertsOn" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="bookify" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.bookify.BookifyApplication" />
+    <option name="VM_PARAMETERS" value="-ea" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

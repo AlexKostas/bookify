@@ -29,6 +29,7 @@ public class AdminService {
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
+                    user.getEmail(),
                     user.getRolesAsString()
             ));
         }

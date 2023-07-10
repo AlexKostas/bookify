@@ -6,6 +6,7 @@ import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.user.UserService;
 import com.bookify.utils.Constants;
 import com.bookify.utils.InappropriatePasswordException;
 import jakarta.transaction.Transactional;
@@ -19,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
-import javax.security.auth.login.FailedLoginException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -29,6 +30,7 @@ import java.util.Set;
 public class RegistrationService {
 
     private UserRepository userRepository;
+    private UserService userService;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
@@ -41,6 +43,9 @@ public class RegistrationService {
 
         if(userRepository.findByUsername(username).isPresent())
             throw new IllegalArgumentException("Username is taken");
+
+        if(userRepository.findByEmail(registrationDTO.email()).isPresent())
+            throw new IllegalArgumentException("Email is taken");
 
         if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
             throw new InappropriatePasswordException("Password too short");
@@ -75,17 +80,17 @@ public class RegistrationService {
     public LoginResponseDTO loginUser(LoginDTO loginDTO) throws BadCredentialsException {
         try{
             Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginDTO.username(), loginDTO.password()
+                    loginDTO.usernameOrEmail(), loginDTO.password()
             ));
 
             String token = tokenService.GenerateJWTToken(auth);
 
-            return new LoginResponseDTO(userRepository.findByUsername(loginDTO.username()).get(),
-                    token);
+            Optional<User> user = userService.loadUserOptionalByUsernameOrEmail(loginDTO.usernameOrEmail());
+            assert(user.isPresent());
+
+            return new LoginResponseDTO(user.get().getUsername(), token);
         }
         catch (AuthenticationException e){
-            //TODO: Throw proper http response message
-            //TODO: try to authenticate with email
             throw new BadCredentialsException("Invalid credentials");
         }
     }
