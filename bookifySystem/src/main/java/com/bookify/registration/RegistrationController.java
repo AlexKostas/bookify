@@ -18,6 +18,7 @@ public class RegistrationController {
 
     private RegistrationService registrationService;
 
+    //TODO: return jwt token for instant login, along with the username
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationDTO registrationDTO) {
         try {

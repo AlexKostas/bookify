@@ -29,53 +29,14 @@ import java.util.Set;
 @AllArgsConstructor
 public class RegistrationService {
 
-    private UserRepository userRepository;
     private UserService userService;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    //TODO: maybe move the main logic to the user service
     public String registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
             IllegalArgumentException, InappropriatePasswordException {
-        String username = registrationDTO.username();
-        username = username.trim();
 
-        if(userRepository.findByUsername(username).isPresent())
-            throw new IllegalArgumentException("Username " + registrationDTO.username() + " is taken");
-
-        if(userRepository.findByEmail(registrationDTO.email()).isPresent())
-            throw new IllegalArgumentException("Email " + registrationDTO.email() + " is taken");
-
-        if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
-            throw new InappropriatePasswordException("Password too short");
-
-        String encodedPassword = passwordEncoder.encode(registrationDTO.password());
-        Role tenantRole = roleRepository.findByAuthority(Constants.TENANT_ROLE).get();
-        Role inactiveHostRole = roleRepository.findByAuthority(Constants.INACTIVE_HOST_ROLE).get();
-
-        Set<Role> roles = new HashSet<>();
-
-        switch (registrationDTO.preferredRoles()) {
-            case Constants.TENANT_ROLE -> roles.add(tenantRole);
-            case Constants.HOST_ROLE -> roles.add(inactiveHostRole);
-            case Constants.HOST_TENANT_PREF_ROLE -> {
-                roles.add(tenantRole);
-                roles.add(inactiveHostRole);
-            }
-            default -> throw new OperationNotSupportedException("Unknown preferred role");
-        }
-
-        userRepository.save(new User(0L, username,
-                registrationDTO.firstName(),
-                registrationDTO.lastName(),
-                registrationDTO.email(),
-                registrationDTO.phoneNumber(),
-                encodedPassword,
-                roles));
-
-        return username;
+        return userService.createUser(registrationDTO).getUsername();
     }
 
     public LoginResponseDTO loginUser(LoginDTO loginDTO) throws BadCredentialsException {

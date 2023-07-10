@@ -1,5 +1,11 @@
 package com.bookify.user;
 
+import com.bookify.configuration.Configuration;
+import com.bookify.registration.RegistrationDTO;
+import com.bookify.role.Role;
+import com.bookify.role.RoleRepository;
+import com.bookify.utils.Constants;
+import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -7,14 +13,39 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.OperationNotSupportedException;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private PasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
+
+    public User createUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
+        String username = registrationDTO.username();
+
+        checkUsernameAndEmailValidity(username, registrationDTO.email(), "", "");
+
+        if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
+            throw new InappropriatePasswordException("Password too short");
+
+        String encodedPassword = passwordEncoder.encode(registrationDTO.password());
+
+        Set<Role> roles = createRoleSet(registrationDTO.preferredRoles(), new HashSet<>());
+
+        return userRepository.save(new User(0L, username,
+                registrationDTO.firstName(),
+                registrationDTO.lastName(),
+                registrationDTO.email(),
+                registrationDTO.phoneNumber(),
+                encodedPassword,
+                roles));
+    }
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
@@ -50,22 +81,20 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    //TODO: add support to change preferred roles
-    public void updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException {
+    public void updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
+            OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + newProfile.oldUsername() + " does not exist"));
 
-        if(userRepository.findByUsername(newProfile.newUsername()).isPresent())
-            throw new IllegalArgumentException("Username " + newProfile.newUsername() + " is taken");
-
-        if(userRepository.findByEmail(newProfile.email()).isPresent())
-            throw new IllegalArgumentException("Email " + newProfile.email() + " is taken");
+        checkUsernameAndEmailValidity(newProfile.newUsername(), newProfile.email(), user.getUsername(), user.getEmail());
+        //TODO: maybe verify that at least one field changes
 
         user.setUsername(newProfile.newUsername());
         user.setFirstName(newProfile.firstName());
         user.setLastName(newProfile.lastName());
         user.setEmail(newProfile.email());
         user.setPhoneNumber(newProfile.phoneNumber());
+        user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
 
         userRepository.save(user);
     }
@@ -77,5 +106,44 @@ public class UserService implements UserDetailsService {
         if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
 
         userRepository.delete(user);
+    }
+
+    private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
+        Optional<User> userOptional = userRepository.findByUsername(newUsername);
+        if(userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername))
+            throw new IllegalArgumentException("Username " + newUsername + " is taken");
+
+        userOptional = userRepository.findByEmail(newEmail);
+        if(userOptional.isPresent() && !userOptional.get().getEmail().equals(oldEmail))
+            throw new IllegalArgumentException("Email " + newEmail + " is taken");
+    }
+
+    private Set<Role> createRoleSet(String preferredRoles, Set<Role> previousRoles) throws OperationNotSupportedException {
+        Role tenantRole = roleRepository.findByAuthority(Constants.TENANT_ROLE).get();
+        Role inactiveHostRole = roleRepository.findByAuthority(Constants.INACTIVE_HOST_ROLE).get();
+        Role hostRole = roleRepository.findByAuthority(Constants.HOST_ROLE).get();
+
+        Set<Role> roles = new HashSet<>();
+
+        switch (preferredRoles) {
+            case Constants.TENANT_ROLE -> roles.add(tenantRole);
+            case Constants.HOST_ROLE -> {
+                if(previousRoles.contains(hostRole))
+                    roles.add(hostRole);
+                else
+                    roles.add(inactiveHostRole);
+            }
+            case Constants.HOST_TENANT_PREF_ROLE -> {
+                roles.add(tenantRole);
+
+                if(previousRoles.contains(hostRole))
+                    roles.add(hostRole);
+                else
+                    roles.add(inactiveHostRole);
+            }
+            default -> throw new OperationNotSupportedException("Unknown preferred role");
+        }
+
+        return roles;
     }
 }
