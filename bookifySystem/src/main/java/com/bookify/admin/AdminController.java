@@ -1,15 +1,12 @@
 package com.bookify.admin;
 
-import com.bookify.user.UserRepository;
 import com.bookify.user.UserService;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.OperationNotSupportedException;
 import java.util.List;
 
 @RestController
@@ -33,7 +30,7 @@ public class AdminController {
             return ResponseEntity.ok().build();
         }
         catch (UsernameNotFoundException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (UnsupportedOperationException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
@@ -50,7 +47,7 @@ public class AdminController {
             return ResponseEntity.ok().build();
         }
         catch (UsernameNotFoundException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (UnsupportedOperationException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);

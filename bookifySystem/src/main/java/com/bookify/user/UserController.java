@@ -23,7 +23,7 @@ public class UserController {
             return ResponseEntity.ok(userService.loadUserData(username));
         }
         catch (UsernameNotFoundException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -32,19 +32,19 @@ public class UserController {
 
     @PostMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
-    public ResponseEntity updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
+    public ResponseEntity<String> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
             String token = userService.updateUser(updateUserProfileDTO);
             return ResponseEntity.ok(token);
         }
         catch (UsernameNotFoundException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (IllegalArgumentException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
         catch (OperationNotSupportedException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());

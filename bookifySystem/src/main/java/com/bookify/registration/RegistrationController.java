@@ -23,13 +23,13 @@ public class RegistrationController {
             LoginRegistrationResponseDTO result = registrationService.registerUser(registrationDTO);
             return ResponseEntity.ok(result);
         } catch (OperationNotSupportedException | InappropriatePasswordException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         catch (IllegalArgumentException e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
         catch (Exception e){
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -39,14 +39,14 @@ public class RegistrationController {
             LoginRegistrationResponseDTO result = registrationService.loginUser(loginDTO);
             return ResponseEntity.ok(result);
         } catch (BadCredentialsException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/getMinPasswordLength")
-    public ResponseEntity getMinPasswordLength(){
+    public ResponseEntity<Integer> getMinPasswordLength(){
         return ResponseEntity.ok(Configuration.MIN_PASSWORD_LENGTH);
     }
 }
