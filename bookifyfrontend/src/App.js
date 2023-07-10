@@ -1,22 +1,16 @@
-import React, { useState } from "react";
+import React from 'react';
+import CustomAppBar from './components/welcomepage/AppBar';
+import SelectTextFields from './components/welcomepage/SearchBar';
 import './App.css';
-import { Login } from "./components/auth/Login";
-import { Register } from "./components/auth/Register";
 
 function App() {
-  const [currentForm, setCurrentForm] = useState('login');
-
-  const toggleForm = (formName) => {
-    setCurrentForm(formName);
-  }
-
-  return (
-    <div className="App">
-      {
-        currentForm === "login" ? <Login onFormSwitch={toggleForm} /> : <Register onFormSwitch={toggleForm} />
-      }
-    </div>
-  );
+    return (
+        <div className="App">
+            <CustomAppBar />
+            {/* Other components and content */}
+        </div>
+    );
 }
 
 export default App;
+

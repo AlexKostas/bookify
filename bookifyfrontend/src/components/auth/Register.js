@@ -1,28 +1,63 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import axios from 'axios';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
-export const Register = (props) => {
-    const [email, setEmail] = useState('');
-    const [pass, setPass] = useState('');
-    const [name, setName] = useState('');
+const baseURL = "https://localhost:8443/api/registration/register";
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(email);
-    }
+const Registration = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleUsernameChange = (event) => {
+        setUsername(event.target.value);
+    };
+
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        const payload = {
+            username,
+            password,
+        };
+
+        axios.post(baseURL, payload)
+            .then((response) => {
+                console.log('Registration successful:', response.data);
+            })
+            .catch((error) => {
+                console.error('Registration error:', error);
+            });
+    };
 
     return (
-        <div className="auth-form-container">
-            <h2>Register</h2>
-        <form className="register-form" onSubmit={handleSubmit}>
-            <label htmlFor="name">Full name</label>
-            <input value={name} name="name" onChange={(e) => setName(e.target.value)} id="name" placeholder="full Name" />
-            <label htmlFor="email">email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)}type="email" placeholder="youremail@gmail.com" id="email" name="email" />
-            <label htmlFor="password">password</label>
-            <input value={pass} onChange={(e) => setPass(e.target.value)} type="password" placeholder="********" id="password" name="password" />
-            <button type="submit">Log In</button>
-        </form>
-        <button className="link-btn" onClick={() => props.onFormSwitch('login')}>Already have an account? Login here.</button>
-    </div>
-    )
-}
+        <div>
+            <TextField
+                id="outlined-username"
+                label="Username"
+                variant="outlined"
+                fullWidth
+                value={username}
+                onChange={handleUsernameChange}
+            />
+            <TextField
+                id="outlined-password"
+                label="Password"
+                variant="outlined"
+                fullWidth
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+            />
+            <Button variant="contained" type="submit" onClick={handleSubmit}>
+                Register
+            </Button>
+        </div>
+    );
+};
+
+export default Registration;
