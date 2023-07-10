@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -18,11 +17,10 @@ public class RegistrationController {
 
     private RegistrationService registrationService;
 
-    //TODO: return jwt token for instant login, along with the username
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationDTO registrationDTO) {
         try {
-            String result = registrationService.registerUser(registrationDTO);
+            LoginRegistrationResponseDTO result = registrationService.registerUser(registrationDTO);
             return ResponseEntity.ok(result);
         } catch (OperationNotSupportedException | InappropriatePasswordException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -38,7 +36,7 @@ public class RegistrationController {
     @GetMapping("/login")
     public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
         try {
-            LoginResponseDTO result = registrationService.loginUser(loginDTO);
+            LoginRegistrationResponseDTO result = registrationService.loginUser(loginDTO);
             return ResponseEntity.ok(result);
         } catch (BadCredentialsException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
