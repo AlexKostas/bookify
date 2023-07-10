@@ -38,7 +38,6 @@ public class AdminService {
     }
 
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {
-        username.trim();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 

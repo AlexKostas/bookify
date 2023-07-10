@@ -42,6 +42,9 @@ public class UserController {
         catch (IllegalArgumentException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     //TODO: Change password endpoint
