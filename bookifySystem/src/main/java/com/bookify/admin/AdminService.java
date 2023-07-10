@@ -29,6 +29,7 @@ public class AdminService {
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
+                    user.getEmail(),
                     user.getRolesAsString()
             ));
         }
@@ -37,7 +38,6 @@ public class AdminService {
     }
 
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {
-        username.trim();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
