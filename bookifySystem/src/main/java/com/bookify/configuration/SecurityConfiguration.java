@@ -42,15 +42,22 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+//        http.csrf(csrf -> csrf.disable()).
+//                authorizeHttpRequests(auth -> {
+//                    auth.requestMatchers("/api/registration/**").permitAll();
+//                    auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
+//                    auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
+//                            Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);
+//                    auth.anyRequest().authenticated();
+//                }).
+//            oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+//        http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
         http.csrf(csrf -> csrf.disable()).
                 authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/registration/**").permitAll();
-                    auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
-                    auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
-                            Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().permitAll();
                 }).
-            oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
+                oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
         http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
 
