@@ -42,10 +42,10 @@ public class RegistrationService {
         username = username.trim();
 
         if(userRepository.findByUsername(username).isPresent())
-            throw new IllegalArgumentException("Username is taken");
+            throw new IllegalArgumentException("Username " + registrationDTO.username() + " is taken");
 
         if(userRepository.findByEmail(registrationDTO.email()).isPresent())
-            throw new IllegalArgumentException("Email is taken");
+            throw new IllegalArgumentException("Email " + registrationDTO.email() + " is taken");
 
         if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
             throw new InappropriatePasswordException("Password too short");
@@ -56,15 +56,15 @@ public class RegistrationService {
 
         Set<Role> roles = new HashSet<>();
 
-        if (registrationDTO.preferredRoles().equals(Constants.TENANT_ROLE))
-            roles.add(tenantRole);
-        else if (registrationDTO.preferredRoles().equals(Constants.HOST_ROLE))
-            roles.add(inactiveHostRole);
-        else if (registrationDTO.preferredRoles().equals(Constants.HOST_TENANT_PREF_ROLE)) {
-            roles.add(tenantRole);
-            roles.add(inactiveHostRole);
-        } else
-            throw new OperationNotSupportedException("Unknown preferred role");
+        switch (registrationDTO.preferredRoles()) {
+            case Constants.TENANT_ROLE -> roles.add(tenantRole);
+            case Constants.HOST_ROLE -> roles.add(inactiveHostRole);
+            case Constants.HOST_TENANT_PREF_ROLE -> {
+                roles.add(tenantRole);
+                roles.add(inactiveHostRole);
+            }
+            default -> throw new OperationNotSupportedException("Unknown preferred role");
+        }
 
         userRepository.save(new User(0L, username,
                 registrationDTO.firstName(),
