@@ -1,6 +1,5 @@
 package com.bookify.user;
 
-import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +30,12 @@ public class UserController {
         }
     }
 
-    //TODO: Return jwt token as the session might change
     @PostMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
     public ResponseEntity updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
-            userService.updateUser(updateUserProfileDTO);
-            return ResponseEntity.ok().build();
+            String token = userService.updateUser(updateUserProfileDTO);
+            return ResponseEntity.ok(token);
         }
         catch (UsernameNotFoundException e){
             return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);

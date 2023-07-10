@@ -52,6 +52,6 @@ public class RegistrationService {
                 username, password
         ));
 
-        return tokenService.GenerateJWTToken(auth);
+        return tokenService.generateJWTToken(auth);
     }
 }

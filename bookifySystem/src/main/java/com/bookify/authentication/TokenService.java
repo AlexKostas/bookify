@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class TokenService {
 
     private JwtEncoder jwtEncoder;
 
-    public String GenerateJWTToken(Authentication authentication){
+    public String generateJWTToken(Authentication authentication){
         Instant now = Instant.now();
 
         String scope = authentication.getAuthorities().stream().

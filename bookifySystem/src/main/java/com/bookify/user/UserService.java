@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.authentication.TokenService;
 import com.bookify.configuration.Configuration;
 import com.bookify.registration.RegistrationDTO;
 import com.bookify.role.Role;
@@ -7,6 +8,9 @@ import com.bookify.role.RoleRepository;
 import com.bookify.utils.Constants;
 import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +29,7 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private TokenService tokenService;
 
     public User createUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
         String username = registrationDTO.username();
@@ -81,7 +86,7 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public void updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
+    public String updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
             OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + newProfile.oldUsername() + " does not exist"));
@@ -97,6 +102,13 @@ public class UserService implements UserDetailsService {
         user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
 
         userRepository.save(user);
+
+        // Generate and return a new token as user info is updated
+        //TODO: maybe move this to a more appropriate place
+
+        Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(updatedAuth);
+        return tokenService.generateJWTToken(updatedAuth);
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {
