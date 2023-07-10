@@ -3,6 +3,7 @@ package com.bookify.user;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +15,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/getUser/{username}")
+    @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity getUser(@PathVariable String username){
-        //TODO: restrict access to admin or appropriate user
-
         try{
             return ResponseEntity.ok(userService.loadUserData(username));
         }
@@ -29,9 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/updateProfile")
+    @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
-        //TODO: restrict access
-
         try {
             userService.updateUser(updateUserProfileDTO);
             return ResponseEntity.ok().build();
