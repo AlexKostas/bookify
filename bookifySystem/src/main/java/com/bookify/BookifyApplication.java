@@ -1,6 +1,8 @@
 package com.bookify;
 
 import com.bookify.configuration.Configuration;
+import com.bookify.images.Image;
+import com.bookify.images.ImageRepository;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
@@ -23,7 +25,8 @@ public class BookifyApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder){
+	CommandLineRunner run(RoleRepository roleRepository, UserRepository userRepository, ImageRepository imageRepository,
+						  PasswordEncoder passwordEncoder){
 		return args -> {
 			if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
 
@@ -35,10 +38,14 @@ public class BookifyApplication {
 			Set<Role> adminRoles = new HashSet<>();
 			adminRoles.add(adminRole);
 
+			imageRepository.save(new Image(Configuration.DEFAULT_PROFILE_PIC_NAME));
+
 			String encodedAdminPassword = passwordEncoder.encode(Configuration.ADMIN_PASSWORD);
+			Image profilePic = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
 			userRepository.save(new User(1L, Configuration.ADMIN_USERNAME, Configuration.ADMIN_USERNAME,
-					Configuration.ADMIN_USERNAME,"admin@gmail.com", "", encodedAdminPassword, adminRoles));
+					Configuration.ADMIN_USERNAME,"admin@gmail.com", "", encodedAdminPassword, profilePic,
+					adminRoles));
 		};
 	}
 }

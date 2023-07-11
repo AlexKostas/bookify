@@ -1,5 +1,6 @@
 package com.bookify.images;
 
+import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,4 +17,9 @@ public class Image {
     @Id
     @Column(name="imageIdentifier")
     private String imageGuid;
+
+    //TODO: support other image types
+    public String getImageFilename(){
+        return imageGuid + ".png";
+    }
 }

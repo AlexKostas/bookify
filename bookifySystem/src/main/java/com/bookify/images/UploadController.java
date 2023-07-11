@@ -1,7 +1,9 @@
 package com.bookify.images;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +31,20 @@ public class UploadController {
         }
     }
 
-//    @GetMapping("/getProfilePic/{username}")
-//    @PreAuthorize("hasRole('admin') or #username == authentication.name")
-//    public ResponseEntity getProfilePic(@PathVariable String username){
-//
-//    }
+    @GetMapping("/getProfilePic/{username}")
+    @PreAuthorize("hasRole('admin') or #username == authentication.name")
+    public ResponseEntity getProfilePic(@PathVariable String username){
+        try{
+            //TODO: extend for other image types
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+
+            return ResponseEntity.ok().headers(headers).body(profilePictureService.getProfilePicture(username));
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 //
 //    @DeleteMapping("/deleteProfilePic/{username}")
 //    @PreAuthorize("hasRole('admin') or #username == authentication.name")

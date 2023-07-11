@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.images.Image;
 import com.bookify.role.Role;
 import com.bookify.utils.Constants;
 import jakarta.persistence.*;
@@ -30,6 +31,10 @@ public class User implements UserDetails {
     private String email;
     private String phoneNumber;
     private String password;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_pic_GUID", referencedColumnName = "imageIdentifier")
+    private Image profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role_relationship",
