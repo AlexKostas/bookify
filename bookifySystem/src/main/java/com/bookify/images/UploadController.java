@@ -45,10 +45,18 @@ public class UploadController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-//
-//    @DeleteMapping("/deleteProfilePic/{username}")
-//    @PreAuthorize("hasRole('admin') or #username == authentication.name")
-//    public ResponseEntity deleteProfilePic(@PathVariable String username){
-//
-//    }
+
+    @DeleteMapping("/deleteProfilePic/{username}")
+    @PreAuthorize("hasRole('admin') or #username == authentication.name")
+    public ResponseEntity deleteProfilePic(@PathVariable String username){
+        try {
+            return ResponseEntity.ok(profilePictureService.deleteProfilePicture(username));
+        }
+        catch (UnsupportedOperationException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

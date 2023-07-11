@@ -41,7 +41,7 @@ public class ProfilePictureService {
 
         if(image.isEmpty()) throw new IllegalArgumentException("The provided file is empty");
 
-        String guid = "";
+        String guid;
         do{
             guid = GUIDGenerator.GenerateGUID();
         } while(imageRepository.findByImageGuid(guid).isPresent() || guid.equals(Configuration.DEFAULT_PROFILE_PIC_NAME));
@@ -71,6 +71,22 @@ public class ProfilePictureService {
         String finalPath = pathRoot + filename;
 
         return new FileSystemResource(finalPath);
+    }
+
+    public String deleteProfilePicture(String username) throws UnsupportedOperationException {
+        User user = userRepository.findByUsername(username).get();
+        Image oldProfilePic = user.getProfilePicture();
+
+        if(oldProfilePic.getImageGuid().equals(Configuration.DEFAULT_PROFILE_PIC_NAME))
+            throw new UnsupportedOperationException("Can not delete default profile pic");
+
+        deleteImage(oldProfilePic);
+        Image defaultPic = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
+
+        user.setProfilePicture(defaultPic);
+        userRepository.save(user);
+
+        return defaultPic.getImageGuid();
     }
 
     private String getImageDirectoryPath() throws IOException {
