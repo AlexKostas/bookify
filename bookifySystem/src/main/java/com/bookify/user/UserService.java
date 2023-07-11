@@ -167,6 +167,7 @@ public class UserService implements UserDetailsService {
 
                 if(previousRoles.contains(hostRole))
                     roles.add(hostRole);
+
                 else
                     roles.add(inactiveHostRole);
             }
