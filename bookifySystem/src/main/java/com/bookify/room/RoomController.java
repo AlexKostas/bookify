@@ -1,9 +1,10 @@
 package com.bookify.room;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -14,19 +15,29 @@ public class RoomController {
 
     private RoomService roomService;
 
-    @GetMapping("/getRoom")
-    public RoomDTO getRoom(@RequestParam(name = "roomId") int roomId){
-        // TODO: return appropriate response when id not exists
-        return roomService.loadRoomData(roomId);
+    @GetMapping("/getRoom/{roomID}")
+    public ResponseEntity getRoom(@PathVariable int roomID){
+        try{
+            return ResponseEntity.ok(roomService.loadRoomData(roomID));
+        }
+        catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @PostMapping("/registerRoom")
-    public int registerRoom(@RequestBody RoomDTO roomDTO) {
+    public ResponseEntity registerRoom(@RequestBody RoomDTO roomDTO){
         try {
-            int result = roomService.registerRoom(roomDTO);
-            return result;
+            RoomRegistrationResponseDTO result = roomService.registerRoom(roomDTO);
+            return ResponseEntity.ok(result);
         } catch (OperationNotSupportedException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

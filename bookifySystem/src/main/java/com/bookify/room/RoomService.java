@@ -12,7 +12,9 @@ public class RoomService{
 
     private RoomRepository roomRepository;
 
-    public int registerRoom(RoomDTO roomDTO) throws OperationNotSupportedException {
+    private Room createRoom(RoomDTO roomDTO) throws OperationNotSupportedException {
+        if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.sArea() < 2)
+            throw new OperationNotSupportedException("Incompatible room fields");
         Room newR =  new Room(0,
                 roomDTO.nBeds(),
                 roomDTO.nBaths(),
@@ -20,9 +22,13 @@ public class RoomService{
                 roomDTO.sArea(),
                 roomDTO.descr()
         );
-        roomRepository.save(newR);
-        return newR.getRoomID();
+        return roomRepository.save(newR);
     }
+
+    public RoomRegistrationResponseDTO registerRoom(RoomDTO roomDTO) throws OperationNotSupportedException {
+        return new RoomRegistrationResponseDTO(createRoom(roomDTO).getRoomID());
+    }
+
     public Room loadRoomDataById(int roomId) throws EntityNotFoundException {
         return roomRepository.findRoomByRoomID(roomId).orElseThrow(() -> new EntityNotFoundException("Room does" +
                 "not exist"));
