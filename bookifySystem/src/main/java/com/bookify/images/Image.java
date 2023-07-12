@@ -16,8 +16,9 @@ public class Image {
     @Column(name="imageIdentifier")
     private String imageGuid;
 
-    //TODO: support other image types
+    private String extension;
+
     public String getImageFilename(){
-        return imageGuid + ".png";
+        return imageGuid + "." + extension;
     }
 }

@@ -42,7 +42,8 @@ public class InitializeDatabase {
 
     private void preloadDefaultImages(ImageRepository imageRepository){
         log.info("Preloading default profile picture to database");
-        imageRepository.save(new Image(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME));
+        imageRepository.save(new Image(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME,
+                com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_EXTENSION));
     }
 
     private void preloadAdminUser(RoleRepository roleRepository, UserRepository userRepository,

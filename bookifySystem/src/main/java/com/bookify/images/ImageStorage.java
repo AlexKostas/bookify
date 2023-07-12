@@ -1,6 +1,7 @@
 package com.bookify.images;
 
 import com.bookify.configuration.Configuration;
+import com.bookify.utils.ImageFormatDetector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
@@ -17,11 +18,14 @@ import java.nio.file.Path;
 public class ImageStorage {
     private final ImageRepository imageRepository;
     private final ResourceLoader resourceLoader;
+    private final ImageFormatDetector imageFormatDetector;
     private final String pathRoot;
 
-    public ImageStorage(ImageRepository imageRepository, ResourceLoader resourceLoader) throws IOException {
+    public ImageStorage(ImageRepository imageRepository, ResourceLoader resourceLoader,
+                        ImageFormatDetector imageFormatDetector) throws IOException {
         this.imageRepository = imageRepository;
         this.resourceLoader = resourceLoader;
+        this.imageFormatDetector = imageFormatDetector;
 
         pathRoot = getImageDirectoryPath();
     }
@@ -34,8 +38,9 @@ public class ImageStorage {
             guid = GUIDGenerator.GenerateGUID();
         } while(imageRepository.findByImageGuid(guid).isPresent() || guid.equals(Configuration.DEFAULT_PROFILE_PIC_NAME));
 
+        String imageFormat = imageFormatDetector.getImageFormat(image);
 
-        Image imageItem = imageRepository.save(new Image(guid));
+        Image imageItem = imageRepository.save(new Image(guid, imageFormat));
         try{
             saveImageFile(imageItem.getImageFilename(), image);
         }
