@@ -23,29 +23,4 @@ public class BookifyApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BookifyApplication.class, args);
 	}
-
-	@Bean
-	CommandLineRunner run(RoleRepository roleRepository, UserRepository userRepository, ImageRepository imageRepository,
-						  PasswordEncoder passwordEncoder){
-		return args -> {
-			if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
-
-			Role adminRole = roleRepository.save(new Role(Constants.ADMIN_ROLE));
-			roleRepository.save(new Role(Constants.TENANT_ROLE));
-			roleRepository.save(new Role(Constants.HOST_ROLE));
-			roleRepository.save(new Role(Constants.INACTIVE_HOST_ROLE));
-
-			Set<Role> adminRoles = new HashSet<>();
-			adminRoles.add(adminRole);
-
-			imageRepository.save(new Image(Configuration.DEFAULT_PROFILE_PIC_NAME));
-
-			String encodedAdminPassword = passwordEncoder.encode(Configuration.ADMIN_PASSWORD);
-			Image profilePic = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
-
-			userRepository.save(new User(1L, Configuration.ADMIN_USERNAME, Configuration.ADMIN_USERNAME,
-					Configuration.ADMIN_USERNAME,"admin@gmail.com", "", encodedAdminPassword, profilePic,
-					adminRoles));
-		};
-	}
 }

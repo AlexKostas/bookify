@@ -37,9 +37,7 @@ public class ImageStorage {
 
         Image imageItem = imageRepository.save(new Image(guid));
         try{
-            String finalPath = pathRoot +  imageItem.getImageFilename();
-            File newFile = new File(finalPath);
-            image.transferTo(newFile);
+            saveImageFile(imageItem.getImageFilename(), image);
         }
         catch (IOException e){
             imageRepository.delete(imageItem);
@@ -66,6 +64,12 @@ public class ImageStorage {
 
         deleteImageFile(image.getImageFilename());
         imageRepository.delete(image);
+    }
+
+    private void saveImageFile(String filename, MultipartFile image) throws IOException {
+        String finalPath = pathRoot +  filename;
+        File newFile = new File(finalPath);
+        image.transferTo(newFile);
     }
 
     private void deleteImageFile(String filename){

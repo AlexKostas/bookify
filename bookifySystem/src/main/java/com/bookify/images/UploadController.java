@@ -22,6 +22,7 @@ public class UploadController {
     @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
         try {
+            //TODO: maybe return CREATED http status instead
             return ResponseEntity.ok(profilePictureService.uploadProfilePicture(username, image));
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
