@@ -44,6 +44,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf -> csrf.disable()).
                 authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/api/upload/**").authenticated();
                     auth.requestMatchers("/api/registration/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,

@@ -2,6 +2,8 @@ package com.bookify.user;
 
 import com.bookify.authentication.TokenService;
 import com.bookify.configuration.Configuration;
+import com.bookify.images.Image;
+import com.bookify.images.ImageRepository;
 import com.bookify.registration.LoginRegistrationResponseDTO;
 import com.bookify.registration.RegistrationDTO;
 import com.bookify.role.Role;
@@ -27,10 +29,11 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final ImageRepository imageRepository;
+    private final TokenService tokenService;
 
     public User createUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
         String username = registrationDTO.username();
@@ -41,6 +44,7 @@ public class UserService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(registrationDTO.password());
 
         Set<Role> roles = createRoleSet(registrationDTO.preferredRoles(), new HashSet<>());
+        Image defaultImage = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
         return userRepository.save(new User(0L, username,
                 registrationDTO.firstName(),
@@ -48,6 +52,7 @@ public class UserService implements UserDetailsService {
                 registrationDTO.email(),
                 registrationDTO.phoneNumber(),
                 encodedPassword,
+                defaultImage,
                 roles));
     }
 
@@ -167,6 +172,7 @@ public class UserService implements UserDetailsService {
 
                 if(previousRoles.contains(hostRole))
                     roles.add(hostRole);
+
                 else
                     roles.add(inactiveHostRole);
             }
