@@ -1,6 +1,7 @@
 package com.bookify.images;
 
 import com.bookify.configuration.Configuration;
+import com.bookify.utils.GUIDGenerator;
 import com.bookify.utils.ImageFormatDetector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;

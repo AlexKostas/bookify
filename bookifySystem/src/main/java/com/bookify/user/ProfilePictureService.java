@@ -1,6 +1,8 @@
-package com.bookify.images;
+package com.bookify.user;
 
 import com.bookify.configuration.Configuration;
+import com.bookify.images.Image;
+import com.bookify.images.ImageStorage;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import lombok.AllArgsConstructor;

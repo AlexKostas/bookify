@@ -1,4 +1,4 @@
-package com.bookify.images;
+package com.bookify.utils;
 
 import java.util.UUID;
 

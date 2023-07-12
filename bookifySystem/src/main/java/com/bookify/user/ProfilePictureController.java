@@ -1,5 +1,6 @@
-package com.bookify.images;
+package com.bookify.user;
 
+import com.bookify.user.ProfilePictureService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,12 +10,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping("/api/upload")
 @AllArgsConstructor
-public class UploadController {
+public class ProfilePictureController {
 
     private final ProfilePictureService profilePictureService;
 
