@@ -1,12 +1,8 @@
 package com.bookify.registration;
 
 import com.bookify.authentication.TokenService;
-import com.bookify.configuration.Configuration;
-import com.bookify.role.Role;
-import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
-import com.bookify.user.UserRepository;
-import com.bookify.utils.Constants;
+import com.bookify.user.UserService;
 import com.bookify.utils.InappropriatePasswordException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -15,78 +11,47 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
-import javax.security.auth.login.FailedLoginException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @Transactional
 @AllArgsConstructor
 public class RegistrationService {
 
-    private UserRepository userRepository;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private UserService userService;
     private AuthenticationManager authenticationManager;
     private TokenService tokenService;
 
-    public String registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
+    public LoginRegistrationResponseDTO registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
             IllegalArgumentException, InappropriatePasswordException {
-        String username = registrationDTO.username();
-        username = username.trim();
 
-        if(userRepository.findByUsername(username).isPresent())
-            throw new IllegalArgumentException("Username is taken");
+        return new LoginRegistrationResponseDTO(userService.createUser(registrationDTO).getUsername(),
+                generateToken(registrationDTO.username(), registrationDTO.password()));
 
-        if(registrationDTO.password().length() < Configuration.MIN_PASSWORD_LENGTH)
-            throw new InappropriatePasswordException("Password too short");
-
-        String encodedPassword = passwordEncoder.encode(registrationDTO.password());
-        Role tenantRole = roleRepository.findByAuthority(Constants.TENANT_ROLE).get();
-        Role inactiveHostRole = roleRepository.findByAuthority(Constants.INACTIVE_HOST_ROLE).get();
-
-        Set<Role> roles = new HashSet<>();
-
-        if (registrationDTO.preferredRoles().equals(Constants.TENANT_ROLE))
-            roles.add(tenantRole);
-        else if (registrationDTO.preferredRoles().equals(Constants.HOST_ROLE))
-            roles.add(inactiveHostRole);
-        else if (registrationDTO.preferredRoles().equals(Constants.HOST_TENANT_PREF_ROLE)) {
-            roles.add(tenantRole);
-            roles.add(inactiveHostRole);
-        } else
-            throw new OperationNotSupportedException("Unknown preferred role");
-
-        userRepository.save(new User(0L, username,
-                registrationDTO.firstName(),
-                registrationDTO.lastName(),
-                registrationDTO.email(),
-                registrationDTO.phoneNumber(),
-                encodedPassword,
-                roles));
-
-        return username;
     }
 
-    public LoginResponseDTO loginUser(LoginDTO loginDTO) throws BadCredentialsException {
+    public LoginRegistrationResponseDTO loginUser(LoginDTO loginDTO) throws BadCredentialsException {
         try{
-            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginDTO.username(), loginDTO.password()
-            ));
+            String token = generateToken(loginDTO.usernameOrEmail(), loginDTO.password());
 
-            String token = tokenService.GenerateJWTToken(auth);
+            Optional<User> user = userService.loadUserOptionalByUsernameOrEmail(loginDTO.usernameOrEmail());
+            assert(user.isPresent());
 
-            return new LoginResponseDTO(userRepository.findByUsername(loginDTO.username()).get(),
-                    token);
+            return new LoginRegistrationResponseDTO(user.get().getUsername(), token);
         }
         catch (AuthenticationException e){
-            //TODO: Throw proper http response message
-            //TODO: try to authenticate with email
             throw new BadCredentialsException("Invalid credentials");
         }
+    }
+
+    private String generateToken(String username, String password){
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                username, password
+        ));
+
+        return tokenService.generateJWTToken(auth);
     }
 }
