@@ -1,10 +1,10 @@
 package com.bookify.admin;
 
-import com.bookify.user.UserRepository;
 import com.bookify.user.UserService;
-import jdk.jshell.spi.ExecutionControl;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,16 +25,36 @@ public class AdminController {
 
     @DeleteMapping("/deleteUser/{username}")
     public ResponseEntity deleteUser(@PathVariable String username){
-        //TODO: error handling
-        userService.deleteUser(username);
-        return ResponseEntity.ok().build();
+        try{
+            userService.deleteUser(username);
+            return ResponseEntity.ok().build();
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (UnsupportedOperationException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     @PostMapping("/approveHost/{username}")
     public ResponseEntity approveHost(@PathVariable String username){
-        //TODO: error handling
-        adminService.approveHost(username);
-        return ResponseEntity.ok().build();
+        try{
+            adminService.approveHost(username);
+            return ResponseEntity.ok().build();
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (UnsupportedOperationException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 
     //TODO: Add rejectHost endpoint

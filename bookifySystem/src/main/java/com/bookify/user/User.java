@@ -1,11 +1,11 @@
 package com.bookify.user;
 
+import com.bookify.images.Image;
 import com.bookify.role.Role;
 import com.bookify.utils.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,8 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @Table(name="users")
 public class User implements UserDetails {
@@ -30,6 +29,10 @@ public class User implements UserDetails {
     private String email;
     private String phoneNumber;
     private String password;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_pic_GUID", referencedColumnName = "imageIdentifier")
+    private Image profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role_relationship",
