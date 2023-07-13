@@ -5,7 +5,7 @@ import axios from './api/axios';
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/register';
+const REGISTER_URL = 'https://localhost:8443/api/registration/register';
 
 const Register = () => {
     const userRef = useRef();
@@ -86,7 +86,7 @@ const Register = () => {
                 <section>
                     <h1>Success!</h1>
                     <p>
-                        <a href="#">Sign In</a>
+                        <a href="https://localhost:8443/api">Sign In</a>
                     </p>
                 </section>
             ) : (

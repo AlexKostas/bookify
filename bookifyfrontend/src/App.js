@@ -1,9 +1,10 @@
 import Login from './Login';
+
 function App() {
 
     return (
-        <main className = "App">
-            <Login/>
+        <main className="App">
+            <Login />
         </main>
     );
 }

@@ -2,7 +2,7 @@ import {useRef, useState, useEffect, useContext} from 'react';
 import AuthContext from "./context/AuthProvider";
 
 import axios from './api/axios';
-const LOGIN_URL = '/auth';
+const LOGIN_URL = 'https://localhost:8443/api/registration/login';
 
 const Login = () => {
     const { setAuth } = useContext(AuthContext);
@@ -61,7 +61,7 @@ const Login = () => {
                     <h1>You are logged in!</h1>
                     <br />
                     <p>
-                        <a href="#">Go to Home</a>
+                        <a href="https://localhost:8443/api">Go to Home</a>
                     </p>
                 </section>
                 ) : (
@@ -94,7 +94,7 @@ const Login = () => {
                     Need an Account?<br/>
                     <span className="line">
                         {/*put router link here */}
-                        <a href="#">Sign Up</a>
+                        <a href="https://localhost:8443/api/registration/register">Sign Up</a>
                     </span>
                 </p>
             </section>
