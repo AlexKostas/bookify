@@ -12,7 +12,6 @@ import javax.naming.OperationNotSupportedException;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin("*")
 @RequestMapping("/api/registration")
 public class RegistrationController {
 
@@ -34,7 +33,7 @@ public class RegistrationController {
         }
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
         try {
             LoginRegistrationResponseDTO result = registrationService.loginUser(loginDTO);

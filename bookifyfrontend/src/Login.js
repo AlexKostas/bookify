@@ -2,7 +2,7 @@ import {useRef, useState, useEffect, useContext} from 'react';
 import AuthContext from "./context/AuthProvider";
 
 import axios from './api/axios';
-const LOGIN_URL = 'https://localhost:8443/api/registration/login';
+const LOGIN_URL = '/api/registration/login';
 
 const Login = () => {
     const { setAuth } = useContext(AuthContext);
@@ -25,7 +25,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get(LOGIN_URL,
+            const response = await axios.post(LOGIN_URL,
                 {
                     usernameOrEmail: user,
                     password: pwd,
