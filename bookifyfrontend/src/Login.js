@@ -25,15 +25,18 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(LOGIN_URL,
-                JSON.stringify({user, pwd}),
+            const response = await axios.get(LOGIN_URL,
+                {
+                    usernameOrEmail: user,
+                    password: pwd,
+                },
                 {
                     headers: { 'Content-Type': 'application/json'},
                     withCredentials: true
                 }
             );
             console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response));
+            console.log(JSON.stringify(response));
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
             setAuth({user, pwd, roles, accessToken});
