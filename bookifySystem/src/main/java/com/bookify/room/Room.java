@@ -7,7 +7,8 @@ import lombok.*;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,7 +44,7 @@ public class Room {
     // private String address;
 
 
-//    @ManyToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "app_user_id", nullable = false)
-//    private User host;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_host_id", nullable = false)
+    private User roomHost;
 }

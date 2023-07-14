@@ -13,12 +13,12 @@ import javax.naming.OperationNotSupportedException;
 @RequestMapping("/api/room")
 @AllArgsConstructor
 public class RoomController {
-    //TODO: enable role based authentication when testing is done
+    //TODO: fix role based authentication when testing is done
 
     private RoomService roomService;
 
     @PostMapping("/registerRoom")
-    //@PreAuthorize("hasRole('host')")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity registerRoom(@RequestBody RoomRegistrationDTO roomDTO){
         try {
             RoomRegistrationResponseDTO result = roomService.registerRoom(roomDTO);

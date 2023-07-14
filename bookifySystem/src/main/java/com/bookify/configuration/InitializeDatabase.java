@@ -62,7 +62,7 @@ public class InitializeDatabase {
         String encodedAdminPassword = passwordEncoder.encode(com.bookify.configuration.Configuration.ADMIN_PASSWORD);
         Image profilePic = imageRepository.findByImageGuid(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
-        userRepository.save(new User(1L, com.bookify.configuration.Configuration.ADMIN_USERNAME,
+        userRepository.save(new User(com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 "admin@gmail.com", "",
