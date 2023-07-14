@@ -1,22 +1,21 @@
 package com.bookify.room;
 
+import com.bookify.room_amenities.Amenity;
 import com.bookify.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.Set;
+
+@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Table(name="rooms")
 public class Room {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @Column(name="app_room_ID")
+    @Column(name="room_ID")
     private int roomID;
 
     // general info
@@ -25,6 +24,12 @@ public class Room {
     private int numOfBedrooms;
     private int spaceArea;
     private String description;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "room_amenity_relationship",
+                joinColumns = {@JoinColumn(name = "room_ID")},
+                inverseJoinColumns = {@JoinColumn(name = "amenity_ID")})
+    private Set<Amenity> amenities;
 
     // TODO: rest of entity's attributes
     // check par. 6 and the end of par.5
@@ -41,8 +46,4 @@ public class Room {
 //    @ManyToOne(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "app_user_id", nullable = false)
 //    private User host;
-
-    public int getRoomID() {
-        return roomID;
-    }
 }
