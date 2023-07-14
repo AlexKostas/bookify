@@ -24,7 +24,7 @@ public class Room {
     private int numOfBeds;
     private int numOfBaths;
     private int numOfBedrooms;
-    private int spaceArea;
+    private int surfaceArea;
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)

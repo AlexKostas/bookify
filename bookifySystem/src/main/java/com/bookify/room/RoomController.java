@@ -21,10 +21,24 @@ public class RoomController {
     @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> registerRoom(@RequestBody RoomRegistrationDTO roomDTO){
         try {
-            RoomRegistrationResponseDTO result = roomService.registerRoom(roomDTO);
+            Integer result = roomService.registerRoom(roomDTO);
             return ResponseEntity.ok(result);
         } catch (OperationNotSupportedException | EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/editRoom/{roomID}")
+    @PreAuthorize("hasRole('tenant')")
+    public ResponseEntity<?> editRoom(@PathVariable Integer roomID, @RequestBody RoomRegistrationDTO roomDTO){
+        try{
+            return ResponseEntity.ok(roomService.editRoom(roomDTO, roomID));
+        }
+        catch (IllegalAccessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
         catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

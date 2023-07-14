@@ -22,18 +22,42 @@ public class RoomService{
     private AmenityRepository amenityRepository;
     private UserRepository userRepository;
 
-    public RoomRegistrationResponseDTO registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
+    public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return new RoomRegistrationResponseDTO(createRoom(roomDTO, username).getRoomID());
+        Room newRoom = createRoom(roomDTO, username);
+        return newRoom.getRoomID();
     }
 
-    public RoomResponseDTO loadRoomData(Integer roomId) throws EntityNotFoundException {
-        Room room = loadRoomDataById(roomId);
+    public Integer editRoom(RoomRegistrationDTO roomDTO, Integer roomID) throws IllegalAccessException {
+        Room room = roomRepository.findById(roomID)
+                .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
+
+        assert(room.getRoomID() == roomID);
+
+        verifyRoomEditingPrivileges(room);
+
+        //TODO: keep this up to date with the new fields of rooms
+        room.setNumOfBeds(roomDTO.nBeds());
+        room.setNumOfBaths(roomDTO.nBaths());
+        room.setNumOfBedrooms(roomDTO.nBedrooms());
+        room.setSurfaceArea(roomDTO.surfaceArea());
+        room.setDescription(roomDTO.description());
+        room.setAmenities(generateAmenitiesSet(roomDTO.amenityIDs()));
+
+        roomRepository.save(room);
+
+        return roomID;
+    }
+
+    public RoomResponseDTO loadRoomData(Integer roomID) throws EntityNotFoundException {
+        Room room = loadRoomDataById(roomID);
+
+        assert(room.getRoomID() == roomID);
         return new RoomResponseDTO(
                 room.getNumOfBeds(),
                 room.getNumOfBaths(),
                 room.getNumOfBedrooms(),
-                room.getSpaceArea(),
+                room.getSurfaceArea(),
                 room.getDescription(),
                 getAmenitiesNames(room),
                 getAmenitiesDescriptions(room)
@@ -44,12 +68,11 @@ public class RoomService{
         Room roomToDelete = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
 
-        User host = roomToDelete.getRoomHost();
-        User currentUser = userRepository.findByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        assert(roomToDelete.getRoomID() == roomID);
 
-        if(!currentUser.getUserID().equals(host.getUserID()) && !currentUser.isAdmin())
-            throw new IllegalAccessException("Insufficient privileges to delete room " + roomID);
+        User host = roomToDelete.getRoomHost();
+
+        verifyRoomEditingPrivileges(roomToDelete);
 
         host.unassignRoom(roomToDelete);
         userRepository.save(host);
@@ -61,16 +84,6 @@ public class RoomService{
         if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.surfaceArea() < 2)
             throw new OperationNotSupportedException("Incompatible room fields");
 
-        // Load amenities
-        Set<Amenity> amenities = new HashSet<>();
-        for(Integer amenityID : roomDTO.amenityIDs()){
-            Optional<Amenity> amenityOptional = amenityRepository.findById(amenityID);
-            if(amenityOptional.isEmpty())
-                throw new EntityNotFoundException("Amenity with ID " + amenityID + " not found");
-
-            amenities.add(amenityOptional.get());
-        }
-
         User host = userRepository.findByUsername(hostUsername).get();
 
         Room newRoom =  new Room(0,
@@ -79,7 +92,7 @@ public class RoomService{
                 roomDTO.nBedrooms(),
                 roomDTO.surfaceArea(),
                 roomDTO.description(),
-                amenities,
+                generateAmenitiesSet(roomDTO.amenityIDs()),
                 host
         );
 
@@ -92,6 +105,28 @@ public class RoomService{
     private Room loadRoomDataById(int roomId) throws EntityNotFoundException {
         return roomRepository.findById(roomId).orElseThrow(() ->
                 new EntityNotFoundException("Room " + roomId + " does not exist"));
+    }
+
+    private void verifyRoomEditingPrivileges(Room room) throws IllegalAccessException {
+        User currentUser = userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+
+        Long hostID = room.getRoomHost().getUserID();
+        if(hostID != currentUser.getUserID() && !currentUser.isAdmin())
+            throw new IllegalAccessException("Insufficient privileges to edit/delete room " + room.getRoomID());
+    }
+
+    private Set<Amenity> generateAmenitiesSet(List<Integer> amenityIDs){
+        Set<Amenity> amenities = new HashSet<>();
+        for(Integer amenityID : amenityIDs){
+            Optional<Amenity> amenityOptional = amenityRepository.findById(amenityID);
+            if(amenityOptional.isEmpty())
+                throw new EntityNotFoundException("Amenity with ID " + amenityID + " not found");
+
+            amenities.add(amenityOptional.get());
+        }
+
+        return amenities;
     }
 
     private List<String> getAmenitiesNames(Room room){
