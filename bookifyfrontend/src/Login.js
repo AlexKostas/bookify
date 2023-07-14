@@ -1,5 +1,6 @@
-import {useRef, useState, useEffect, useContext} from 'react';
-import AuthContext from "./context/AuthProvider";
+import { useRef, useState, useEffect, useContext } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { AuthContext } from './context/AuthProvider';
 
 import axios from './api/axios';
 const LOGIN_URL = '/api/registration/login';
@@ -25,7 +26,8 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(LOGIN_URL,
+            const response = await axios.post(
+                LOGIN_URL,
                 {
                     usernameOrEmail: user,
                     password: pwd,
@@ -39,7 +41,7 @@ const Login = () => {
             console.log(JSON.stringify(response));
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
-            setAuth({user, pwd, roles, accessToken});
+            setAuth({user, roles, accessToken});
             setUser('');
             setPwd('');
             setSuccess(true);
@@ -56,23 +58,19 @@ const Login = () => {
             errRef.current.focus();
         }
     }
+    // Redirect to welcome page if authenticated
+    const { isAuthenticated } = useContext(AuthContext);
+    if (isAuthenticated) {
+        return <Navigate to="/welcome" />;
+    }
 
     return (
-        <>
-            {success ? (
-                <section>
-                    <h1>You are logged in!</h1>
-                    <br />
-                    <p>
-                        <a href="https://localhost:8443/api">Go to Home</a>
-                    </p>
-                </section>
-                ) : (
-            <section>
-                <p ref={errRef} className={errMsg ? "errmsg" :
-                "offscreen"} aria-live="assertive">{errMsg}</p>
+        <section>
+            <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'} aria-live="assertive">
+                {errMsg}
+            </p>
                 <h1>Sign In</h1>
-                <form onSubmit = {handleSubmit}>
+                <form onSubmit = {handleSubmit} method="POST">
                     <label htmlFor = "username"> Username:</label>
                     <input
                         type="text"
@@ -93,18 +91,14 @@ const Login = () => {
                     />
                     <button>Sign In</button>
                 </form>
-                <p>
-                    Need an Account?<br/>
-                    <span className="line">
-                        {/*put router link here */}
-                        <a href="https://localhost:8443/api/registration/register">Sign Up</a>
-                    </span>
-                </p>
-            </section>
-                )}
-        </>
-    )
+            <p>
+                Need an Account?<br />
+                <span className="line">
+          <Link to="/registration/register">Sign Up</Link>
+        </span>
+            </p>
+        </section>
+    );
+};
 
-}
-
-export default Login
+export default Login;
