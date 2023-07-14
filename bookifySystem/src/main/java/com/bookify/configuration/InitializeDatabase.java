@@ -28,10 +28,11 @@ public class InitializeDatabase {
         return args -> {
             if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
 
+            preloadAmenities(amenityRepository);
             preloadRoles(roleRepository);
             preloadDefaultImages(imageRepository);
             preloadAdminUser(roleRepository, userRepository, imageRepository, passwordEncoder);
-            preloadAmenities(amenityRepository);
+
         };
     }
 
@@ -60,15 +61,21 @@ public class InitializeDatabase {
         adminRoles.add(adminRole);
 
         String encodedAdminPassword = passwordEncoder.encode(com.bookify.configuration.Configuration.ADMIN_PASSWORD);
+
         Image profilePic = imageRepository.findByImageGuid(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
-        userRepository.save(new User(com.bookify.configuration.Configuration.ADMIN_USERNAME,
+        User admin = new User(com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 "admin@gmail.com", "",
                 encodedAdminPassword,
-                profilePic,
-                adminRoles));
+                adminRoles);
+
+
+        userRepository.save(admin);
+        admin.setProfilePicture(profilePic);
+        userRepository.save(admin);
+
     }
 
     private void preloadAmenities(AmenityRepository amenityRepository){

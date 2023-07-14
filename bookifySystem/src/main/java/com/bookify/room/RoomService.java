@@ -16,6 +16,8 @@ import java.util.*;
 @AllArgsConstructor
 public class RoomService{
 
+    //TODO: when host leaves/changes roles make sure his room entries are deleted/disabled
+
     private RoomRepository roomRepository;
     private AmenityRepository amenityRepository;
     private UserRepository userRepository;
@@ -25,7 +27,7 @@ public class RoomService{
         return new RoomRegistrationResponseDTO(createRoom(roomDTO, username).getRoomID());
     }
 
-    public RoomResponseDTO loadRoomData(int roomId) throws EntityNotFoundException {
+    public RoomResponseDTO loadRoomData(Integer roomId) throws EntityNotFoundException {
         Room room = loadRoomDataById(roomId);
         return new RoomResponseDTO(
                 room.getNumOfBeds(),
@@ -36,6 +38,23 @@ public class RoomService{
                 getAmenitiesNames(room),
                 getAmenitiesDescriptions(room)
         );
+    }
+
+    public void deleteRoom(Integer roomID) throws IllegalAccessException {
+        Room roomToDelete = roomRepository.findById(roomID)
+                .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
+
+        User host = roomToDelete.getRoomHost();
+        User currentUser = userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+
+        if(!currentUser.getUserID().equals(host.getUserID()) && !currentUser.isAdmin())
+            throw new IllegalAccessException("Insufficient privileges to delete room " + roomID);
+
+        host.unassignRoom(roomToDelete);
+        userRepository.save(host);
+
+        roomRepository.delete(roomToDelete);
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
@@ -65,12 +84,13 @@ public class RoomService{
         );
 
         host.assignRoom(newRoom);
+        userRepository.save(host);
 
         return roomRepository.save(newRoom);
     }
 
     private Room loadRoomDataById(int roomId) throws EntityNotFoundException {
-        return roomRepository.findRoomByRoomID(roomId).orElseThrow(() ->
+        return roomRepository.findById(roomId).orElseThrow(() ->
                 new EntityNotFoundException("Room " + roomId + " does not exist"));
     }
 

@@ -5,6 +5,7 @@ import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -47,4 +48,18 @@ public class Room {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
     private User roomHost;
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(roomID);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+
+        Room otherRoom = (Room) o;
+        return roomID == otherRoom.roomID;
+    }
 }

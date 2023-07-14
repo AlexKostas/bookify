@@ -9,5 +9,4 @@ import java.util.Set;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Integer> {
-    Optional<Room> findRoomByRoomID(int roomId);
 }

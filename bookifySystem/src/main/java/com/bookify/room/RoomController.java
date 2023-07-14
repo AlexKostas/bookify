@@ -19,7 +19,7 @@ public class RoomController {
 
     @PostMapping("/registerRoom")
     @PreAuthorize("hasRole('tenant')")
-    public ResponseEntity registerRoom(@RequestBody RoomRegistrationDTO roomDTO){
+    public ResponseEntity<?> registerRoom(@RequestBody RoomRegistrationDTO roomDTO){
         try {
             RoomRegistrationResponseDTO result = roomService.registerRoom(roomDTO);
             return ResponseEntity.ok(result);
@@ -32,7 +32,7 @@ public class RoomController {
     }
 
     @GetMapping("/getRoom/{roomID}")
-    public ResponseEntity getRoom(@PathVariable int roomID){
+    public ResponseEntity<?> getRoom(@PathVariable Integer roomID){
         try{
             return ResponseEntity.ok(roomService.loadRoomData(roomID));
         }
@@ -41,6 +41,24 @@ public class RoomController {
         }
         catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteRoom/{roomID}")
+    @PreAuthorize("hasRole('admin') or hasRole('tenant')")
+    public ResponseEntity<?> deleteRoom(@PathVariable Integer roomID){
+        try {
+            roomService.deleteRoom(roomID);
+            return ResponseEntity.ok("Room " + roomID + " deleted successfully");
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (IllegalAccessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
