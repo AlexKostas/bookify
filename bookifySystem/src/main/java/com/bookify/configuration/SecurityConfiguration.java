@@ -49,6 +49,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/room/**").permitAll();
                     auth.requestMatchers("/api/amenities/**").permitAll();
                     auth.requestMatchers("api/roomPhotos/**").permitAll();
+                    auth.requestMatchers("api/reviews/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
                             Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);

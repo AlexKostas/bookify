@@ -20,7 +20,7 @@ public class ReviewService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    public Integer createReview(ReviewDTO reviewDTO, Integer roomID) {
+    public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException {
         //TODO: when booking system is ready, make sure we update 'reviewerVisitedRoom' property correctly
         User currentUser = userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()).get();
@@ -40,7 +40,7 @@ public class ReviewService {
         return review.getReviewID();
     }
 
-    public ReviewResponseDTO getReview(Integer reviewID) {
+    public ReviewResponseDTO getReview(Integer reviewID) throws EntityNotFoundException {
         Review review = findReview(reviewID);
 
         return new ReviewResponseDTO(
@@ -50,7 +50,10 @@ public class ReviewService {
                 review.getReviewer().getUsername());
     }
 
-    public List<ReviewResponseDTO> getAllReviews(Integer roomID){
+    public List<ReviewResponseDTO> getAllReviews(Integer roomID) throws EntityNotFoundException {
+        if(!roomRepository.findById(roomID).isPresent())
+            throw new EntityNotFoundException("Room with id " + roomID + " not found");
+
         List<Review> reviews = reviewRepository.findAllByRoomRoomID(roomID);
         List<ReviewResponseDTO> result = new ArrayList<>(reviews.size());
 
@@ -65,7 +68,7 @@ public class ReviewService {
         return result;
     }
 
-    public void editReview(Integer reviewID, ReviewDTO reviewDTO) throws IllegalAccessException {
+    public void editReview(Integer reviewID, ReviewDTO reviewDTO) throws IllegalAccessException, EntityNotFoundException {
         Review review = findReview(reviewID);
         verifyReviewEditingPrivileges(review);
 
@@ -75,7 +78,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void deleteReview(Integer reviewID) throws IllegalAccessException {
+    public void deleteReview(Integer reviewID) throws IllegalAccessException, EntityNotFoundException {
         Review review = findReview(reviewID);
         verifyReviewEditingPrivileges(review);
 
