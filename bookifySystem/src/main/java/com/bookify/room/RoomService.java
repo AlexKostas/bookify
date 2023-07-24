@@ -21,6 +21,7 @@ public class RoomService{
     private RoomRepository roomRepository;
     private AmenityRepository amenityRepository;
     private UserRepository userRepository;
+    private RoomAuthenticationUtility roomAuthenticationUtility;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -34,7 +35,7 @@ public class RoomService{
 
         assert(room.getRoomID() == roomID);
 
-        verifyRoomEditingPrivileges(room);
+        roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
         //TODO: keep this up to date with the new fields of rooms
         room.setNumOfBeds(roomDTO.nBeds());
@@ -72,7 +73,7 @@ public class RoomService{
 
         User host = roomToDelete.getRoomHost();
 
-        verifyRoomEditingPrivileges(roomToDelete);
+        roomAuthenticationUtility.verifyRoomEditingPrivileges(roomToDelete);
 
         host.unassignRoom(roomToDelete);
         userRepository.save(host);
@@ -84,6 +85,7 @@ public class RoomService{
         if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.surfaceArea() < 2)
             throw new OperationNotSupportedException("Incompatible room fields");
 
+        assert(userRepository.findByUsername(hostUsername).isPresent());
         User host = userRepository.findByUsername(hostUsername).get();
 
         Room newRoom =  new Room(0,
@@ -93,6 +95,7 @@ public class RoomService{
                 roomDTO.surfaceArea(),
                 roomDTO.description(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
+                new ArrayList<>(),
                 host
         );
 
@@ -105,15 +108,6 @@ public class RoomService{
     private Room loadRoomDataById(int roomId) throws EntityNotFoundException {
         return roomRepository.findById(roomId).orElseThrow(() ->
                 new EntityNotFoundException("Room " + roomId + " does not exist"));
-    }
-
-    private void verifyRoomEditingPrivileges(Room room) throws IllegalAccessException {
-        User currentUser = userRepository.findByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName()).get();
-
-        Long hostID = room.getRoomHost().getUserID();
-        if(hostID != currentUser.getUserID() && !currentUser.isAdmin())
-            throw new IllegalAccessException("Insufficient privileges to edit/delete room " + room.getRoomID());
     }
 
     private Set<Amenity> generateAmenitiesSet(List<Integer> amenityIDs){
