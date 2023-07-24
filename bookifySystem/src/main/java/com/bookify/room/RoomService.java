@@ -99,10 +99,12 @@ public class RoomService{
                 host
         );
 
-        host.assignRoom(newRoom);
+        Room savedRoom = roomRepository.save(newRoom);
+
+        host.assignRoom(savedRoom);
         userRepository.save(host);
 
-        return roomRepository.save(newRoom);
+        return savedRoom;
     }
 
     private Room loadRoomDataById(int roomId) throws EntityNotFoundException {
