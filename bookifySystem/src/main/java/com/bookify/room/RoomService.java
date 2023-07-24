@@ -96,7 +96,8 @@ public class RoomService{
                 roomDTO.description(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
                 new ArrayList<>(),
-                host
+                host,
+                new ArrayList<>()
         );
 
         Room savedRoom = roomRepository.save(newRoom);

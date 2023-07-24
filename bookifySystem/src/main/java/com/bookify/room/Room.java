@@ -1,11 +1,13 @@
 package com.bookify.room;
 
 import com.bookify.images.Image;
+import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -53,6 +55,9 @@ public class Room {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
     private User roomHost;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     public void addPhoto(Image newPhoto){
         photos.add(newPhoto);
