@@ -45,13 +45,18 @@ public class RoomPhotoService {
         return imageStorage.loadImageFileByGuid(guid);
     }
 
-    public void deletePhoto(String guid, int roomID) throws EntityNotFoundException, IllegalAccessException {
+    public void deletePhoto(String guid, Integer roomID) throws EntityNotFoundException, IllegalAccessException {
         Room room = roomRepository.findById(roomID).
                 orElseThrow(() -> new EntityNotFoundException("Room with id " + roomID + " not found"));
 
+        Image photoToDelete = imageStorage.loadImage(guid);
+
+        if(!room.containsPhoto(photoToDelete))
+            throw new EntityNotFoundException("Room " + roomID + " does not contain photo with guid " +
+                    photoToDelete.getImageGuid());
+
         roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
-        Image photoToDelete = imageStorage.loadImage(guid);
         imageStorage.deleteImage(photoToDelete);
         room.deletePhoto(photoToDelete);
 

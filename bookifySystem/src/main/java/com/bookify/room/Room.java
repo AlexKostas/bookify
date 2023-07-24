@@ -35,7 +35,7 @@ public class Room {
                 inverseJoinColumns = {@JoinColumn(name = "amenity_ID")})
     private Set<Amenity> amenities;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Image> photos;
 
     // TODO: rest of entity's attributes
@@ -60,6 +60,10 @@ public class Room {
 
     public void deletePhoto(Image photoToDelete){
         photos.remove(photoToDelete);
+    }
+
+    public boolean containsPhoto(Image photo){
+        return photos.contains(photo);
     }
 
     @Override
