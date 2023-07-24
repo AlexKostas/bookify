@@ -1,5 +1,6 @@
 package com.bookify.reviews;
 
+import com.bookify.room.Room;
 import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,10 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private User reviewer;
+
+    @ManyToOne
+    @JoinColumn(name = "room_ID")
+    private Room room;
 
     public Review() {}
 }
