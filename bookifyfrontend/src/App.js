@@ -1,22 +1,21 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import Login from './Login';
-import Register from './Register';
-import { AuthProvider } from './context/AuthProvider';
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+} from "react-router-dom";
+import Home from "./pages/home/Home";
+import Hotel from "./pages/hotel/Hotel";
+import List from "./pages/list/List";
 
 function App() {
     return (
-        <AuthProvider>
-            <Router>
-                <main className="App">
-                    <Routes>
-                        <Route path="/" element={<Navigate to="/registration/login" />} />
-                        <Route path="/registration/login" element={<Login />} />
-                        <Route path="/registration/register" element={<Register />} />
-                    </Routes>
-                </main>
-            </Router>
-        </AuthProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home/>}/>
+                <Route path="/hotels" element={<List/>}/>
+                <Route path="/hotels/:id" element={<Hotel/>}/>
+            </Routes>
+        </BrowserRouter>
     );
 }
 
