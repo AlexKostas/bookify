@@ -71,6 +71,21 @@ public class Room {
         return photos.contains(photo);
     }
 
+    public float getRating(){
+        //TODO: maybe use a more sophisticated algorithm that gives greater weight to more recent or verified reviews
+        if(reviews.isEmpty()) return 0.0f;
+
+        int count = 0;
+        for(Review review : reviews)
+            count += review.getStars();
+
+        return (float) count / (float) getReviewCount();
+    }
+
+    public int getReviewCount(){
+        return reviews.size();
+    }
+
     @Override
     public int hashCode(){
         return Objects.hash(roomID);
