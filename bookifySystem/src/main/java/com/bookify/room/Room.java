@@ -29,6 +29,7 @@ public class Room {
     private int numOfBaths;
     private int numOfBedrooms;
     private int surfaceArea;
+    @Column(length = 3000)
     private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)

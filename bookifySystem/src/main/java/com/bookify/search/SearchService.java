@@ -26,7 +26,8 @@ public class SearchService {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
                     "Please use 'asc' or 'desc' to specify the order of the search results");
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, direction);
+        //TODO: Add sorting direction and property to sort by
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Room> searchResult = roomRepository.findAll(pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
