@@ -1,16 +1,20 @@
-import { useRef, useState, useEffect } from "react";
+import axios from "axios";
+import { useContext, useState } from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {AuthContext} from "../../context/AuthContext";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from './api/axios';
-import {Link} from "react-router-dom";
+import "./register.css"
+
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = 'https://localhost:8443/api/registration/register';
 
 const Register = () => {
-    const userRef = useRef();
-    const errRef = useRef();
+
+    const { loading, error, dispatch } = useContext(AuthContext);
+    const navigate = useNavigate()
 
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
@@ -26,23 +30,6 @@ const Register = () => {
 
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
-
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
-
-    useEffect(() => {
-        setValidName(USER_REGEX.test(user));
-    }, [user])
-
-    useEffect(() => {
-        setValidPwd(PWD_REGEX.test(pwd));
-        setValidMatch(pwd === matchPwd);
-    }, [pwd, matchPwd])
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd, matchPwd])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -64,23 +51,13 @@ const Register = () => {
                     withCredentials: true
                 }
             );
-            // TODO: remove console.logs before deployment
             console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response))
             setSuccess(true);
-            //clear state and controlled inputs
             setUser('');
             setPwd('');
             setMatchPwd('');
         } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 409) {
-                setErrMsg('Username Taken');
-            } else {
-                setErrMsg('Registration Failed')
-            }
-            errRef.current.focus();
+            dispatch({ type: "REGISTRATION_FAILURE", payload: err.response.data });
         }
     }
 
@@ -95,7 +72,6 @@ const Register = () => {
                 </section>
             ) : (
                 <section>
-                    <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                     <h1>Register</h1>
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="username">
@@ -106,7 +82,6 @@ const Register = () => {
                         <input
                             type="text"
                             id="username"
-                            ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setUser(e.target.value)}
                             value={user}
@@ -169,7 +144,7 @@ const Register = () => {
                             Must match the first password input field.
                         </p>
 
-                        <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
+                        <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
                     </form>
                     <p>
                         Already registered?<br />

@@ -1,4 +1,4 @@
-import "./hotel.css";
+import "./room.css";
 import Navbar from "../../components/navbar/Navbar";
 import Header from "../../components/header/Header";
 import MailList from "../../components/mailList/MailList";
@@ -17,7 +17,7 @@ import { SearchContext } from "../../context/SearchContext";
 import { AuthContext } from "../../context/AuthContext";
 import Reserve from "../../components/reserve/Reserve";
 
-const Hotel = () => {
+const Room = () => {
     const location = useLocation();
     const id = location.pathname.split("/")[2];
     const [slideNumber, setSlideNumber] = useState(0);
@@ -151,4 +151,4 @@ const Hotel = () => {
     );
 };
 
-export default Hotel;
+export default Room;
