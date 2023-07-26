@@ -1,61 +1,103 @@
-import axios from "axios";
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRef, useState, useEffect, useContext } from 'react';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 import "./login.css";
 const LOGIN_URL = '/api/registration/login';
 
 const Login = () => {
+    const { setAuth } = useContext(AuthContext);
+    const userRef = useRef();
+    const errRef = useRef();
 
-    const [credentials, setCredentials] = useState({
-        username: undefined,
-        password: undefined,
-    });
+    const [user, setUser] = useState('');
+    const [pwd, setPwd] = useState('');
+    const [errMsg, setErrMsg] = useState('');
+    const [success, setSuccess] = useState(false);
 
-    const { loading, error, dispatch } = useContext(AuthContext);
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
 
-    const navigate = useNavigate()
+    useEffect(()=> {
+        setErrMsg('');
+    }, [user, pwd])
 
-    const handleChange = (e) => {
-        setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value }));
-    };
-
-    const handleClick = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        dispatch({ type: "LOGIN_START" });
         try {
-            const res = await axios.post(LOGIN_URL, credentials);
-            dispatch({ type: "LOGIN_SUCCESS", payload: res.data.details });
-            navigate("/")
+            const response = await axios.post(
+                LOGIN_URL,
+                {
+                    usernameOrEmail: user,
+                    password: pwd,
+                },
+                {
+                    headers: { 'Content-Type': 'application/json'},
+                    withCredentials: true
+                }
+            );
+            console.log(JSON.stringify(response?.data));
+            console.log(JSON.stringify(response));
+            const accessToken = response?.data?.accessToken;
+            const roles = response?.data?.roles;
+            setAuth({user, roles, accessToken});
+            setUser('');
+            setPwd('');
+            setSuccess(true);
         } catch (err) {
-            dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 400) {
+                setErrMsg('Missing Username or Password');
+            } else if (err.response?.status === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg('Login Failed');
+            }
+            errRef.current.focus();
         }
-    };
-
+    }
+    // Redirect to welcome page if authenticated
+    const { isAuthenticated } = useContext(AuthContext);
+    if (isAuthenticated) {
+        return <Navigate to="/" />;
+    }
 
     return (
-        <div className="login">
-            <div className="lContainer">
+        <section className="login">
+            <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'} aria-live="assertive">
+                {errMsg}
+            </p>
+            <h1>Sign In</h1>
+            <form onSubmit = {handleSubmit} method="POST">
+                <label htmlFor = "username"> Username:</label>
                 <input
                     type="text"
-                    placeholder="username"
                     id="username"
-                    onChange={handleChange}
-                    className="lInput"
+                    ref={userRef}
+                    autoComplete="off"
+                    onChange = {(e)=> setUser(e.target.value)}
+                    value = {user}
+                    required
                 />
+                <label htmlFor = "password"> Password:</label>
                 <input
                     type="password"
-                    placeholder="password"
                     id="password"
-                    onChange={handleChange}
-                    className="lInput"
+                    onChange = {(e)=> setPwd(e.target.value)}
+                    value = {pwd}
+                    required
                 />
-                <button disabled={loading} onClick={handleClick} className="lButton">
-                    Login
-                </button>
-                {error && <span>{error.message}</span>}
-            </div>
-        </div>
+                <button>Sign In</button>
+            </form>
+            <p>
+                Need an Account?<br />
+                <span className="line">
+          <Link to="/registration/register">Sign Up</Link>
+        </span>
+            </p>
+        </section>
     );
 };
 
