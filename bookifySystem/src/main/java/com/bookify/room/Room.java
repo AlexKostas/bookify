@@ -19,18 +19,37 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name="rooms")
 public class Room {
+
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     @Column(name="room_ID")
     private int roomID;
 
-    // general info
+    // General Info
+    private String name;
+    private String summary;
+    private String space;
+    @Column(length = 3000)
+    private String description;
+    private String neighborhoodOverview;
+    private String notes;
+    private String transitInfo;
+
+    // Address Info
+    private String address;
+    private String neighborhood;
+    private String city;
+    private String state;
+    private String country;
+    private String zipcode;
+
+    private String latitude;
+    private String longitude;
+
     private int numOfBeds;
     private int numOfBaths;
     private int numOfBedrooms;
     private int surfaceArea;
-    @Column(length = 3000)
-    private String description;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "room_amenity_relationship",
@@ -38,20 +57,11 @@ public class Room {
                 inverseJoinColumns = {@JoinColumn(name = "amenity_ID")})
     private Set<Amenity> amenities;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Image thumbnail;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Image> photos;
-
-    // TODO: rest of entity's attributes
-    // check par. 6 and the end of par.5
-    //private String roomCategory;
-
-    // set of rules
-
-    // address and geographical coordinates
-    //    private Float latitude;
-    //    private Float longitude;
-    // private String address;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
@@ -59,6 +69,21 @@ public class Room {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
+    public Room(String description, int numOfBeds, int numOfBaths, int numOfBedrooms,
+                int surfaceArea, Set<Amenity> amenities, User roomHost) {
+        this.description = description;
+        this.numOfBeds = numOfBeds;
+        this.numOfBaths = numOfBaths;
+        this.numOfBedrooms = numOfBedrooms;
+        this.surfaceArea = surfaceArea;
+        this.amenities = amenities;
+        this.roomHost = roomHost;
+
+        this.thumbnail = null;
+        this.photos = new ArrayList<>();
+        this.reviews = new ArrayList<>();
+    }
 
     public void addPhoto(Image newPhoto){
         photos.add(newPhoto);

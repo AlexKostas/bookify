@@ -20,7 +20,8 @@ public class RoomPhotoService {
     private final ImageStorage imageStorage;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
 
-    public String addPhoto(int roomID, MultipartFile photo) throws IllegalAccessException, IOException {
+    public String addPhoto(int roomID, MultipartFile photo)
+            throws IllegalAccessException, IOException, EntityNotFoundException {
         Room room = roomRepository.findById(roomID).
                 orElseThrow(() -> new EntityNotFoundException("Room with id " + roomID + " not found"));
 
@@ -31,6 +32,23 @@ public class RoomPhotoService {
 
         roomRepository.save(room);
         return newPhoto.getImageGuid();
+    }
+
+    public String addThumbnail(int roomID, MultipartFile thumbnail)
+            throws IllegalAccessException, IOException, EntityNotFoundException {
+        Room room = roomRepository.findById(roomID).
+                orElseThrow(() -> new EntityNotFoundException("Room with id " + roomID + " not found"));
+
+        roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
+
+        Image oldThumbnail = room.getThumbnail();
+        if(oldThumbnail != null) imageStorage.deleteImage(oldThumbnail);
+
+        Image newThumbnail = imageStorage.saveImage(thumbnail);
+        room.setThumbnail(newThumbnail);
+
+        roomRepository.save(room);
+        return newThumbnail.getImageGuid();
     }
 
     public List<String> getPhotoGUIDs(int roomID) throws EntityNotFoundException {

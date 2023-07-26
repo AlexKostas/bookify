@@ -27,6 +27,27 @@ public class RoomPhotoController {
         catch (IllegalAccessException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/addThumbnail/{roomID}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> addThumbnail(@PathVariable Integer roomID, @RequestParam("file") MultipartFile thumbnail){
+        try{
+            String newThumbnailGuid = roomPhotoService.addThumbnail(roomID, thumbnail);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newThumbnailGuid);
+        }
+        catch (IllegalAccessException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
         catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

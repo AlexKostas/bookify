@@ -61,7 +61,8 @@ public class RoomService{
                 room.getSurfaceArea(),
                 room.getDescription(),
                 getAmenitiesNames(room),
-                getAmenitiesDescriptions(room)
+                getAmenitiesDescriptions(room),
+                room.getThumbnail() != null ? room.getThumbnail().getImageGuid() : ""
         );
     }
 
@@ -88,16 +89,14 @@ public class RoomService{
         assert(userRepository.findByUsername(hostUsername).isPresent());
         User host = userRepository.findByUsername(hostUsername).get();
 
-        Room newRoom =  new Room(0,
+        Room newRoom =  new Room(
+                roomDTO.description(),
                 roomDTO.nBeds(),
                 roomDTO.nBaths(),
                 roomDTO.nBedrooms(),
                 roomDTO.surfaceArea(),
-                roomDTO.description(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
-                new ArrayList<>(),
-                host,
-                new ArrayList<>()
+                host
         );
 
         Room savedRoom = roomRepository.save(newRoom);
