@@ -1,5 +1,6 @@
 package com.bookify.room;
 
+import com.bookify.configuration.Configuration;
 import com.bookify.room_amenities.Amenity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,4 +26,13 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT r.roomID FROM Room r WHERE r.roomHost.username = :hostUsername")
     List<String> findRoomIDsByHostUsername(@Param("hostUsername") String hostUsername);
+
+    // Running native query, so we are able to use LIMIT keyword
+    @Query(nativeQuery = true, value =
+            "SELECT DISTINCT r.city, r.state, r.country FROM rooms r " +
+            "WHERE LOWER(r.city) LIKE CONCAT('%', LOWER(:input), '%') " +
+            "   OR LOWER(r.state) LIKE CONCAT('%', LOWER(:input), '%') " +
+            "   OR LOWER(r.country) LIKE CONCAT('%', LOWER(:input), '%') " +
+            "LIMIT " + Configuration.MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS)
+    List<String[]> findAutocompleteLocationSuggestions(@Param("input") String input);
 }

@@ -14,4 +14,6 @@ public class Configuration {
     public static final String DEFAULT_PAGE_SIZE = "10";
     public static final String DEFAULT_PAGE_INDEX = "0";
     public static final String DEFAULT_SEARCH_ORDER = "asc";
+
+    public static final String MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS = "10";
 }
