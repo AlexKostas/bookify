@@ -58,6 +58,16 @@ public class RoomController {
         }
     }
 
+    @GetMapping("/getRoomsOfHost/{username}")
+    public ResponseEntity<?> getRoomsOfHost(@PathVariable String username){
+        try {
+            return ResponseEntity.ok(roomService.getRoomsOfHost(username));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/deleteRoom/{roomID}")
     @PreAuthorize("hasRole('admin') or hasRole('tenant')")
     public ResponseEntity<?> deleteRoom(@PathVariable Integer roomID){

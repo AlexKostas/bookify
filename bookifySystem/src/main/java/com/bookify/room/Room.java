@@ -46,6 +46,9 @@ public class Room {
     private String latitude;
     private String longitude;
 
+    // Booking info
+    private int minimumStay;
+
     private int numOfBeds;
     private int numOfBaths;
     private int numOfBedrooms;

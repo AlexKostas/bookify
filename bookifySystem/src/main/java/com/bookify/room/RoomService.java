@@ -66,6 +66,10 @@ public class RoomService{
         );
     }
 
+    public List<String> getRoomsOfHost(String username){
+        return roomRepository.findRoomIDsByHostUsername(username);
+    }
+
     public void deleteRoom(Integer roomID) throws IllegalAccessException {
         Room roomToDelete = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));

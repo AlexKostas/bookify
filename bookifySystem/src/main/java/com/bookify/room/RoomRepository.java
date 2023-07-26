@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -23,4 +22,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "HAVING COUNT(a) = :amenitiesCount")
     List<Room> filterRoomsByAmenities(@Param("amenities") Set<Amenity> amenities,
                                        @Param("amenitiesCount") Integer amenitiesCount);
+
+    @Query("SELECT r.roomID FROM Room r WHERE r.roomHost.username = :hostUsername")
+    List<String> findRoomIDsByHostUsername(@Param("hostUsername") String hostUsername);
 }
