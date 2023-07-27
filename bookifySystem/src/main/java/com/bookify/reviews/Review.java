@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "reviews")
 @Getter
@@ -20,7 +22,10 @@ public class Review {
     private int reviewID;
 
     private int stars;
+    @Column(length = 10000)
     private String comment;
+
+    private LocalDate date;
 
     private boolean reviewerVisitedRoom;
 

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class ReviewService {
                 0,
                 reviewDTO.stars(),
                 reviewDTO.comment(),
+                LocalDate.now(),
                 false,
                 currentUser,
                 room

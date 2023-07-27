@@ -27,12 +27,17 @@ public class Room {
 
     // General Info
     private String name;
+    @Column(length =1000)
     private String summary;
+    @Column(length = 1500)
     private String space;
-    @Column(length = 3000)
+    @Column(length = 5000)
     private String description;
+    @Column(length = 1500)
     private String neighborhoodOverview;
+    @Column(length = 2000)
     private String notes;
+    @Column(length = 2000)
     private String transitInfo;
 
     // Address Info
