@@ -2,6 +2,7 @@ package com.bookify.user;
 
 import com.bookify.images.Image;
 import com.bookify.role.Role;
+import com.bookify.room.Room;
 import com.bookify.utils.Constants;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,6 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "profile_pic_GUID", referencedColumnName = "imageIdentifier")
     private Image profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -40,9 +40,38 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Room> rooms;
+
     public User(){
         super();
         this.roles = new HashSet<>();
+        this.rooms = new HashSet<>();
+    }
+
+    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.profilePicture = profilePicture;
+        this.roles = roles;
+
+        this.rooms = new HashSet<>();
+    }
+
+    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Set<Role> roles) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.roles = roles;
+
+        this.rooms = new HashSet<>();
     }
 
     public String getRolesAsString(){
@@ -72,6 +101,14 @@ public class User implements UserDetails {
 
         roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
         roles.add(hostRole);
+    }
+
+    public void assignRoom(Room room){
+        rooms.add(room);
+    }
+
+    public void unassignRoom(Room room){
+        rooms.remove(room);
     }
 
     @Override

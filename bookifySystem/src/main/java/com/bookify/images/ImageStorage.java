@@ -3,6 +3,7 @@ package com.bookify.images;
 import com.bookify.configuration.Configuration;
 import com.bookify.utils.GUIDGenerator;
 import com.bookify.utils.ImageFormatDetector;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
@@ -53,12 +54,19 @@ public class ImageStorage {
         return imageItem;
     }
 
-    public Image loadImage(String guid) throws ClassNotFoundException {
+    public Image loadImage(String guid) throws EntityNotFoundException {
         return imageRepository.findByImageGuid(guid).
-                orElseThrow(() -> new ClassNotFoundException("Image with id " + guid + " not found"));
+                orElseThrow(() -> new EntityNotFoundException("Image with id " + guid + " not found"));
     }
 
     public FileSystemResource loadImageFile(Image image){
+        String finalPath = pathRoot + image.getImageFilename();
+        return new FileSystemResource(finalPath);
+    }
+
+    public FileSystemResource loadImageFileByGuid(String guid) throws EntityNotFoundException {
+        Image image = imageRepository.findByImageGuid(guid).
+                orElseThrow(() -> new EntityNotFoundException("Image with guid "+ guid + " not found"));
         String finalPath = pathRoot + image.getImageFilename();
         return new FileSystemResource(finalPath);
     }

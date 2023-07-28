@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
         Set<Role> roles = createRoleSet(registrationDTO.preferredRoles(), new HashSet<>());
         Image defaultImage = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
-        return userRepository.save(new User(0L, username,
+        return userRepository.save(new User(username,
                 registrationDTO.firstName(),
                 registrationDTO.lastName(),
                 registrationDTO.email(),

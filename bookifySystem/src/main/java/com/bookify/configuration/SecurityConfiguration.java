@@ -46,14 +46,18 @@ public class SecurityConfiguration {
                 authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/upload/**").authenticated();
                     auth.requestMatchers("/api/registration/**").permitAll();
+                    auth.requestMatchers("/api/room/**").permitAll();
+                    auth.requestMatchers("/api/amenities/**").permitAll();
+                    auth.requestMatchers("/api/roomPhotos/**").permitAll();
+                    auth.requestMatchers("/api/search/**").permitAll();
+                    auth.requestMatchers("/api/reviews/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
                             Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);
-                    auth.anyRequest().authenticated();
+                    auth.anyRequest().permitAll();
                 }).
             oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
         http.sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
 
         return http.build();
     }
