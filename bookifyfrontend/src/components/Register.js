@@ -1,20 +1,16 @@
-import axios from "axios";
-import { useContext, useState } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {AuthContext} from "../../context/AuthContext";
+import { useRef, useState, useEffect } from "react";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "./register.css"
-
+import axios from '../api/axios';
+import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = 'https://localhost:8443/api/registration/register';
+const REGISTER_URL = '/register';
 
 const Register = () => {
-
-    const { loading, error, dispatch } = useContext(AuthContext);
-    const navigate = useNavigate()
+    const userRef = useRef();
+    const errRef = useRef();
 
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
@@ -31,6 +27,23 @@ const Register = () => {
     const [errMsg, setErrMsg] = useState('');
     const [success, setSuccess] = useState(false);
 
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
+
+    useEffect(() => {
+        setValidName(USER_REGEX.test(user));
+    }, [user])
+
+    useEffect(() => {
+        setValidPwd(PWD_REGEX.test(pwd));
+        setValidMatch(pwd === matchPwd);
+    }, [pwd, matchPwd])
+
+    useEffect(() => {
+        setErrMsg('');
+    }, [user, pwd, matchPwd])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         // if button enabled with JS hack
@@ -42,22 +55,29 @@ const Register = () => {
         }
         try {
             const response = await axios.post(REGISTER_URL,
-                {
-                    usernameOrEmail: user,
-                    password: pwd,
-                },
+                JSON.stringify({ user, pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             );
+            // TODO: remove console.logs before deployment
             console.log(JSON.stringify(response?.data));
+            //console.log(JSON.stringify(response))
             setSuccess(true);
+            //clear state and controlled inputs
             setUser('');
             setPwd('');
             setMatchPwd('');
         } catch (err) {
-            dispatch({ type: "REGISTRATION_FAILURE", payload: err.response.data });
+            if (!err?.response) {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 409) {
+                setErrMsg('Username Taken');
+            } else {
+                setErrMsg('Registration Failed')
+            }
+            errRef.current.focus();
         }
     }
 
@@ -67,11 +87,12 @@ const Register = () => {
                 <section>
                     <h1>Success!</h1>
                     <p>
-                        <a href="https://localhost:8443/api">Sign In</a>
+                        <a href="#">Sign In</a>
                     </p>
                 </section>
             ) : (
                 <section>
+                    <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                     <h1>Register</h1>
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="username">
@@ -82,6 +103,7 @@ const Register = () => {
                         <input
                             type="text"
                             id="username"
+                            ref={userRef}
                             autoComplete="off"
                             onChange={(e) => setUser(e.target.value)}
                             value={user}
@@ -144,12 +166,12 @@ const Register = () => {
                             Must match the first password input field.
                         </p>
 
-                        <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
+                        <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
                     </form>
                     <p>
                         Already registered?<br />
                         <span className="line">
-                            <Link to="/registration/login">Sign In</Link>
+                            <Link to="/">Sign In</Link>
                         </span>
                     </p>
                 </section>
