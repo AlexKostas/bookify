@@ -19,7 +19,7 @@ const Login = () => {
         userRef.current.focus();
     }, [])
 
-    useEffect(()=> {
+    useEffect(() => {
         setErrMsg('');
     }, [user, pwd])
 
@@ -33,7 +33,7 @@ const Login = () => {
                     password: pwd,
                 },
                 {
-                    headers: { 'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             );
@@ -41,7 +41,7 @@ const Login = () => {
             console.log(JSON.stringify(response));
             const accessToken = response?.data?.accessToken;
             const roles = response?.data?.roles;
-            setAuth({user, roles, accessToken});
+            setAuth({ user, roles, accessToken });
             setUser('');
             setPwd('');
             setSuccess(true);
@@ -54,7 +54,7 @@ const Login = () => {
                 setErrMsg('Unauthorized');
             } else {
                 setErrMsg('Login Failed');
-        }
+            }
             errRef.current.focus();
         }
     }
@@ -69,33 +69,33 @@ const Login = () => {
             <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'} aria-live="assertive">
                 {errMsg}
             </p>
-                <h1>Sign In</h1>
-                <form onSubmit = {handleSubmit} method="POST">
-                    <label htmlFor = "username"> Username:</label>
-                    <input
-                        type="text"
-                        id="username"
-                        ref={userRef}
-                        autoComplete="off"
-                        onChange = {(e)=> setUser(e.target.value)}
-                        value = {user}
-                        required
-                     />
-                    <label htmlFor = "password"> Password:</label>
-                    <input
-                        type="password"
-                        id="password"
-                        onChange = {(e)=> setPwd(e.target.value)}
-                        value = {pwd}
-                        required
-                    />
-                    <button>Sign In</button>
-                </form>
+            <h1>Sign In</h1>
+            <form onSubmit={handleSubmit} method="POST">
+                <label htmlFor="username"> Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    autoComplete="off"
+                    onChange={(e) => setUser(e.target.value)}
+                    value={user}
+                    required
+                />
+                <label htmlFor="password"> Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    onChange={(e) => setPwd(e.target.value)}
+                    value={pwd}
+                    required
+                />
+                <button>Sign In</button>
+            </form>
             <p>
                 Need an Account?<br />
                 <span className="line">
-          <Link to="/registration/register">Sign Up</Link>
-        </span>
+                    <Link to="/registration/register">Sign Up</Link>
+                </span>
             </p>
         </section>
     );
