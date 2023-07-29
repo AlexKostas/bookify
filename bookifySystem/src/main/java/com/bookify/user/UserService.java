@@ -139,7 +139,7 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
 
-        return new LoginRegistrationResponseDTO(changePasswordDTO.username(), generateNewJWTToken(user));
+        return new LoginRegistrationResponseDTO(changePasswordDTO.username(), generateNewJWTToken(user), user.getRoleAuthorityList());
     }
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {

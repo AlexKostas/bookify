@@ -9,9 +9,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Data
@@ -56,6 +54,14 @@ public class User implements UserDetails {
 
 
         return builder.length() > 0 ? builder.substring(0, builder.length() - delimiter.length()) : "";
+    }
+
+    public List<String> getRoleAuthorityList(){
+        List<String> result = new ArrayList<>();
+        for(Role role : roles)
+            result.add(role.getAuthority());
+
+        return result;
     }
 
     public boolean isAdmin(){

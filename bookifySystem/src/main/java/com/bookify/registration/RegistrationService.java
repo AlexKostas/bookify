@@ -28,9 +28,10 @@ public class RegistrationService {
     public LoginRegistrationResponseDTO registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
             IllegalArgumentException, InappropriatePasswordException {
 
-        return new LoginRegistrationResponseDTO(userService.createUser(registrationDTO).getUsername(),
-                generateToken(registrationDTO.username(), registrationDTO.password()));
+        User newUser = userService.createUser(registrationDTO);
 
+        return new LoginRegistrationResponseDTO(newUser.getUsername(), generateToken(registrationDTO.username(),
+                registrationDTO.password()), newUser.getRoleAuthorityList());
     }
 
     public LoginRegistrationResponseDTO loginUser(LoginDTO loginDTO) throws BadCredentialsException {
@@ -40,7 +41,7 @@ public class RegistrationService {
             Optional<User> user = userService.loadUserOptionalByUsernameOrEmail(loginDTO.usernameOrEmail());
             assert(user.isPresent());
 
-            return new LoginRegistrationResponseDTO(user.get().getUsername(), token);
+            return new LoginRegistrationResponseDTO(user.get().getUsername(), token, user.get().getRoleAuthorityList());
         }
         catch (AuthenticationException e){
             throw new BadCredentialsException("Invalid credentials");
