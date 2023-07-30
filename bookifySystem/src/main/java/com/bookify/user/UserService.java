@@ -46,7 +46,8 @@ public class UserService implements UserDetailsService {
         Set<Role> roles = createRoleSet(registrationDTO.preferredRoles(), new HashSet<>());
         Image defaultImage = imageRepository.findByImageGuid(Configuration.DEFAULT_PROFILE_PIC_NAME).get();
 
-        return userRepository.save(new User(0L, username,
+        return userRepository.save(new User(
+                username,
                 registrationDTO.firstName(),
                 registrationDTO.lastName(),
                 registrationDTO.email(),
@@ -139,7 +140,11 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
 
-        return new LoginRegistrationResponseDTO(changePasswordDTO.username(), generateNewJWTToken(user), user.getRoleAuthorityList());
+        return new LoginRegistrationResponseDTO(
+                changePasswordDTO.username(),
+                generateNewJWTToken(user),
+                user.getRefreshToken().getToken(),
+                user.getRoleAuthorityList());
     }
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {

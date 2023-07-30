@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.authentication.RefreshToken;
 import com.bookify.images.Image;
 import com.bookify.role.Role;
 import com.bookify.utils.Constants;
@@ -10,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -28,6 +30,10 @@ public class User implements UserDetails {
     private String phoneNumber;
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
+    private RefreshToken refreshToken;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "profile_pic_GUID", referencedColumnName = "imageIdentifier")
     private Image profilePicture;
@@ -41,6 +47,19 @@ public class User implements UserDetails {
     public User(){
         super();
         this.roles = new HashSet<>();
+    }
+
+    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.profilePicture = profilePicture;
+        this.roles = roles;
+
+        this.refreshToken = null;
     }
 
     public String getRolesAsString(){
@@ -64,6 +83,12 @@ public class User implements UserDetails {
         return result;
     }
 
+    public String getScope(){
+        return getAuthorities().stream().
+                map(GrantedAuthority::getAuthority).
+                collect(Collectors.joining(" "));
+    }
+
     public boolean isAdmin(){
         return hasRole(Constants.ADMIN_ROLE);
     }
@@ -78,6 +103,10 @@ public class User implements UserDetails {
 
         roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
         roles.add(hostRole);
+    }
+
+    public void replaceRefreshToken(RefreshToken newToken){
+        refreshToken = newToken;
     }
 
     @Override
