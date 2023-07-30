@@ -51,6 +51,7 @@ a, a:visited {
 
 input[type="text"],
 input[type="password"],
+select,
 button,
 textarea {
   font-family: 'Nunito', sans-serif;

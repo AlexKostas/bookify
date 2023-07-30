@@ -1,20 +1,29 @@
 import { useRef, useState, useEffect } from "react";
+import useAuth from '../hooks/useAuth';
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from '../api/axios';
 import { Link } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/register';
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
+const REGISTER_URL = '/registration/register';
 
 const Register = () => {
+    const { setAuth } = useAuth();
+
     const userRef = useRef();
     const errRef = useRef();
 
     const [user, setUser] = useState('');
     const [validName, setValidName] = useState(false);
     const [userFocus, setUserFocus] = useState(false);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [selectedRole, setSelectedRole] = useState('tenant')
 
     const [pwd, setPwd] = useState('');
     const [validPwd, setValidPwd] = useState(false);
@@ -46,7 +55,7 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // if button enabled with JS hack
+
         const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(pwd);
         if (!v1 || !v2) {
@@ -55,17 +64,32 @@ const Register = () => {
         }
         try {
             const response = await axios.post(REGISTER_URL,
-                JSON.stringify({ user, pwd }),
+                JSON.stringify(
+                    { 
+                        username: user, 
+                        password: pwd,
+                        firstName,
+                        lastName,
+                        email,
+                        phoneNumber,
+                        preferredRoles: selectedRole
+                    }
+                    ),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             );
-            // TODO: remove console.logs before deployment
-            console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response))
+
+            const responseUsername = response?.data?.username;
+            const accessToken = response?.data?.jwtToken;
+            const roles = response?.data?.roles;
+            setAuth({ user: responseUsername, accessToken, roles });
+
+
             setSuccess(true);
-            //clear state and controlled inputs
+
+            //Clear state
             setUser('');
             setPwd('');
             setMatchPwd('');
@@ -73,7 +97,7 @@ const Register = () => {
             if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 409) {
-                setErrMsg('Username Taken');
+                setErrMsg('Username or Email is taken');
             } else {
                 setErrMsg('Registration Failed')
             }
@@ -85,9 +109,9 @@ const Register = () => {
         <>
             {success ? (
                 <section>
-                    <h1>Success!</h1>
+                    <h1>You have registered successfully!</h1>
                     <p>
-                        <a href="#">Sign In</a>
+                        <Link to="/">Go to home page</Link>
                     </p>
                 </section>
             ) : (
@@ -120,6 +144,56 @@ const Register = () => {
                             Letters, numbers, underscores, hyphens allowed.
                         </p>
 
+                        <label htmlFor="firstName">
+                            First Name:
+                        </label>
+                        <input
+                            type="text"
+                            id="lastname"
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setFirstName(e.target.value)}
+                            value={firstName}
+                            required
+                            aria-invalid={validName ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setUserFocus(true)}
+                            onBlur={() => setUserFocus(false)}
+                        />
+
+                        <label htmlFor="lastName">
+                            Last Name:
+                        </label>
+                        <input
+                            type="text"
+                            id="firstname"
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setLastName(e.target.value)}
+                            value={lastName}
+                            required
+                            aria-invalid={validName ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setUserFocus(true)}
+                            onBlur={() => setUserFocus(false)}
+                        />
+
+                        <label htmlFor="email">
+                            Email:
+                        </label>
+                        <input
+                            type="text"
+                            id="email"
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                            required
+                            aria-invalid={validName ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setUserFocus(true)}
+                            onBlur={() => setUserFocus(false)}
+                        />
 
                         <label htmlFor="password">
                             Password:
@@ -166,12 +240,39 @@ const Register = () => {
                             Must match the first password input field.
                         </p>
 
+                        <label htmlFor="phoneNumber">
+                            Phone Number:
+                        </label>
+                        <input
+                            type="text"
+                            id="phonenumber"
+                            ref={userRef}
+                            autoComplete="off"
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            value={phoneNumber}
+                            required
+                            aria-invalid={validName ? "false" : "true"}
+                            aria-describedby="uidnote"
+                            onFocus={() => setUserFocus(true)}
+                            onBlur={() => setUserFocus(false)}
+                        />
+
+                        <label htmlFor="dropdown">Select role:</label>
+                        <select 
+                            id="dropdown" 
+                            value={selectedRole} 
+                            onChange={(event) => setSelectedRole(event.target.value)}>
+                            <option value="tenant">Tenant</option>
+                            <option value="host">Host</option>
+                            <option value="host_tenant">Host & Tenant</option>
+                        </select>
+
                         <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
                     </form>
                     <p>
                         Already registered?<br />
                         <span className="line">
-                            <Link to="/">Sign In</Link>
+                            <Link to="/login">Sign In</Link>
                         </span>
                     </p>
                 </section>

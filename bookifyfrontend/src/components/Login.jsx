@@ -43,7 +43,6 @@ const Login = () => {
                     withCredentials: true
                 }
             );
-            console.log(JSON.stringify(response?.data));
 
             const responseUsername = response?.data?.username;
             const accessToken = response?.data?.jwtToken;
