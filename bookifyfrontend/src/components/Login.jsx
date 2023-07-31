@@ -2,12 +2,14 @@ import { useRef, useState, useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from '../api/axios';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 // The login api endpoint URL
 const LOGIN_URL = '/registration/login';
 
 const Login = () => {
     const { setAuth } = useAuth();
+    const { setItem } = useLocalStorage();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -39,15 +41,17 @@ const Login = () => {
                         password
                     }),
                 {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
+                    headers: { 'Content-Type': 'application/json' }
                 }
             );
 
             const responseUsername = response?.data?.username;
-            const accessToken = response?.data?.jwtToken;
+            const accessToken = response?.data?.accessToken;
+            const refreshToken = response?.data?.refreshToken;
             const roles = response?.data?.roles;
-            setAuth({ user: responseUsername, accessToken, roles });
+            
+            setAuth({ user: responseUsername, accessToken, refreshToken, roles });
+            setItem('refreshToken', refreshToken);
 
             setUsername('');
             setPassword('');
