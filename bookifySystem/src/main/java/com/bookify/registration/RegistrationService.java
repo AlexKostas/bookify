@@ -61,7 +61,7 @@ public class RegistrationService {
         }
     }
 
-    public RefreshResponseDTO refresh(String refreshToken){
+    public LoginRegistrationResponseDTO refresh(String refreshToken){
         RefreshToken token = refreshTokenRepository.findById(refreshToken)
                 .orElseThrow(() -> new BadCredentialsException("Refresh token not found"));
 
@@ -70,7 +70,12 @@ public class RegistrationService {
         User user = token.getUser();
         if(user == null) throw new BadCredentialsException("User assigned to this token has been removed");
 
-        return new RefreshResponseDTO(tokenService.generateJWTToken(user.getScope(), user.getUsername()));
+        String newAccessToken = tokenService.generateJWTToken(user.getScope(), user.getUsername());
+        return new LoginRegistrationResponseDTO(
+                user.getUsername(),
+                newAccessToken,
+                refreshToken,
+                user.getRoleAuthorityList());
     }
 
     public void logout(){

@@ -4,6 +4,7 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from '../api/axios';
 import { Link } from "react-router-dom";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
@@ -11,6 +12,7 @@ const REGISTER_URL = '/registration/register';
 
 const Register = () => {
     const { setAuth } = useAuth();
+    const { setItem } = useLocalStorage();
 
     const userRef = useRef();
     const errRef = useRef();
@@ -74,18 +76,16 @@ const Register = () => {
                         phoneNumber,
                         preferredRoles: selectedRole
                     }
-                    ),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
+                    )
             );
 
             const responseUsername = response?.data?.username;
-            const accessToken = response?.data?.jwtToken;
+            const accessToken = response?.data?.accessToken;
+            const refreshToken = response?.data?.refreshToken;
             const roles = response?.data?.roles;
-            setAuth({ user: responseUsername, accessToken, roles });
-
+            
+            setAuth({ user: responseUsername, accessToken, refreshToken, roles });
+            setItem('refreshToken', refreshToken);
 
             setSuccess(true);
 
