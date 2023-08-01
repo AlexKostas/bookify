@@ -11,6 +11,9 @@ import LinkPage from './components/LinkPage';
 import RequireAuth from './components/RequireAuth';
 import PersistentLogin from './components/PersistentLogin';
 import { Routes, Route } from 'react-router-dom';
+import ProfilePage from './pages/ProfilePage';
+import RegistrationPage from './pages/RegistrationPage';
+import useAuth from './hooks/useAuth';
 
 const ROLES = {
   'Admin': "admin",
@@ -20,22 +23,20 @@ const ROLES = {
 }
 
 function App() {
+    const auth = useAuth();
 
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* public routes */}
         <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
+        <Route path="register" element={<RegistrationPage />} />
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="/" element={<Home />} />
 
         {/* we want to protect these routes */}
         <Route element={<PersistentLogin />}>
-          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-
           <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
             <Route path="editor" element={<Editor />} />
           </Route>
@@ -47,6 +48,10 @@ function App() {
 
           <Route element={<RequireAuth allowedRoles={[ROLES.Host, ROLES.Admin]} />}>
             <Route path="lounge" element={<Lounge />} />
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+            <Route path ="profile" element={<ProfilePage />} />
           </Route>
         </Route>
 

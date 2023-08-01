@@ -1,20 +1,12 @@
-import { useNavigate, Link } from "react-router-dom";
-import useLogout from "../hooks/useLogout";
+import Navbar from "./Navbar/Navbar";
+import { Link } from "react-router-dom";
 
 const Home = () => {
-    const logout = useLogout();
-    const navigate = useNavigate();
-
-    const signout = async () => {
-        await logout();
-        navigate('/linkpage');
-    }
-
     return (
+        <>
+        <Navbar />
         <section>
             <h1>Home</h1>
-            <br />
-            <p>You are logged in!</p>
             <br />
             <Link to="/editor">Go to the Editor page</Link>
             <br />
@@ -23,10 +15,8 @@ const Home = () => {
             <Link to="/lounge">Go to the Lounge</Link>
             <br />
             <Link to="/linkpage">Go to the link page</Link>
-            <div className="flexGrow">
-                <button onClick={signout}>Sign Out</button>
-            </div>
         </section>
+        </>   
     )
 }
 
