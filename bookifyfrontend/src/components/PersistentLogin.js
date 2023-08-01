@@ -27,13 +27,6 @@ const PersistentLogin = () => {
 
     }, [])
 
-    useEffect(() => {
-        console.log(`isLoading: ${loading}`)
-        console.log(`aT: ${JSON.stringify(auth?.accessToken)}`)
-        console.log(`rT: ${JSON.stringify(auth?.refreshToken)}`)
-    }, [loading])
-
-
     return (
         <>
             {loading ? <p>Loading...</p> : <Outlet />}
