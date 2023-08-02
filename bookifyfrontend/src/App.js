@@ -14,6 +14,7 @@ import { Routes, Route } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage';
 import useAuth from './hooks/useAuth';
+import RoomViewPage from './pages/RoomViewPage';
 
 const ROLES = {
   'Admin': "admin",
@@ -33,6 +34,7 @@ function App() {
         <Route path="register" element={<RegistrationPage />} />
         <Route path="linkpage" element={<LinkPage />} />
         <Route path="unauthorized" element={<Unauthorized />} />
+        <Route path="room/:roomID" element={<RoomViewPage />} />
         <Route path="/" element={<Home />} />
 
         {/* we want to protect these routes */}
