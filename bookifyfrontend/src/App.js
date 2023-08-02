@@ -17,9 +17,9 @@ import useAuth from './hooks/useAuth';
 
 const ROLES = {
   'Admin': "admin",
-  'Host': 1984,
-  'Tenant': 5150,
-  'Inactive-Host': 4
+  'Host': "host",
+  'Tenant': "tenant",
+  'InactiveHost': "incative-host",
 }
 
 function App() {
@@ -50,7 +50,8 @@ function App() {
             <Route path="lounge" element={<Lounge />} />
           </Route>
 
-          <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route element={<RequireAuth allowedRoles={
+            [ROLES.Host, ROLES.InactiveHost, ROLES.Tenant, ROLES.Admin]} />}>
             <Route path ="profile" element={<ProfilePage />} />
           </Route>
         </Route>
