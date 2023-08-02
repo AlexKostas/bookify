@@ -30,6 +30,11 @@ const RoomGrid = ({endpointURL}) => {
     setCurrentPage(pageNumber);
   }
 
+  const handleSortingChange = (value) => {
+    setOrderDirection(value);
+    setCurrentPage(1);
+  }
+
   const paginationRange = () => {
     const buttonsToShow = 10;
     const startPage = Math.max(1, currentPage - Math.floor(buttonsToShow / 2));
@@ -40,9 +45,15 @@ const RoomGrid = ({endpointURL}) => {
 
   return (
     <>
+      <div className="sort">
+        <select value={orderDirection} onChange={(event) => handleSortingChange(event.target.value)}>
+        <option value="ASC">Ascending Price</option>
+        <option value="DESC">Descending Price</option>
+      </select>
+      </div>
       <div className="room-grid">
           {
-              rooms.map(room => (<RoomCard key={room.roomID} room={{...room, image: 'https://img.freepik.com/free-photo/green-sofa-white-living-room-with-free-space_43614-834.jpg?w=2000'}} />))
+              rooms.map(room => (<RoomCard key={room.roomID} room={room} />))
           }
       </div>
 

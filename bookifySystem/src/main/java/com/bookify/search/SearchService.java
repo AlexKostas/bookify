@@ -57,6 +57,7 @@ public class SearchService {
                 room.getReviewCount(),
                 room.getNumOfBeds(),
                 100,
-                "Private Room");
+                "Private Room",
+                room.getThumbnail().getImageGuid());
     }
 }

@@ -1,10 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './roomCard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faStarHalfAlt, faBed } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import axios from '../../api/axios';
 
 const RoomCard = ({room}) => {
+    const [imageData, setImageData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const fetchImage = async (link) => {
+        await axios.get(link, { responseType: 'blob' })
+            .then(response => {
+                const url = URL.createObjectURL(response.data);
+                setLoading(false);
+                setImageData(url);
+            }
+            
+        )
+        .catch(error => {
+            console.error('Failed to fetch image:', error);
+            setLoading(false);
+            setImageData(null);
+        });
+    }
+
+    useEffect(() => {
+      if (!room.thumbnail) return;
+
+      const url = `/roomPhotos/get/${room.thumbnail}`
+      fetchImage(url);
+    }, [room]);
+
 
     const renderStars = (rating) => {
         const fullStars = Math.floor(rating);
@@ -28,7 +56,10 @@ const RoomCard = ({room}) => {
   return (
     <Link to={`/room/${room.roomID}`} style={{ textDecoration: 'none' }}>
       <div className="room-card">
-        <img src={room.image} alt={room.name} className="room-image" />
+        {
+          loading ? (<p>Loading</p>) : 
+            (<img src={imageData} alt={room.name} className="room-image" />)
+        }
         <div className="room-details">
           <h3>{room.name}</h3>
           <div className="rating">{renderStars(room.rating)}</div>

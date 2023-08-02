@@ -2,16 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import "./dropdown.css";
 import { useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
-import axios from '../../api/axios';
+import useImageFetcher from '../../hooks/useImageFetcher';
 
 const Dropdown = ({username}) => {
     const dropdownRef = useRef();
 
     const [isOpen, setIsOpen] = useState(false);
-    const [profilePic, setProfilePic] = useState(null);
 
     const navigate = useNavigate();
     const logout = useLogout();
+
+    const profilePicURL = `/upload/getProfilePic/${username}`;
+    const {imageData, loading} = useImageFetcher(profilePicURL);
 
     const handleToggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -32,30 +34,18 @@ const Dropdown = ({username}) => {
         };
     }, []);
 
-    useEffect(() => {
-        if(!username) return;
-
-        axios.get(`/upload/getProfilePic/${username}`, { responseType: 'blob' })
-            .then(response => {
-            const url = URL.createObjectURL(response.data);
-            setProfilePic(url);
-        })
-        .catch(error => {
-            console.error('Failed to fetch image:', error);
-        });
-        
-    }, [username]);
-
     return (
         <div className="user-dropdown" ref={dropdownRef}>
 
             <button className="user-name" onClick={handleToggleDropdown}>
-                {profilePic ? (
-                    <img
-                    src={profilePic}
-                    alt="Could not load profile picture"
-                    className="profile-picture"
-                    />) : username
+                {loading ? 
+                    (<p>Loading...</p>) 
+                    :imageData ? (
+                        <img
+                        src={imageData}
+                        alt="Could not load profile picture"
+                        className="profile-picture"
+                        />) : username
                 }
             </button>
             {isOpen && (

@@ -30,7 +30,7 @@ public class InitializeDatabase {
 
             preloadAmenities(amenityRepository);
             preloadRoles(roleRepository);
-            //preloadDefaultImages(imageRepository);
+            preloadDefaultImages(imageRepository);
             preloadAdminUser(roleRepository, userRepository, imageRepository, passwordEncoder);
         };
     }
@@ -45,9 +45,8 @@ public class InitializeDatabase {
     }
 
     private void preloadDefaultImages(ImageRepository imageRepository){
-        log.info("Preloading default profile picture to database");
-        imageRepository.save(new Image(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME,
-                com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_EXTENSION));
+        log.info("Preloading default room picture to database");
+        imageRepository.save(new Image("default-room", "jpeg"));
     }
 
     private void preloadAdminUser(RoleRepository roleRepository, UserRepository userRepository,
