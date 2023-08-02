@@ -91,7 +91,7 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public String updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
+    public LoginRegistrationResponseDTO updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
             OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + newProfile.oldUsername() + " does not exist"));
@@ -108,7 +108,13 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         // Generate and return a new token as user info is updated
-        return generateNewJWTToken(user);
+        String newAccessToken = generateNewJWTToken(user);
+
+        return new LoginRegistrationResponseDTO(
+                newProfile.newUsername(),
+                newAccessToken,
+                user.getRefreshToken().getToken(),
+                user.getRoleAuthorityList());
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {

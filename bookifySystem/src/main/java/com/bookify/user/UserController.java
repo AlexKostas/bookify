@@ -34,10 +34,9 @@ public class UserController {
 
     @PostMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
-    public ResponseEntity<String> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
-            String newToken = userService.updateUser(updateUserProfileDTO);
-            return ResponseEntity.ok(newToken);
+            return ResponseEntity.ok(userService.updateUser(updateUserProfileDTO));
         }
         catch (UsernameNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
