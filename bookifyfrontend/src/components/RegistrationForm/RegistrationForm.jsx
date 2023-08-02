@@ -45,11 +45,13 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
     const userData = useGetUserDetails(initialUsername);
 
     useEffect(() => {
-        setUser(userData?.username ?? '');
-        setFirstName(userData?.firstName ?? '');
-        setLastName(userData?.lastName ?? '');
-        setEmail(userData?.email ?? '');
-        setPhoneNumber(userData?.phoneNumber ?? '');
+        if (!userData) return;
+
+        setUser(userData.username);
+        setFirstName(userData.firstName);
+        setLastName(userData.lastName);
+        setEmail(userData.email);
+        setPhoneNumber(userData.phoneNumber);
     }, [userData]);
 
     useEffect(() => {
