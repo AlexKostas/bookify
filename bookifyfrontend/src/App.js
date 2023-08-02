@@ -1,9 +1,5 @@
-import Register from './components/Register';
-import Login from './components/Login';
 import Home from './components/Home';
 import Layout from './components/Layout';
-import Editor from './components/Editor';
-import Admin from './components/Admin';
 import Missing from './components/Missing';
 import Unauthorized from './components/Unauthorized';
 import Lounge from './components/Lounge';
@@ -16,13 +12,13 @@ import RegistrationPage from './pages/RegistrationPage';
 import useAuth from './hooks/useAuth';
 import RoomViewPage from './pages/RoomViewPage';
 import LoginPage from './pages/LoginPage';
+import AdminPage from './pages/AdminPage';
+import HostDashboard from './pages/HostDashboard';
 
-const ROLES = {
-  'Admin': "admin",
-  'Host': "host",
-  'Tenant': "tenant",
-  'InactiveHost': "inactive-host",
-}
+export const Admin = "admin";
+export const Host = "host";
+export const Tenant = "tenant";
+export const InactiveHost = "inactive-host";
 
 function App() {
     const auth = useAuth();
@@ -30,9 +26,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* public routes */}
         
-
         {/* we want to protect these routes */}
         <Route element={<PersistentLogin />}>
           <Route path="login" element={<LoginPage />} />
@@ -42,21 +36,16 @@ function App() {
           <Route path="room/:roomID" element={<RoomViewPage />} />
           <Route path="/" element={<Home />} />
 
-          <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
-            <Route path="editor" element={<Editor />} />
+          <Route element={<RequireAuth allowedRoles={[Admin]} />}>
+            <Route path="admin" element={<AdminPage />} />
           </Route>
 
-
-          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-            <Route path="admin" element={<Admin />} />
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={[ROLES.Host, ROLES.Admin]} />}>
-            <Route path="lounge" element={<Lounge />} />
+          <Route element={<RequireAuth allowedRoles={[Host, InactiveHost]} />}>
+            <Route path="host" element={<HostDashboard />} />
           </Route>
 
           <Route element={<RequireAuth allowedRoles={
-            [ROLES.Host, ROLES.InactiveHost, ROLES.Tenant, ROLES.Admin]} />}>
+            [Host, InactiveHost, Tenant, Admin]} />}>
             <Route path ="profile" element={<ProfilePage />} />
           </Route>
         </Route>

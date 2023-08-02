@@ -21,6 +21,7 @@ const useLogout = () => {
 
         removeItem('refreshToken');
         navigate('/');
+        window.location.reload();
     }
 
     return logout;

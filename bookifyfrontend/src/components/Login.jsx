@@ -3,6 +3,7 @@ import useAuth from '../hooks/useAuth';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from '../api/axios';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import { red } from '@material-ui/core/colors';
 
 // The login api endpoint URL
 const LOGIN_URL = '/registration/login';
@@ -13,7 +14,8 @@ const Login = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "";
+    const redirected = location.state?.redirected ?? false;
 
     const userRef = useRef();
     const errRef = useRef();
@@ -57,7 +59,17 @@ const Login = () => {
             setPassword('');
 
             // Return back to original page if user has been redirected to login page
-            navigate(from, { replace: true });
+            // otherwise redirect to appropriate page based on user role
+            if (redirected)
+                navigate(from, { replace: true });
+            else{
+                if(roles.includes('admin'))
+                    navigate('/admin');
+                else if(roles.includes('host') || roles.includes('inactive-host'))
+                    navigate('/host');   
+                else
+                    navigate('/');   
+            }
         } catch (err) { // Error handling logic
             if (!err?.response) {
                 setErrMsg('No Server Response');
