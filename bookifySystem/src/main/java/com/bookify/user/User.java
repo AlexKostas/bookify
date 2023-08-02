@@ -62,17 +62,32 @@ public class User implements UserDetails {
         this.refreshToken = null;
     }
 
-    public String getRolesAsString(){
-        StringBuilder builder = new StringBuilder();
-        String delimiter = ", ";
+    public String getRolePreference(){
+        //TODO: Maybe store the preference in the database on signup to get rid of this boilerplate code
 
-        for(Role role : roles) {
-            builder.append(role.getAuthority());
-            builder.append(delimiter);
+        boolean hasHostRole = false;
+        boolean hasTenantRole = false;
+        boolean hasInactiveHostRole = false;
+        boolean hasAdminRole = false;
+
+        for (Role role : roles) {
+            if (Constants.HOST_ROLE.equals(role.getAuthority()))
+                hasHostRole = true;
+            else if (Constants.TENANT_ROLE.equals(role.getAuthority()))
+                hasTenantRole = true;
+            else if (Constants.INACTIVE_HOST_ROLE.equals(role.getAuthority()))
+                hasInactiveHostRole = true;
+            else if (Constants.ADMIN_ROLE.equals(role.getAuthority()))
+                hasAdminRole = true;
         }
 
+        if((hasHostRole || hasInactiveHostRole) && hasTenantRole) return Constants.HOST_TENANT_PREF_ROLE;
+        if(hasHostRole || hasInactiveHostRole) return Constants.HOST_ROLE;
+        if(hasTenantRole) return Constants.TENANT_ROLE;
+        if(hasAdminRole) return Constants.ADMIN_ROLE;
 
-        return builder.length() > 0 ? builder.substring(0, builder.length() - delimiter.length()) : "";
+        assert(false);
+        return "";
     }
 
     public List<String> getRoleAuthorityList(){

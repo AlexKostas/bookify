@@ -87,7 +87,7 @@ public class UserService implements UserDetailsService {
                 user.getLastName(),
                 user.getEmail(),
                 user.getPhoneNumber(),
-                user.getRolesAsString()
+                user.getRolePreference()
         );
     }
 
@@ -97,7 +97,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User " + newProfile.oldUsername() + " does not exist"));
 
         checkUsernameAndEmailValidity(newProfile.newUsername(), newProfile.email(), user.getUsername(), user.getEmail());
-        //TODO: maybe verify that at least one field changes
 
         user.setUsername(newProfile.newUsername());
         user.setFirstName(newProfile.firstName());

@@ -15,15 +15,8 @@ const useGetUserDetails = (usrname) => {
 
       try {
         const response = await axiosPrivate.get(`/user/getUser/${usrname}`);
-        const { username, firstName, lastName, email, phoneNumber } = response.data;
 
-        setUserDetails({
-          username,
-          firstName,
-          lastName,
-          email,
-          phoneNumber,
-        });
+        setUserDetails(response?.data ?? null);
 
       } catch (error) {
         //TODO: maybe we need a better error handling strategy here

@@ -24,12 +24,10 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [selectedRole, setSelectedRole] = useState('tenant');
 
     const [validName, setValidName] = useState(false);
     const [userFocus, setUserFocus] = useState(false);
-    
-    //TODO: set initial value from user object
-    const [selectedRole, setSelectedRole] = useState('tenant')
 
     const [pwd, setPwd] = useState('');
     const [validPwd, setValidPwd] = useState(false);
@@ -52,6 +50,7 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
         setLastName(userData.lastName);
         setEmail(userData.email);
         setPhoneNumber(userData.phoneNumber);
+        setSelectedRole(userData.rolePreference);
     }, [userData]);
 
     useEffect(() => {

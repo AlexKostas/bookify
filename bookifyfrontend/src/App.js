@@ -19,7 +19,7 @@ const ROLES = {
   'Admin': "admin",
   'Host': "host",
   'Tenant': "tenant",
-  'InactiveHost': "incative-host",
+  'InactiveHost': "inactive-host",
 }
 
 function App() {
