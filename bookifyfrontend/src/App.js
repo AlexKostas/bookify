@@ -15,6 +15,7 @@ import ProfilePage from './pages/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage';
 import useAuth from './hooks/useAuth';
 import RoomViewPage from './pages/RoomViewPage';
+import LoginPage from './pages/LoginPage';
 
 const ROLES = {
   'Admin': "admin",
@@ -34,7 +35,7 @@ function App() {
 
         {/* we want to protect these routes */}
         <Route element={<PersistentLogin />}>
-          <Route path="login" element={<Login />} />
+          <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegistrationPage />} />
           <Route path="linkpage" element={<LinkPage />} />
           <Route path="unauthorized" element={<Unauthorized />} />
