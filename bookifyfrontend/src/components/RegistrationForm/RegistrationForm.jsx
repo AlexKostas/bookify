@@ -10,12 +10,9 @@ import "./registrationForm.css"
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
-const REGISTER_URL = '/registration/register';
 
-
-const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
-    const { setAuth } = useAuth();
-    const { setItem } = useLocalStorage();
+const RegistrationForm = ({showPassword = true, initialUsername = '', 
+        onSubmit, errorMessage = '', success = false}) => {
 
     const userRef = useRef();
     const errRef = useRef();
@@ -39,7 +36,6 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
     const [matchFocus, setMatchFocus] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
-    const [success, setSuccess] = useState(false);
 
     const userData = useGetUserDetails(initialUsername);
 
@@ -71,6 +67,11 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
         setErrMsg('');
     }, [user, pwd, matchPwd])
 
+    useEffect(() => {
+        setErrMsg(errorMessage);
+        errRef.current.focus();
+    }, [errorMessage]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -80,45 +81,22 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
             setErrMsg("Invalid Entry");
             return;
         }
-        try {
-            const response = await axios.post(REGISTER_URL,
-                JSON.stringify(
-                    { 
-                        username: user, 
-                        password: pwd,
-                        firstName,
-                        lastName,
-                        email,
-                        phoneNumber,
-                        preferredRoles: selectedRole
-                    }
-                    )
-            );
+        
+        const userDetails = {
+            user, 
+            pwd, 
+            firstName, 
+            lastName, 
+            email, 
+            phoneNumber, 
+            selectedRole,
+        };
+        onSubmit(userDetails);
 
-            const responseUsername = response?.data?.username;
-            const accessToken = response?.data?.accessToken;
-            const refreshToken = response?.data?.refreshToken;
-            const roles = response?.data?.roles;
-            
-            setAuth({ user: responseUsername, accessToken, refreshToken, roles });
-            setItem('refreshToken', refreshToken);
-
-            setSuccess(true);
-
-            //Clear state
-            setUser('');
-            setPwd('');
-            setMatchPwd('');
-        } catch (err) {
-            if (!err?.response) {
-                setErrMsg('No Server Response');
-            } else if (err.response?.status === 409) {
-                setErrMsg('Username or Email is taken');
-            } else {
-                setErrMsg('Registration Failed')
-            }
-            errRef.current.focus();
-        }
+        //Clear state
+        setUser('');
+        setPwd('');
+        setMatchPwd('');
     }
 
     return (
