@@ -30,15 +30,17 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* public routes */}
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<RegistrationPage />} />
-        <Route path="linkpage" element={<LinkPage />} />
-        <Route path="unauthorized" element={<Unauthorized />} />
-        <Route path="room/:roomID" element={<RoomViewPage />} />
-        <Route path="/" element={<Home />} />
+        
 
         {/* we want to protect these routes */}
         <Route element={<PersistentLogin />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<RegistrationPage />} />
+          <Route path="linkpage" element={<LinkPage />} />
+          <Route path="unauthorized" element={<Unauthorized />} />
+          <Route path="room/:roomID" element={<RoomViewPage />} />
+          <Route path="/" element={<Home />} />
+
           <Route element={<RequireAuth allowedRoles={[ROLES.Editor]} />}>
             <Route path="editor" element={<Editor />} />
           </Route>

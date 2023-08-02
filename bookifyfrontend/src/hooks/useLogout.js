@@ -14,13 +14,13 @@ const useLogout = () => {
 
         try{
             const response = await axiosPrivate.post("registration/logout");
-            removeItem('refreshToken');
-
-            navigate('/');
         }
         catch(error){
             console.error(error);
         }
+
+        removeItem('refreshToken');
+        navigate('/');
     }
 
     return logout;
