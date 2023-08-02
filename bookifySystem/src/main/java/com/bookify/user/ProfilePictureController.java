@@ -1,6 +1,7 @@
 package com.bookify.user;
 
 import com.bookify.user.ProfilePictureService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,6 @@ public class ProfilePictureController {
     }
 
     @GetMapping("/getProfilePic/{username}")
-    @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity getProfilePic(@PathVariable String username){
         try{
             //TODO: extend for other image types
@@ -40,6 +40,9 @@ public class ProfilePictureController {
             headers.setContentType(MediaType.IMAGE_PNG);
 
             return ResponseEntity.ok().headers(headers).body(profilePictureService.getProfilePicture(username));
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

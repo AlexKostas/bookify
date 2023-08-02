@@ -47,7 +47,7 @@ public class SecurityConfiguration {
         http.csrf(csrf -> csrf.disable()).
                 authorizeHttpRequests(auth -> {
                     auth.requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll();
-                    auth.requestMatchers("/api/upload/**").authenticated();
+                    auth.requestMatchers("/api/upload/**").permitAll();
                     auth.requestMatchers("/api/registration/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasAnyRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,

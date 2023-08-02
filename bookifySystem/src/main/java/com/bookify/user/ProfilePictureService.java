@@ -5,6 +5,7 @@ import com.bookify.images.Image;
 import com.bookify.images.ImageStorage;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,8 @@ public class ProfilePictureService {
     }
 
     public FileSystemResource getProfilePicture(String username){
-        User user = userRepository.findByUsername(username).get();
+        User user = userRepository.findByUsername(username).
+                orElseThrow(() -> new EntityNotFoundException("Could not find user " + username));
         return imageStorage.loadImageFile(user.getProfilePicture());
     }
 
