@@ -1,3 +1,6 @@
 package com.bookify.registration;
 
-public record LoginRegistrationResponseDTO(String username, String jwtToken) {}
+import java.util.List;
+
+public record LoginRegistrationResponseDTO(String username, String accessToken,
+                                           String refreshToken, List<String> roles) {}

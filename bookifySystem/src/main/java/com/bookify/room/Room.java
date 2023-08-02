@@ -65,7 +65,7 @@ public class Room {
                 inverseJoinColumns = {@JoinColumn(name = "amenity_ID")})
     private Set<Amenity> amenities;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Image thumbnail;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -5,7 +5,9 @@ import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.OperationNotSupportedException;
@@ -18,7 +20,7 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegistrationDTO registrationDTO) {
+    public ResponseEntity<?> register(@RequestBody RegistrationDTO registrationDTO) {
         try {
             LoginRegistrationResponseDTO result = registrationService.registerUser(registrationDTO);
             return ResponseEntity.ok(result);
@@ -33,13 +35,35 @@ public class RegistrationController {
         }
     }
 
-    @GetMapping("/login")
-    public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
             LoginRegistrationResponseDTO result = registrationService.loginUser(loginDTO);
             return ResponseEntity.ok(result);
         } catch (BadCredentialsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequestDTO refreshRequestDTO){
+        try {
+            return ResponseEntity.ok(registrationService.refresh(refreshRequestDTO.refreshToken()));
+        } catch (BadCredentialsException | CredentialsExpiredException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> logout(){
+        try {
+            registrationService.logout();
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

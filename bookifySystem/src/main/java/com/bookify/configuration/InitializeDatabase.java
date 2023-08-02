@@ -32,7 +32,6 @@ public class InitializeDatabase {
             preloadRoles(roleRepository);
             preloadDefaultImages(imageRepository);
             preloadAdminUser(roleRepository, userRepository, imageRepository, passwordEncoder);
-
         };
     }
 
@@ -46,9 +45,8 @@ public class InitializeDatabase {
     }
 
     private void preloadDefaultImages(ImageRepository imageRepository){
-        log.info("Preloading default profile picture to database");
-        imageRepository.save(new Image(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME,
-                com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_EXTENSION));
+        log.info("Preloading default room picture to database");
+        imageRepository.save(new Image("default-room", "jpeg"));
     }
 
     private void preloadAdminUser(RoleRepository roleRepository, UserRepository userRepository,
@@ -61,21 +59,17 @@ public class InitializeDatabase {
         adminRoles.add(adminRole);
 
         String encodedAdminPassword = passwordEncoder.encode(com.bookify.configuration.Configuration.ADMIN_PASSWORD);
+        Image profilePic = new Image(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME,
+                com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
 
-        Image profilePic = imageRepository.findByImageGuid(com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_NAME).get();
-
-        User admin = new User(com.bookify.configuration.Configuration.ADMIN_USERNAME,
+        userRepository.save(new User(
+                com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 com.bookify.configuration.Configuration.ADMIN_USERNAME,
                 "admin@gmail.com", "",
                 encodedAdminPassword,
-                adminRoles);
-
-
-        userRepository.save(admin);
-        admin.setProfilePicture(profilePic);
-        userRepository.save(admin);
-
+                profilePic,
+                adminRoles));
     }
 
     private void preloadAmenities(AmenityRepository amenityRepository){

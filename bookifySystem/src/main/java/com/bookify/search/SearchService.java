@@ -51,6 +51,13 @@ public class SearchService {
     }
 
     private SearchPreviewDTO mapRoomToDTO(Room room){
-        return new SearchPreviewDTO(room.getRating(), room.getReviewCount(), room.getNumOfBeds());
+        return new SearchPreviewDTO(room.getRoomID(),
+                room.getName(),
+                room.getRating(),
+                room.getReviewCount(),
+                room.getNumOfBeds(),
+                100,
+                "Private Room",
+                room.getThumbnail().getImageGuid());
     }
 }

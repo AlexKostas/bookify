@@ -30,7 +30,7 @@ public class AdminService {
                     user.getFirstName(),
                     user.getLastName(),
                     user.getEmail(),
-                    user.getRolesAsString()
+                    user.getRolePreference()
             ));
         }
 

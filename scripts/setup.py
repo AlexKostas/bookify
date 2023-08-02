@@ -127,12 +127,13 @@ def insert_listings(connection, csv_file):
             transit_info = row['transit']
             zipcode = row['zipcode']
             minimum_stay = row['minimum_nights']
+            thumbnail = 'default-room'
 
 
             if check_user_exists(connection, room_id): continue
 
-            insert_query = "INSERT INTO rooms (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay)
+            insert_query = "INSERT INTO rooms (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay, thumbnail_image_identifier) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay, thumbnail)
 
             try:
                 cursor.execute(insert_query, values)

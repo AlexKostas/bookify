@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.authentication.RefreshToken;
 import com.bookify.images.Image;
 import com.bookify.role.Role;
 import com.bookify.room.Room;
@@ -10,9 +11,8 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -31,6 +31,10 @@ public class User implements UserDetails {
     private String phoneNumber;
     private String password;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
+    private RefreshToken refreshToken;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Image profilePicture;
 
@@ -46,7 +50,6 @@ public class User implements UserDetails {
     public User(){
         super();
         this.roles = new HashSet<>();
-        this.rooms = new HashSet<>();
     }
 
     public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles) {
@@ -59,32 +62,49 @@ public class User implements UserDetails {
         this.profilePicture = profilePicture;
         this.roles = roles;
 
-        this.rooms = new HashSet<>();
+        this.refreshToken = null;
     }
 
-    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Set<Role> roles) {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
-        this.roles = roles;
+    public String getRolePreference(){
+        //TODO: Maybe store the preference in the database on signup to get rid of this boilerplate code
 
-        this.rooms = new HashSet<>();
-    }
+        boolean hasHostRole = false;
+        boolean hasTenantRole = false;
+        boolean hasInactiveHostRole = false;
+        boolean hasAdminRole = false;
 
-    public String getRolesAsString(){
-        StringBuilder builder = new StringBuilder();
-        String delimiter = ", ";
-
-        for(Role role : roles) {
-            builder.append(role.getAuthority());
-            builder.append(delimiter);
+        for (Role role : roles) {
+            if (Constants.HOST_ROLE.equals(role.getAuthority()))
+                hasHostRole = true;
+            else if (Constants.TENANT_ROLE.equals(role.getAuthority()))
+                hasTenantRole = true;
+            else if (Constants.INACTIVE_HOST_ROLE.equals(role.getAuthority()))
+                hasInactiveHostRole = true;
+            else if (Constants.ADMIN_ROLE.equals(role.getAuthority()))
+                hasAdminRole = true;
         }
 
+        if((hasHostRole || hasInactiveHostRole) && hasTenantRole) return Constants.HOST_TENANT_PREF_ROLE;
+        if(hasHostRole || hasInactiveHostRole) return Constants.HOST_ROLE;
+        if(hasTenantRole) return Constants.TENANT_ROLE;
+        if(hasAdminRole) return Constants.ADMIN_ROLE;
 
-        return builder.length() > 0 ? builder.substring(0, builder.length() - delimiter.length()) : "";
+        assert(false);
+        return "";
+    }
+
+    public List<String> getRoleAuthorityList(){
+        List<String> result = new ArrayList<>();
+        for(Role role : roles)
+            result.add(role.getAuthority());
+
+        return result;
+    }
+
+    public String getScope(){
+        return getAuthorities().stream().
+                map(GrantedAuthority::getAuthority).
+                collect(Collectors.joining(" "));
     }
 
     public boolean isAdmin(){
@@ -109,6 +129,10 @@ public class User implements UserDetails {
 
     public void unassignRoom(Room room){
         rooms.remove(room);
+    }
+
+    public void replaceRefreshToken(RefreshToken newToken){
+        refreshToken = newToken;
     }
 
     @Override
