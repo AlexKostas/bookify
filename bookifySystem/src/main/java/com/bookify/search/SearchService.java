@@ -56,6 +56,7 @@ public class SearchService {
                 room.getRating(),
                 room.getReviewCount(),
                 room.getNumOfBeds(),
-                100);
+                100,
+                "Private Room");
     }
 }

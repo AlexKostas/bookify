@@ -36,10 +36,12 @@ const Home = () => {
     },
   ];
 
+    const endpointURL = '/search/searchAll';
+
     return (
         <>
         <Navbar />
-        <section>
+        {/* <section>
             <h1>Home</h1>
             <br />
             <Link to="/editor">Go to the Editor page</Link>
@@ -49,10 +51,10 @@ const Home = () => {
             <Link to="/lounge">Go to the Lounge</Link>
             <br />
             <Link to="/linkpage">Go to the link page</Link>
-        </section>
+        </section> */}
         <h1>Rooms you may like</h1>
         <br />
-        <RoomGrid rooms={roomResults} />
+        <RoomGrid endpointURL={endpointURL} />
         </>   
     )
 }
