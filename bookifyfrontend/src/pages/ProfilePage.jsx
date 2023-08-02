@@ -10,6 +10,7 @@ const ProfilePage = () => {
   return (
     <>
         <Navbar />
+        <h1>Update Profile</h1>
         <RegistrationForm initialUsername={auth.user} showPassword={false} />
     </>
   );

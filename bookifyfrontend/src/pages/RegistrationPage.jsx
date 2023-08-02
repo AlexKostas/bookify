@@ -5,6 +5,7 @@ const RegistrationPage = () => {
     return (
         <>
             <Navbar />
+            <h1>Register</h1>
             <RegistrationForm showPassword/>
         </>
     )

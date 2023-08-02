@@ -6,6 +6,7 @@ import axios from "../../api/axios";
 import { Link } from "react-router-dom";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import useGetUserDetails from "../../hooks/useGetUserDetails";
+import "./registrationForm.css"
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
@@ -130,9 +131,10 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
                     </p>
                 </section>
             ) : (
+                <div className="main">
                 <section>
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    <h1>Register</h1>
+                    
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="username">
                             Username:
@@ -276,15 +278,22 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
                             onBlur={() => setUserFocus(false)}
                         />
 
-                        <label htmlFor="dropdown">Select role:</label>
-                        <select 
-                            id="dropdown" 
-                            value={selectedRole} 
-                            onChange={(event) => setSelectedRole(event.target.value)}>
-                            <option value="tenant">Tenant</option>
-                            <option value="host">Host</option>
-                            <option value="host_tenant">Host & Tenant</option>
-                        </select>
+                        {
+                            userData?.rolePreference != 'admin' && (
+                                <>
+                                    <label htmlFor="dropdown">Select role:</label>
+                                    <select 
+                                        id="dropdown" 
+                                        value={selectedRole} 
+                                        onChange={(event) => setSelectedRole(event.target.value)}>
+                                        <option value="tenant">Tenant</option>
+                                        <option value="host">Host</option>
+                                        <option value="host_tenant">Host & Tenant</option>
+                                    </select>
+                                </>
+                            )
+                        }
+                        
 
                         <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
                     </form>
@@ -295,6 +304,7 @@ const RegistrationForm = ({showPassword = true, initialUsername = ''}) => {
                         </span>
                     </p>
                 </section>
+                </div>
             )}
         </>
     );
