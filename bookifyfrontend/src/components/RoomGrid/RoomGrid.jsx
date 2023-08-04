@@ -2,6 +2,7 @@ import axios from "../../api/axios";
 import RoomCard from "../RoomCard/RoomCard";
 import { useEffect, useState } from "react";
 import './roomGrid.css';
+import FilterPanel from "../FilterPanel/FilterPanel";
 
 const RoomGrid = ({endpointURL}) => {
   const itemsPerPage = 9;
@@ -47,10 +48,11 @@ const RoomGrid = ({endpointURL}) => {
     <>
       <div className="sort">
         <select value={orderDirection} onChange={(event) => handleSortingChange(event.target.value)}>
-        <option value="ASC">Ascending Price</option>
-        <option value="DESC">Descending Price</option>
-      </select>
+          <option value="ASC">Ascending Price</option>
+          <option value="DESC">Descending Price</option>
+        </select>
       </div>
+      <FilterPanel />
       <div className="room-grid">
           {
               rooms.map(room => (<RoomCard key={room.roomID} room={room} />))

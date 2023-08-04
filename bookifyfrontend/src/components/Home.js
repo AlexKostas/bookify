@@ -1,5 +1,5 @@
 import Navbar from "./Navbar/Navbar";
-import { Link } from "react-router-dom";
+import SearchBar from "./SearchBar/SearchBar";
 import RoomGrid from "./RoomGrid/RoomGrid";
 
 const Home = () => {
@@ -41,6 +41,8 @@ const Home = () => {
     return (
         <>
         <Navbar />
+        <SearchBar />
+        <br />
         <h1>Rooms you may like</h1>
         <br />
         <RoomGrid endpointURL={endpointURL} />
