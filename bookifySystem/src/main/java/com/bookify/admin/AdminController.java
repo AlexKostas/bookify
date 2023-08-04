@@ -1,13 +1,12 @@
 package com.bookify.admin;
 
+import com.bookify.configuration.Configuration;
 import com.bookify.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -18,12 +17,20 @@ public class AdminController {
     private UserService userService;
 
     @GetMapping("/getAllUsers")
-    public List<UserResponseDTOForAdmin> getAllUsers(){
-        return adminService.getAllUsers();
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize
+    ){
+        try {
+            return ResponseEntity.ok(adminService.getAllUsers(pageNumber, pageSize));
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/deleteUser/{username}")
-    public ResponseEntity deleteUser(@PathVariable String username){
+    public ResponseEntity<?> deleteUser(@PathVariable String username){
         try{
             userService.deleteUser(username);
             return ResponseEntity.ok().build();
@@ -40,7 +47,7 @@ public class AdminController {
     }
 
     @PostMapping("/approveHost/{username}")
-    public ResponseEntity approveHost(@PathVariable String username){
+    public ResponseEntity<?> approveHost(@PathVariable String username){
         try{
             adminService.approveHost(username);
             return ResponseEntity.ok().build();

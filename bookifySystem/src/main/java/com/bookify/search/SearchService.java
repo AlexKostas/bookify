@@ -17,7 +17,7 @@ public class SearchService {
 
     private final RoomRepository roomRepository;
 
-    public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
+public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
         // Ascending is assumed to be the default sorting direction, even when the relevant parameter is invalid
         Sort.Direction direction = Sort.Direction.ASC;
         if(sortDirection.equalsIgnoreCase("desc"))

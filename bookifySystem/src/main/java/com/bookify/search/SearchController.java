@@ -1,7 +1,6 @@
 package com.bookify.search;
 
 import com.bookify.configuration.Configuration;
-import com.bookify.room.RoomService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
