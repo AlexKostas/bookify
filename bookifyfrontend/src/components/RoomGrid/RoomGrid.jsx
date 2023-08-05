@@ -26,6 +26,8 @@ const RoomGrid = ({endpointURL}) => {
     fetchRooms(currentPage, orderDirection);
   }
 
+  useEffect(() => {fetchRooms(1, 'ASC')}, []);
+
   return (
     <>
       {

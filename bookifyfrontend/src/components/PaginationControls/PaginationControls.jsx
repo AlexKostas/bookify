@@ -1,30 +1,28 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Pagination } from "@mui/material";
+import './paginationControls.css';
 
 const PaginationControls = ({ children, onPageChanged, totalPages }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [orderDirection, setOrderDirection] = useState('ASC');
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
-        onPageChanged(pageNumber, orderDirection);
+    const handlePageChange = (event, newPage) => {
+        setCurrentPage(newPage);
+        onPageChanged(newPage, orderDirection);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth', // Use 'auto' for instant scroll
+        });
     }
 
     const handleSortingChange = (value) => {
         setOrderDirection(value);
         setCurrentPage(1);
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth', // Use 'auto' for instant scroll
+        });
     }
-
-    const paginationRange = () => {
-        const buttonsToShow = 10;
-        const startPage = Math.max(1, currentPage - Math.floor(buttonsToShow / 2));
-        const endPage = Math.min(totalPages, startPage + buttonsToShow - 1);
-
-        return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-    };
-
-    useEffect(() => {
-        onPageChanged(currentPage, orderDirection);
-    }, []);
 
     return (
         <div>
@@ -34,34 +32,35 @@ const PaginationControls = ({ children, onPageChanged, totalPages }) => {
                 <option value="DESC">Descending Price</option>
                 </select>
             </div>
+
+            <div className="pagination-controls">
+                <Pagination 
+                    size="large" 
+                    count={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange} 
+                    className="pagination-button"
+                    showFirstButton
+                    showLastButton
+                    variant="outlined" 
+                    color="secondary"
+                />
+            </div>
             
             {children}
 
-            <div className="pagination">
-                <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-                First
-                </button>
-
-                {currentPage !== 1 && (
-                <button onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
-                )}
-
-                {paginationRange().map((page) => (
-                <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    disabled={page === currentPage}
-                >
-                    {page}
-                </button>
-                ))}
-                {currentPage !== totalPages && (
-                <button onClick={() => handlePageChange(currentPage + 1)}>Next</button>
-                )}
-
-                <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-                Last
-                </button>
+            <div className="pagination-controls">
+                <Pagination 
+                    size="large" 
+                    count={totalPages} 
+                    page={currentPage} 
+                    onChange={handlePageChange} 
+                    className="pagination-button"
+                    showFirstButton
+                    showLastButton
+                    variant="outlined" 
+                    color="secondary"
+                />
             </div>
         </div>
     );
