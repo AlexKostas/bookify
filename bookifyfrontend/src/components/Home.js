@@ -1,6 +1,7 @@
 import Navbar from "./Navbar/Navbar";
 import SearchBar from "./SearchBar/SearchBar";
 import RoomGrid from "./RoomGrid/RoomGrid";
+import SearchField from "./SearchField/SearchField";
 
 const Home = () => {
     const roomResults = [
@@ -41,6 +42,7 @@ const Home = () => {
     return (
         <>
         <Navbar />
+        <SearchField />
         <SearchBar />
         <br />
         <h1>Rooms you may like</h1>

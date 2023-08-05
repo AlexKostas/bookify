@@ -1,0 +1,19 @@
+.search-bar-root {
+    margin-top: 15px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 60%;
+}
+
+.search-bar-root .MuiOutlinedInput-notchedOutline {
+    border-color: transparent;
+}
+
+.search-bar-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: transparent;
+}
+
+.search-bar-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #007AFF;
+}
