@@ -3,9 +3,11 @@ import "./dropdown.css";
 import { useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
 import useImageFetcher from '../../hooks/useImageFetcher';
+import useAuth from '../../hooks/useAuth';
 
 const Dropdown = ({username}) => {
     const dropdownRef = useRef();
+    const { auth } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -51,6 +53,16 @@ const Dropdown = ({username}) => {
             {isOpen && (
                 <div className="dropdown-content">
                 <button onClick={logout}>Sign Out</button>
+                {
+                    auth.roles.includes('admin') && (
+                        <button onClick={() => navigate('/admin')}>Admin Dashboard</button>
+                    )
+                }
+                {
+                    (auth.roles.includes('host') || auth.roles.includes('inactive-host')) && (
+                        <button onClick={() => navigate('/host')}>Host Dashboard</button>
+                    )
+                }
                 <button onClick={handleGoToProfile}>Go to Profile</button>
                 </div>
             )}
