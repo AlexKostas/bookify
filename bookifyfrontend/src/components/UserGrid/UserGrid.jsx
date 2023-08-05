@@ -4,7 +4,8 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const UserGrid = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -12,6 +13,10 @@ const UserGrid = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [isChecked, setIsChecked] = useState(false);
     const [paginationModel, setPaginationModel] = useState({page: 0, pageSize: 10});
+    const [success, setSuccess] = useState(null);
+    const [error, setError] = useState(null);
+
+    const clearError = () => setError(null);
 
     const deleteUser = async (username) => {
         console.log(username);
@@ -20,9 +25,23 @@ const UserGrid = () => {
         try{
             await axiosPrivate.delete(`${endpointURL}/${username}`);
             fetchUsers();
+
+            setSuccess(`User ${username} deleted successfully`);
+            setError(null);
+            setTimeout(() => {setSuccess(null)}, 5000);
         }
         catch(error){
             console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occured. Please check the console for more details');
+            }
+
+            setSuccess(null);
+            setTimeout(clearError, 5000);
         }
     }
 
@@ -32,9 +51,23 @@ const UserGrid = () => {
         try{
             await axiosPrivate.put(`${endpointURL}/${username}`);
             fetchUsers(isChecked);
+
+            setSuccess(`Host ${username} approved successfully`);
+            setError(null);
+            setTimeout(() => {setSuccess(null)}, 5000);
         }
         catch(error){
             console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occured. Please check the console for more details');
+            }
+
+            setSuccess(null);
+            setTimeout(clearError, 5000);
         }
     }
 
@@ -93,6 +126,13 @@ const UserGrid = () => {
         }
         catch(error){
             console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occured while fetching the users. Please check the console for more details');
+            }
         }
     }
 
@@ -112,6 +152,20 @@ const UserGrid = () => {
 
     return (
         <div style={{ height: 400, width: '80%' }}>
+            {
+                success ? (
+                    <Alert severity="success" onClose={() => {setSuccess(null)}}>
+                        <AlertTitle>Success</AlertTitle>
+                        {success}
+                    </Alert>
+                ) : error && (
+                        <Alert severity="error" onClose={() => {clearError()}}>
+                            <AlertTitle>Error</AlertTitle>
+                            {error}
+                        </Alert>
+                    )
+            }
+            
             <DataGrid
                 rows={users}
                 columns={columns.concat(actionColumn)}
