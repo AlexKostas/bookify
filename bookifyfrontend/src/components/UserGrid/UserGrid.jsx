@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import CircularProgress from '@mui/material/CircularProgress';
+import './usergrid.css';
 
 const UserGrid = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -15,6 +17,7 @@ const UserGrid = () => {
     const [paginationModel, setPaginationModel] = useState({page: 0, pageSize: 10});
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const clearError = () => setError(null);
 
@@ -72,15 +75,18 @@ const UserGrid = () => {
     }
 
     const columns = [
-        { field: 'username', headerName: 'User name', width: 130, sortable: false, filterable:false },
-        { field: 'firstName', headerName: 'First name', width: 130, sortable: false, filterable:false },
-        { field: 'lastName', headerName: 'Last name', width: 130, sortable: false, filterable:false },
+        { field: 'username', headerName: 'User name', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
+        { field: 'firstName', headerName: 'First name', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
+        { field: 'lastName', headerName: 'Last name', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
         {
             field: 'rolesText',
             headerName: 'Roles',
+            align: 'center',
+            headerAlign: 'center',
             sortable: false,
             filterable: false,
             width: 300,
+            flex: 1,
         },
     ];
 
@@ -89,6 +95,8 @@ const UserGrid = () => {
             field: 'action',
             headerName: 'Action',
             width: 600,
+            align: 'center',
+            headerAlign: 'center',
             renderCell: (params) => {
                 const username = params.row.username;
                 const roles = params.row.roles;
@@ -123,9 +131,11 @@ const UserGrid = () => {
 
             setUsers(finalUserObjects);
             setTotalItems(response.data.totalElements);
+            setLoading(false);
         }
         catch(error){
             console.log(error);
+            setLoading(false);
 
             if(!error.response){
                 setError('No server response. Is the server running?');
@@ -151,41 +161,60 @@ const UserGrid = () => {
     }, [paginationModel.pageSize]);
 
     return (
-        <div style={{ height: 400, width: '80%' }}>
-            {
-                success ? (
-                    <Alert severity="success" onClose={() => {setSuccess(null)}}>
+        <div>
+            {loading ? (
+            <div className='loading-container'>
+                <CircularProgress size={80} className='circular-progress' />
+                <h3>Loading users...</h3>
+            </div>
+            ) : (
+                <>
+                    <div className='data-grid' style={{ height: 400 }}>
+                    {success ? (
+                    <Alert severity="success" onClose={() => { setSuccess(null) }}>
                         <AlertTitle>Success</AlertTitle>
                         {success}
                     </Alert>
-                ) : error && (
-                        <Alert severity="error" onClose={() => {clearError()}}>
-                            <AlertTitle>Error</AlertTitle>
-                            {error}
-                        </Alert>
-                    )
-            }
-            
-            <DataGrid
-                rows={users}
-                columns={columns.concat(actionColumn)}
-                rowCount={totalItems}
-                pageSizeOptions={[5, 10, 20]}
-                disableColumnMenu
-                getRowId = {(row) =>  row.id}
-                paginationMode="server"
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                disableRowSelectionOnClick
-            />
-            <FormControlLabel
-                control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />}
-                label="Show only users pending host approval" // Replace with your desired label
-                labelPlacement='start'
-            />
+                    ) : error && (
+                    <Alert severity="error" onClose={clearError}>
+                        <AlertTitle>Error</AlertTitle>
+                        {error}
+                    </Alert>
+                    )}
+
+                    <DataGrid
+                        rows={users}
+                        columns={columns.concat(actionColumn)}
+                        rowCount={totalItems}
+                        pageSizeOptions={[5, 10, 20]}
+                        disableColumnMenu
+                        getRowId={(row) => row.id}
+                        paginationMode="server"
+                        paginationModel={paginationModel}
+                        onPaginationModelChange={setPaginationModel}
+                        disableRowSelectionOnClick
+                        defaultColumn={{ align: 'center' }} 
+                        autoWidth
+                        showCellVerticalBorder={true}
+                        showColumnVerticalBorder={true}
+                    />
+                
+                    </div>
                     
+                    <div className='checkbox-container'>
+                        <FormControlLabel
+                            control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />}
+                            label="Show only users pending host approval"
+                            labelPlacement='start'
+                            className='checkbox'
+                        />
+                    </div>
+                </>
+            
+            )}
         </div>
     );
+
 }
 
 export default UserGrid;
