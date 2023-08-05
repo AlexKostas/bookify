@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./dropdown.css";
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
 import useImageFetcher from '../../hooks/useImageFetcher';
 import useAuth from '../../hooks/useAuth';
@@ -20,6 +20,10 @@ const Dropdown = ({username}) => {
     const handleToggleDropdown = () => {
         setIsOpen(!isOpen);
     };
+
+    const switchAccount = () => {
+        logout(true);
+    }
 
     const handleGoToProfile = () => navigate('/profile');
 
@@ -53,6 +57,7 @@ const Dropdown = ({username}) => {
             {isOpen && (
                 <div className="dropdown-content">
                 <button onClick={logout}>Sign Out</button>
+                <button onClick={() => switchAccount()}>Switch account</button>
                 {
                     auth.roles.includes('admin') && (
                         <button onClick={() => navigate('/admin')}>Admin Dashboard</button>

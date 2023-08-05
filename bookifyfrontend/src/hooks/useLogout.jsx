@@ -9,7 +9,7 @@ const useLogout = () => {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
-    const logout = async () => {
+    const logout = async (redirectToLogin) => {
         setAuth(null);
 
         try{
@@ -19,8 +19,13 @@ const useLogout = () => {
             console.error(error);
         }
 
-        removeItem('refreshToken');
-        navigate('/');
+        if(redirectToLogin)
+            navigate('/login');
+        else{
+            removeItem('refreshToken');
+            navigate('/');
+        }
+
         window.location.reload();
     }
 
