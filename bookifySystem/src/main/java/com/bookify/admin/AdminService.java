@@ -36,7 +36,28 @@ public class AdminService {
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
-                    user.getEmail()
+                    user.getRoleAuthorityList()
+            ));
+        }
+
+        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
+    }
+
+    public Page<UserResponseDTOForAdmin> getAllInactiveHosts(int pageNumber, int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<User> searchResult = userRepository.findAllInactiveHosts(pageable);
+
+        List<UserResponseDTOForAdmin> result = new ArrayList<>();
+
+        for(User user : searchResult){
+            if(user.isAdmin()) continue;
+
+            result.add(new UserResponseDTOForAdmin(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getRoleAuthorityList()
             ));
         }
 

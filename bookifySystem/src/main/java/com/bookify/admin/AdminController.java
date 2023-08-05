@@ -29,6 +29,19 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/getAllInactiveHosts")
+    public ResponseEntity<?> getAllInactiveHosts(
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize
+    ){
+        try {
+            return ResponseEntity.ok(adminService.getAllInactiveHosts(pageNumber, pageSize));
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/deleteUser/{username}")
     public ResponseEntity<?> deleteUser(@PathVariable String username){
         try{
@@ -46,7 +59,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/approveHost/{username}")
+    @PutMapping("/approveHost/{username}")
     public ResponseEntity<?> approveHost(@PathVariable String username){
         try{
             adminService.approveHost(username);

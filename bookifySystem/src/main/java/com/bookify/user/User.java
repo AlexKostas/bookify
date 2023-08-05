@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
     private RefreshToken refreshToken;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private Image profilePicture;
 
     @ManyToMany(fetch = FetchType.EAGER)

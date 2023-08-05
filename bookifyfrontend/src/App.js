@@ -14,6 +14,7 @@ import RoomViewPage from './pages/RoomViewPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import HostDashboard from './pages/HostDashboard';
+import ViewUserPage from './pages/ViewUserPage';
 
 export const Admin = "admin";
 export const Host = "host";
@@ -34,6 +35,7 @@ function App() {
           <Route path="linkpage" element={<LinkPage />} />
           <Route path="unauthorized" element={<Unauthorized />} />
           <Route path="room/:roomID" element={<RoomViewPage />} />
+          <Route path="user/:username" element={<ViewUserPage />} />
           <Route path="/" element={<Home />} />
 
           <Route element={<RequireAuth allowedRoles={[Admin]} />}>
