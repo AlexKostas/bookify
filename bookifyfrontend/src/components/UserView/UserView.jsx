@@ -22,6 +22,7 @@ const UserView = ({ username }) => {
             ) : imageData ? (
             <div className='profile-picture-container'>
                 <img
+                        className='profile-pic'
                         src={imageData}
                         alt="Could not load profile picture"
                     />
