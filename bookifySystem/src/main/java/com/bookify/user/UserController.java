@@ -19,7 +19,6 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/getUser/{username}")
-    @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity getUser(@PathVariable String username){
         try{
             return ResponseEntity.ok(userService.loadUserData(username));

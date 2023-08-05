@@ -9,7 +9,7 @@ const useLogout = () => {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
-    const logout = async (redirectToLogin) => {
+    const logout = async (redirectToLogin = false) => {
         setAuth(null);
 
         try{

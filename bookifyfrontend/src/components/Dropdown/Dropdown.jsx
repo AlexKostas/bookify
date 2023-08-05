@@ -21,10 +21,6 @@ const Dropdown = ({username}) => {
         setIsOpen(!isOpen);
     };
 
-    const switchAccount = () => {
-        logout(true);
-    }
-
     const handleGoToProfile = () => navigate('/profile');
 
     const handleClickOutside = (event) => {
@@ -56,8 +52,8 @@ const Dropdown = ({username}) => {
             </button>
             {isOpen && (
                 <div className="dropdown-content">
-                <button onClick={logout}>Sign Out</button>
-                <button onClick={() => switchAccount()}>Switch account</button>
+                <button onClick={() => logout(false)}>Sign Out</button>
+                <button onClick={() => logout(true)}>Switch account</button>
                 {
                     auth.roles.includes('admin') && (
                         <button onClick={() => navigate('/admin')}>Admin Dashboard</button>

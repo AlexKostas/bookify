@@ -89,7 +89,6 @@ public class User implements UserDetails {
         if(hasTenantRole) return Constants.TENANT_ROLE;
         if(hasAdminRole) return Constants.ADMIN_ROLE;
 
-        assert(false);
         return "";
     }
 

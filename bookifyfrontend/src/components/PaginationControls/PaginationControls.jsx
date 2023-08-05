@@ -46,6 +46,7 @@ const PaginationControls = ({ children, onPageChanged, totalPages }) => {
                     color="secondary"
                 />
             </div>
+            <br />
             
             {children}
 
