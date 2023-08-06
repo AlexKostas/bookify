@@ -97,6 +97,8 @@ const UserGrid = () => {
             width: 600,
             align: 'center',
             headerAlign: 'center',
+            sortable: false,
+            filterable: false,
             renderCell: (params) => {
                 const username = params.row.username;
                 const roles = params.row.roles;
