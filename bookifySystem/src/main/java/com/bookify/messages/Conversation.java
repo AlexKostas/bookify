@@ -3,9 +3,14 @@ package com.bookify.messages;
 import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Conversation {
 
     @Id
@@ -20,21 +25,35 @@ public class Conversation {
 
     private String topic;
 
-    private boolean isRead;
+    private boolean readonly = false;
 
-    public Conversation(){
-        isRead = false;
-    }
+    private Timestamp lastUpdated;
 
     public Conversation(User member1, User member2, String topic) {
         this.member1 = member1;
         this.member2 = member2;
         this.topic = topic.isEmpty() ? "No Topic" : topic;
 
-        isRead = false;
+        updateTimeStamp();
     }
 
-    public void markAsRead(){
-        isRead = true;
+    public boolean userBelongsToConversation(User user) {
+        return user.getUserID() == member1.getUserID() || user.getUserID() == member2.getUserID();
+    }
+
+    public User getOtherMember(User user){
+        if(user.getUserID() == member1.getUserID()) return member2;
+        else if(user.getUserID() == member2.getUserID()) return member1;
+
+        assert(false);
+        return null;
+    }
+
+    public void markReadonly() {
+        readonly = true;
+    }
+
+    public void updateTimeStamp(){
+        lastUpdated = Timestamp.from(Instant.now());
     }
 }

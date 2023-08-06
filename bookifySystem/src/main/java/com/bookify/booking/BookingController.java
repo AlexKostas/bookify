@@ -22,7 +22,7 @@ public class BookingController {
         try{
             return ResponseEntity.ok(bookingService.book(bookRequest));
         }
-        catch (IllegalArgumentException e){
+        catch (IllegalArgumentException | EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
         catch (Exception e){

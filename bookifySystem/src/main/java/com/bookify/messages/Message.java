@@ -17,11 +17,11 @@ public class Message {
     private Long messageID;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private User sender;
 
-    @ManyToOne
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(nullable = false)
     private Conversation conversation;
 
     @Column(length = 5000)

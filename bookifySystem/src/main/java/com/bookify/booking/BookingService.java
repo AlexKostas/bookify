@@ -5,6 +5,7 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.UtilityComponent;
 import com.bookify.utils.Utils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -19,13 +20,12 @@ public class BookingService {
 
     private final AvailabilityService availabilityService;
     private final BookingRepository bookingRepository;
-    private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final UtilityComponent utility;
 
     @Transactional
     public BookingResponseDTO book(BookingRequestDTO bookRequest){
-        User currentUser = userRepository.findByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(bookRequest.roomID())
                 .orElseThrow(() -> new IllegalArgumentException("Room with id " + bookRequest.roomID() + " not found"));
