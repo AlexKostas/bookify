@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,6 +24,29 @@ public class SearchController {
     ){
         Page<SearchPreviewDTO> searchResults = searchService.searchAll(pageNumber, pageSize, orderDirection);
         return ResponseEntity.ok(searchResults);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize,
+            @RequestParam(defaultValue = Configuration.DEFAULT_SEARCH_ORDER) String orderDirection,
+            @RequestBody SearchRequestDTO searchRequestDTO
+    ){
+        try {
+            Page<SearchPreviewDTO> searchResults = searchService.searchByFilterAndAvailability(
+                    pageNumber,
+                    pageSize,
+                    orderDirection,
+                    searchRequestDTO.startDate(),
+                    searchRequestDTO.endDate(),
+                    searchRequestDTO.amenitiesIDs()
+            );
+            return ResponseEntity.ok(searchResults);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/autocomplete")
