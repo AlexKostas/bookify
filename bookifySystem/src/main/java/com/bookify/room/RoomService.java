@@ -83,6 +83,7 @@ public class RoomService{
         host.unassignRoom(roomToDelete);
         userRepository.save(host);
 
+        //TODO: delete any bookings for given room
         roomRepository.delete(roomToDelete);
     }
 

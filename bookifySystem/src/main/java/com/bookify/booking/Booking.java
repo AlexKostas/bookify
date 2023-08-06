@@ -15,8 +15,7 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "booking_id")
-    private int id;
+    private int bookingNumber;
 
     @OneToOne
     private Room room;

@@ -1,0 +1,67 @@
+package com.bookify.booking;
+
+import com.bookify.availability.AvailabilityService;
+import com.bookify.room.Room;
+import com.bookify.room.RoomRepository;
+import com.bookify.user.User;
+import com.bookify.user.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+
+@Service
+@AllArgsConstructor
+public class BookingService {
+
+    private final AvailabilityService availabilityService;
+    private final BookingRepository bookingRepository;
+    private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
+
+    @Transactional
+    public BookingResponseDTO book(BookingRequestDTO bookRequest){
+        User currentUser = userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+
+        Room room = roomRepository.findById(bookRequest.roomID())
+                .orElseThrow(() -> new IllegalArgumentException("Room with id " + bookRequest.roomID() + " not found"));
+
+        if(!availabilityService.isRoomAvailable(bookRequest.roomID(),
+                bookRequest.checkInDate(), bookRequest.checkOutDate()))
+            throw new IllegalArgumentException("Room not available in specified days");
+
+        LocalDate now = LocalDate.now();
+
+        if(bookRequest.checkInDate().isBefore(now))
+            throw new IllegalArgumentException("Date " + bookRequest.checkInDate() + " is already past");
+
+        if(bookRequest.checkOutDate().isBefore(now))
+            throw new IllegalArgumentException("Date " + bookRequest.checkOutDate() + " is already past");
+
+        if(bookRequest.checkOutDate().isBefore(bookRequest.checkInDate())
+                || bookRequest.checkOutDate().equals(bookRequest.checkInDate()))
+            throw new IllegalArgumentException("Checkout date needs to be after check in date");
+
+        availabilityService.markRoomAsUnavailable(room.getRoomID(), bookRequest.checkInDate(), bookRequest.checkOutDate());
+
+        Booking booking = new Booking(
+                room,
+                currentUser,
+                bookRequest.checkInDate(),
+                bookRequest.checkOutDate(),
+                now);
+
+        bookingRepository.save(booking);
+
+        return new BookingResponseDTO(
+                booking.getBookingNumber(),
+                booking.getCheckInDate(),
+                booking.getCheckOutDate(),
+                booking.getBookingDate(),
+                booking.getRoom().getName()
+        );
+    }
+}
