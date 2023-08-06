@@ -2,7 +2,7 @@ import Home from './components/Home';
 import Layout from './components/Layout';
 import Missing from './components/Missing';
 import Unauthorized from './components/Unauthorized';
-import Lounge from './components/Lounge';
+import CreateRoomPage from './pages/CreateRoomPage';
 import LinkPage from './components/LinkPage';
 import RequireAuth from './components/RequireAuth';
 import PersistentLogin from './components/PersistentLogin';
@@ -44,6 +44,10 @@ function App() {
 
           <Route element={<RequireAuth allowedRoles={[Host, InactiveHost]} />}>
             <Route path="host" element={<HostDashboard />} />
+          </Route>
+
+          <Route element={<RequireAuth allowedRoles={[Host]} />}>
+            <Route path="create" element={<CreateRoomPage />} />
           </Route>
 
           <Route element={<RequireAuth allowedRoles={
