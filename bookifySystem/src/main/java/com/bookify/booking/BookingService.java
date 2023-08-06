@@ -5,6 +5,7 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Utils;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,6 +34,12 @@ public class BookingService {
                 bookRequest.checkInDate(), bookRequest.checkOutDate()))
             throw new IllegalArgumentException("Room not available in specified days");
 
+        if(currentUser.getUserID() == room.getRoomHost().getUserID())
+            throw new IllegalArgumentException("A host can not book their own room");
+
+        if(Utils.getDaysBetween(bookRequest.checkInDate(), bookRequest.checkOutDate()) < room.getMinimumStay())
+            throw new IllegalArgumentException("Stay is too short for this room");
+
         LocalDate now = LocalDate.now();
 
         if(bookRequest.checkInDate().isBefore(now))
@@ -52,7 +59,8 @@ public class BookingService {
                 currentUser,
                 bookRequest.checkInDate(),
                 bookRequest.checkOutDate(),
-                now);
+                now,
+                bookRequest.numberOfTenants());
 
         bookingRepository.save(booking);
 

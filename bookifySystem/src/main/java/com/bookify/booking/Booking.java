@@ -27,12 +27,15 @@ public class Booking {
     private LocalDate checkOutDate;
 
     private LocalDate bookingDate;
+    private int numberOfTenants;
 
-    public Booking(Room room, User user, LocalDate checkInDate, LocalDate checkOutDate, LocalDate bookingDate) {
+    public Booking(Room room, User user, LocalDate checkInDate, LocalDate checkOutDate,
+                   LocalDate bookingDate, int numberOfTenants) {
         this.room = room;
         this.user = user;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.bookingDate = bookingDate;
+        this.numberOfTenants = numberOfTenants;
     }
 }
