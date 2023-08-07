@@ -87,15 +87,19 @@ public class MessageService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize, direction, "lastUpdated");
         Page<Conversation> searchResult = conversationRepository.findAllConversationsOfUser(currentUser.getUserID(), pageable);
 
+
         List<ConversationResponseDTO> finalResult = new ArrayList<>();
         for(Conversation conversation : searchResult){
+            InboxEntry entry = inboxEntryRepository.findByConversationAndUser(conversation, currentUser).get();
+
             finalResult.add(new ConversationResponseDTO(
                     conversation.getConversationID(),
                     conversation.getMember1().getUsername(),
                     conversation.getMember2().getUsername(),
                     conversation.getTopic(),
                     conversation.isReadonly(),
-                    conversation.getLastUpdated()
+                    conversation.getLastUpdated(),
+                    entry.isRead()
             ));
         }
 

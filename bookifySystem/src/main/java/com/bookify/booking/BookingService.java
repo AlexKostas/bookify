@@ -24,7 +24,7 @@ public class BookingService {
     private final UtilityComponent utility;
 
     @Transactional
-    public BookingResponseDTO book(BookingRequestDTO bookRequest){
+    public BookingResponseDTO book(BookingRequestDTO bookRequest) throws IllegalAccessException {
         User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(bookRequest.roomID())
@@ -35,7 +35,7 @@ public class BookingService {
             throw new IllegalArgumentException("Room not available in specified days");
 
         if(currentUser.getUserID() == room.getRoomHost().getUserID())
-            throw new IllegalArgumentException("A host can not book their own room");
+            throw new IllegalAccessException("A host can not book their own room");
 
         if(Utils.getDaysBetween(bookRequest.checkInDate(), bookRequest.checkOutDate()) < room.getMinimumStay())
             throw new IllegalArgumentException("Stay is too short for this room");
