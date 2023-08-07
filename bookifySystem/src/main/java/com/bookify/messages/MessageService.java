@@ -4,6 +4,7 @@ import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -25,6 +26,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final UtilityComponent utility;
 
+    @Transactional
     public void composeMessage(MessageRequestDTO messageRequest) throws EntityNotFoundException, IllegalAccessException {
         User currentUser = utility.getCurrentAuthenticatedUser();
         User recipient = userRepository.findByUsername(messageRequest.recipientUsername()).orElseThrow(() ->
@@ -34,6 +36,7 @@ public class MessageService {
             throw new IllegalAccessException("Can not send a message to yourself");
 
         Conversation newConversation = new Conversation(currentUser, recipient, messageRequest.topic());
+        conversationRepository.save(newConversation);
 
         inboxEntryRepository.save(new InboxEntry(currentUser, newConversation));
         inboxEntryRepository.save(new InboxEntry(recipient, newConversation));

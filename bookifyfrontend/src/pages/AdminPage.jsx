@@ -5,7 +5,7 @@ const AdminPage = () => {
     return (
         <div>
             <Navbar />
-            <h1>Admin Page</h1>
+            <h1>Admin Dashboard</h1>
             <UserGrid />
         </div>
     );

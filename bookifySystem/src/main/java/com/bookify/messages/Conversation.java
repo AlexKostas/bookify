@@ -25,7 +25,7 @@ public class Conversation {
 
     private String topic;
 
-    private boolean readonly = false;
+    private boolean readonly;
 
     private Timestamp lastUpdated;
 
@@ -35,6 +35,7 @@ public class Conversation {
         this.topic = topic.isEmpty() ? "No Topic" : topic;
 
         updateTimeStamp();
+        readonly = false;
     }
 
     public boolean userBelongsToConversation(User user) {

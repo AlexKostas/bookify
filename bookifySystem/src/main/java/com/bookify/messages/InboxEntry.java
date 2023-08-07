@@ -16,10 +16,12 @@ public class InboxEntry {
     @OneToOne
     private User user;
 
-    @OneToOne
+    @ManyToOne
     private Conversation conversation;
 
+    //@Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isRead;
+    //@Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isDeleted;
 
     public InboxEntry(){

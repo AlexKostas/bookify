@@ -52,6 +52,8 @@ const Dropdown = ({username}) => {
             </button>
             {isOpen && (
                 <div className="dropdown-content">
+                <p style={{ textAlign: 'center', color: 'darkblue', marginTop: '20px' }}>{username}</p>
+                <hr style={{ width: '90%', margin: 'auto' }} />
                 <button onClick={() => logout(false)}>Sign Out</button>
                 <button onClick={() => logout(true)}>Switch account</button>
                 {
@@ -64,7 +66,12 @@ const Dropdown = ({username}) => {
                         <button onClick={() => navigate('/host')}>Host Dashboard</button>
                     )
                 }
-                <button onClick={handleGoToProfile}>Go to Profile</button>
+                {
+                    (auth.roles.includes('host') || auth.roles.includes('inactive-host') || auth.roles.includes('tenant') || auth.roles.includes('admin')) && (
+                        <button onClick={() => navigate('/messages')}>Messages</button>
+                    )
+                }
+                <button onClick={handleGoToProfile}>Profile</button>
                 </div>
             )}
         </div>
