@@ -16,6 +16,7 @@ import AdminPage from './pages/AdminPage';
 import HostDashboard from './pages/HostDashboard';
 import ViewUserPage from './pages/ViewUserPage';
 import MessageDashboard from './pages/MessageDashboard';
+import UpdateProfilePage from './pages/UpdateProfilePage';
 
 export const Admin = "admin";
 export const Host = "host";
@@ -54,6 +55,7 @@ function App() {
           <Route element={<RequireAuth allowedRoles={
             [Host, InactiveHost, Tenant, Admin]} />}>
             <Route path ="profile" element={<ProfilePage />} />
+            <Route path ="updateProfile" element={<UpdateProfilePage />} />
             <Route path="messages" element={<MessageDashboard />} />
           </Route>
         </Route>
