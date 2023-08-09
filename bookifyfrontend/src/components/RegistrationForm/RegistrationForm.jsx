@@ -112,11 +112,11 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
         onSubmit(userDetails);
 
         //Clear state
-        setUser('');
+        //setUser('');
         setPwd('');
         setMatchPwd('');
-        setEmail('');
-        setPhoneNumber('');
+        //setEmail('');
+        //setPhoneNumber('');
     }
 
     return (

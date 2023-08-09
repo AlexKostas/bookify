@@ -7,7 +7,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 
-const UPDATE_URL = '/updateProfile';
+const UPDATE_URL = '/user/updateProfile';
 
 const UpdateProfilePage = () => {
     const [error, setError] = useState('');
