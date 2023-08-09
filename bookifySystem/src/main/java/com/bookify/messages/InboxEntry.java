@@ -13,7 +13,7 @@ public class InboxEntry {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long entryID;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
     @ManyToOne

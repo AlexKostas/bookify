@@ -27,6 +27,7 @@ const ComposeMessage = ({onClose}) => {
             setRecipient('');
             setTopic('');
             setMessageBody('');
+            onClose();
         } 
         catch (error) {
             if(!error.response){

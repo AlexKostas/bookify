@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import ComposeMessage from "../components/ComposeMessage/ComposeMessage";
+import MessageGrid from "../components/MessagesGrid/MessageGrid";
 
 const MessageDashboard = () => {
     const navigate = useNavigate();
@@ -14,8 +15,9 @@ const MessageDashboard = () => {
             <button onClick={() => setComposePanelActive(true)}>Compose</button>
 
             {
-                composePanelActive && 
+                composePanelActive ?
                     (<ComposeMessage onClose={() => setComposePanelActive(false)} />)
+                    : <MessageGrid />
             }
         </div>
     );

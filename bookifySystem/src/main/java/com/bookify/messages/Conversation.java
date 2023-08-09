@@ -17,10 +17,10 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long conversationID;
 
-    @OneToOne
+    @ManyToOne
     private User member1;
 
-    @OneToOne
+    @ManyToOne
     private User member2;
 
     private String topic;

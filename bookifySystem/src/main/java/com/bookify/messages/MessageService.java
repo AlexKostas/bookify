@@ -97,8 +97,8 @@ public class MessageService {
 
             finalResult.add(new ConversationResponseDTO(
                     conversation.getConversationID(),
-                    conversation.getMember1().getUsername(),
-                    conversation.getMember2().getUsername(),
+                    currentUser.getUsername(),
+                    conversation.getOtherMember(currentUser).getUsername(),
                     conversation.getTopic(),
                     conversation.isReadonly(),
                     conversation.getLastUpdated(),
