@@ -16,6 +16,7 @@ import ViewUserPage from './pages/ViewUserPage';
 import MessageDashboard from './pages/MessageDashboard';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import Layout from './components/Layout';
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -55,6 +56,7 @@ function App() {
             <Route path ="profile" element={<ProfilePage />} />
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
             <Route path="messages" element={<MessageDashboard />} />
+            <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>
         </Route>
 

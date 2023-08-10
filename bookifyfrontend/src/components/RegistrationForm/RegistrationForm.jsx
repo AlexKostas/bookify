@@ -13,8 +13,8 @@ const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@(.+)$/;
 const PHONE_REGEX = /^\d{10,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
 
-const RegistrationForm = ({showPassword = true, initialUsername = '', 
-        onSubmit, errorMessage = '', success = false, inUpdate = false}) => {
+const RegistrationForm = ({inRegistration = true, initialUsername = '',
+        onSubmit, errorMessage = '', success = false}) => {
 
     const userRef = useRef();
     const errRef = useRef();
@@ -95,7 +95,7 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
         const v2 = PWD_REGEX.test(pwd);
         const v3 = EMAIL_REGEX.test(email);
         const v4 = PHONE_REGEX.test(phoneNumber);
-        if ( (!inUpdate && (!v1 || !v2 || !v3 || !v4)) || (inUpdate && (!v1 || !v3 || !v4))){
+        if ( (inRegistration && (!v1 || !v2 || !v3 || !v4)) || (!inRegistration && (!v1 || !v3 || !v4))){
             setErrMsg("Invalid Entry");
             return;
         }
@@ -217,7 +217,7 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
                             Alphanumeric characters, plus symbols (+), underscores (_), dots (.), and hyphens (-).
                         </p>
 
-                        {showPassword && (
+                        {inRegistration && (
                             <>
                                 <label htmlFor="password">
                             Password:
@@ -265,7 +265,7 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
                         </p>
                             </>
                         )}
-                        
+
                         <label htmlFor="phoneNumber">
                             Phone Number:
                             <FontAwesomeIcon icon={faCheck} className={validPhone ? "valid" : "hide"} />
@@ -305,9 +305,9 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
                             )
                         }
 
-                        {inUpdate ? <button>Edit Profile</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
+                        {!inRegistration ? <button>Edit Profile</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
                     </form>
-                    {!inUpdate &&
+                    {inRegistration &&
                     <p>
                         Already registered?<br />
                         <span className="line">

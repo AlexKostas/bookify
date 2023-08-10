@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
 import UserView from "../components/UserView/UserView";
 import {Link, useNavigate} from "react-router-dom";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -14,7 +16,10 @@ const ProfilePage = () => {
         <Navbar />
         <h1>Profile</h1>
         <UserView username={auth.user}/>
-        <button onClick={() => navigate('/updateProfile')}>Edit Profile</button>
+        <button onClick={() => navigate('/updateProfile')}>
+            <FontAwesomeIcon icon={faEdit} />
+            Edit Profile
+        </button>
     </>
   );
 };

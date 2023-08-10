@@ -51,7 +51,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/changePassword")
+    @PutMapping("/changePassword")
     @PreAuthorize("#changePasswordDTO.username() == authentication.name")
     public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO){
         try {

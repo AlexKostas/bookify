@@ -1,17 +1,17 @@
-// UpdateProfilePage.jsx
+// ChangePasswordPage.jsx
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar/Navbar';
-import RegistrationForm from '../components/RegistrationForm/RegistrationForm';
 import useAuth from '../hooks/useAuth';
+import {Link, useNavigate} from "react-router-dom";
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import {useNavigate} from "react-router-dom";
+import ChangePasswordForm from "../components/RegistrationForm/ChangePasswordForm";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUnlock} from "@fortawesome/free-solid-svg-icons";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
 
-const UPDATE_URL = '/user/updateProfile';
+const PASSWORD_UPDATE_URL = "/user/changePassword";
 
-const UpdateProfilePage = () => {
+const ChangePasswordPage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const { auth, setAuth } = useAuth();
@@ -19,18 +19,14 @@ const UpdateProfilePage = () => {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
-    const submitUpdateRequest = async (userInfo) => {
+    const handleChangePassword = async (userInfo) => {
         try {
-            const response = await axiosPrivate.put(UPDATE_URL,
+            const response = await axiosPrivate.put(PASSWORD_UPDATE_URL,
                 JSON.stringify(
                     {
-                        oldUsername: auth.user,
-                        newUsername: userInfo.user,
-                        firstName: userInfo.firstName,
-                        lastName: userInfo.lastName,
-                        email : userInfo.email,
-                        phoneNumber: userInfo.phoneNumber,
-                        preferredRoles: userInfo.selectedRole
+                        username: auth.user,
+                        oldPassword: userInfo.oldPwd,
+                        newPassword: userInfo.pwd,
                     }
                 )
             );
@@ -50,27 +46,29 @@ const UpdateProfilePage = () => {
             let errorMessage = '';
             if (!err?.response)
                 errorMessage = 'No Server Response';
+            if (err.response?.status === 400)
+                errorMessage = 'New password can not be the same as old password';
+            if (err.response?.status === 403)
+                errorMessage = 'Old password is not correct';
             else
-                errorMessage = 'Update Failed'
+                errorMessage = 'Password change Failed'
 
             setError(errorMessage)
             console.log(err);
         }
     }
 
-
     return (
         <>
             <Navbar />
-            <h1>Update Profile</h1>
-            <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
-                              success={success} />
-            <button onClick={() => navigate('/changePassword')}>
-                <FontAwesomeIcon icon={faUnlock} />
-                Change Password
+            <h1>Change Password</h1>
+            <ChangePasswordForm onSubmit={handleChangePassword} errorMessage={error}/>
+            <button onClick={() => navigate('/updateProfile')}>
+                <FontAwesomeIcon icon={faEdit} />
+                Back to Edit Profile
             </button>
         </>
     );
 };
 
-export default UpdateProfilePage;
+export default ChangePasswordPage;
