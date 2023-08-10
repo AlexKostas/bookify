@@ -107,7 +107,8 @@ public class UserService implements UserDetailsService {
         user.setLastName(newProfile.lastName());
         user.setEmail(newProfile.email());
         user.setPhoneNumber(newProfile.phoneNumber());
-        user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
+        if(!user.isAdmin())
+            user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
 
         userRepository.save(user);
 

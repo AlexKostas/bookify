@@ -1,5 +1,6 @@
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar/Navbar";
 
 const HostDashboard = () => {
     const { auth } = useAuth();
@@ -8,6 +9,7 @@ const HostDashboard = () => {
 
     return (
         <div>
+            <Navbar />
             {
                 isInactiveHost ? 
                     <h3>You have not currently been given host permissions. Please contant an admin for help</h3>
