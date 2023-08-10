@@ -7,7 +7,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUnlock} from "@fortawesome/free-solid-svg-icons";
+import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
 
 const UPDATE_URL = '/user/updateProfile';
 
@@ -65,10 +65,17 @@ const UpdateProfilePage = () => {
             <h1>Update Profile</h1>
             <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
                               success={success} />
+            <div>
+            <button onClick={() => navigate('/profile')}>
+                <FontAwesomeIcon icon={faChevronLeft} />
+                Back to profile
+            </button>
+
             <button onClick={() => navigate('/changePassword')}>
                 <FontAwesomeIcon icon={faUnlock} />
                 Change Password
             </button>
+            </div>
         </>
     );
 };
