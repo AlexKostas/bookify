@@ -3,10 +3,17 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CheckIcon from '@mui/icons-material/Check';
+import CancelIcon from '@mui/icons-material/Cancel';
+import Tooltip from '@mui/material/Tooltip';
+import { useNavigate } from 'react-router-dom';
+
 import './usergrid.css';
 
 const UserGrid = () => {
@@ -18,6 +25,8 @@ const UserGrid = () => {
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     const clearError = () => setError(null);
 
@@ -106,13 +115,44 @@ const UserGrid = () => {
 
                 return (
                     <div>
-                        <Link to={`/user/${username}`} style={{ textDecoration: 'none' }}>
-                            <button>View</button>
-                        </Link>
-                        {roles.includes('inactive-host') && 
-                            <button onClick={() => approveHost(username)}>Approve Host</button> 
-                        }
-                        <button onClick={() => deleteUser(username)}>Delete</button>
+
+                        <Tooltip title="View User" placement="top">
+                            <IconButton
+                                aria-label="view"
+                                onClick={() => navigate(`/user/${username}`)}
+                            >
+                                <VisibilityIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        {roles.includes('inactive-host') && (
+                            <>
+                                <Tooltip title="Approve Host" placement="top">
+                                    <IconButton
+                                        aria-label="check"
+                                        onClick={() => approveHost(username)}
+                                    >
+                                        <CheckIcon style={{ color: 'green' }} />
+                                    </IconButton>
+                                </Tooltip>
+
+                                <Tooltip title="Reject Host" placement="top">
+                                    <IconButton aria-label="reject">
+                                        <CancelIcon style={{ color: 'red' }} />
+                                    </IconButton>
+                                </Tooltip>
+                            </>
+                        )}
+
+                        <Tooltip title="Delete User" placement="top">
+                            <IconButton
+                                aria-label="delete"
+                                onClick={() => deleteUser(username)}
+                                style={{ color: 'red' }}
+                            >
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
                     </div>
                 );
             }
