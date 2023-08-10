@@ -33,9 +33,8 @@ const UpdateProfilePage = () => {
                     }
                 )
             );
-            console.log(userName);
-            console.log(userInfo.username);
-            const responseUsername = response?.data?.newUsername;
+
+            const responseUsername = response?.data?.username;
             const accessToken = response?.data?.accessToken;
             const refreshToken = response?.data?.refreshToken;
             const roles = response?.data?.roles;
