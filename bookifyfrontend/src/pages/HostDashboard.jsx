@@ -1,6 +1,7 @@
 import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
+import RoomDashboard from "../components/RoomDashboard/RoomDashboard";
 
 const HostDashboard = () => {
     const { auth } = useAuth();
@@ -17,6 +18,7 @@ const HostDashboard = () => {
                         <>
                             <h1>Host Dashboard</h1>
                             <button onClick={() => navigate('/create')}>Create new room</button>
+                            <RoomDashboard />
                         </>             
                         )
             }
