@@ -305,7 +305,8 @@ const RegistrationForm = ({showPassword = true, initialUsername = '',
                             )
                         }
 
-                        {inUpdate ? <button>Edit Profile</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
+                        {inUpdate ? <button disabled={!validName || !validEmail || !validPhone}>Edit Profile</button> :
+                            <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
                     </form>
                     {!inUpdate &&
                     <p>

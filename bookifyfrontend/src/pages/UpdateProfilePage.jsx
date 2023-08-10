@@ -13,16 +13,18 @@ const UpdateProfilePage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const { auth, setAuth } = useAuth();
+    const [userName, setUserName] = useState(auth.user);
     const { setItem } = useLocalStorage();
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
+    console.log(userName);
     const submitUpdateRequest = async (userInfo) => {
         try {
-            const response = await axiosPrivate.post(UPDATE_URL,
+            const response = await axiosPrivate.put(UPDATE_URL,
                 JSON.stringify(
                     {
-                        oldUsername: userInfo.user,
-                        newUsername: userInfo.username,
+                        oldUsername: auth.user,
+                        newUsername: userInfo.user,
                         firstName: userInfo.firstName,
                         lastName: userInfo.lastName,
                         email : userInfo.email,
@@ -31,7 +33,8 @@ const UpdateProfilePage = () => {
                     }
                 )
             );
-
+            console.log(userName);
+            console.log(userInfo.username);
             const responseUsername = response?.data?.newUsername;
             const accessToken = response?.data?.accessToken;
             const refreshToken = response?.data?.refreshToken;
@@ -41,13 +44,7 @@ const UpdateProfilePage = () => {
             setItem('refreshToken', refreshToken);
 
             setSuccess(true);
-
-            if(roles.includes('admin'))
-                navigate('/admin');
-            else if(roles.includes('host') || roles.includes('inactive-host'))
-                navigate('/host');
-            else
-                navigate('/');
+            navigate('/profile');
         }
         catch(err) {
             let errorMessage = '';

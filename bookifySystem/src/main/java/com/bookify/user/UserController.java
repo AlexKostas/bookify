@@ -31,7 +31,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/updateProfile")
+    @PutMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
     public ResponseEntity<?> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
