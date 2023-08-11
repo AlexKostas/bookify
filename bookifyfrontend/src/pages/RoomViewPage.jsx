@@ -1,10 +1,15 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router-dom"
+import RoomView from "../components/RoomView/RoomView"
+import Navbar from "../components/Navbar/Navbar";
 
 const RoomViewPage = () => {
     const { roomID } = useParams();
 
     return (
-        <p>Currently viewing room with id {roomID}</p>
+        <>
+            <Navbar />
+            <RoomView roomID={roomID} />
+        </>
     );
 }
 
