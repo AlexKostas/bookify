@@ -50,6 +50,12 @@ const UpdateProfilePage = () => {
             let errorMessage = '';
             if (!err?.response)
                 errorMessage = 'No Server Response';
+            else if (err.response?.status === 404)
+                errorMessage = 'User not Found';
+            else if (err.response?.status === 409)
+                errorMessage = 'Username is taken';
+            else if (err.response?.status === 400)
+                errorMessage = 'Unknown preferred role';
             else
                 errorMessage = 'Update Failed'
 
