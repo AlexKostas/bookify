@@ -21,6 +21,7 @@ public class SearchService {
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
 
+    //TODO: to be deleted once the recommendation system is done
     public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
         // Ascending is assumed to be the default sorting direction, even when the relevant parameter is invalid
         Sort.Direction direction = Sort.Direction.ASC;
@@ -54,6 +55,7 @@ public class SearchService {
                     "Please use 'asc' or 'desc' to specify the order of the search results");
 
         //TODO: Add sorting direction and property to sort by
+        //TODO: filter by minimum stay, max price and other search filters
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Set<Amenity> amenitiesFilter = new HashSet<>();
@@ -96,6 +98,7 @@ public class SearchService {
     }
 
     private SearchPreviewDTO mapRoomToDTO(Room room){
+        //TODO: review this code when we have all the search parameters available
         return new SearchPreviewDTO(room.getRoomID(),
                 room.getName(),
                 room.getRating(),

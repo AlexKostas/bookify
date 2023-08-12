@@ -29,20 +29,21 @@ public class Room {
     private String name;
     @Column(length =1000)
     private String summary;
-    @Column(length = 1500)
-    private String space;
     @Column(length = 5000)
     private String description;
-    @Column(length = 1500)
-    private String neighborhoodOverview;
+
     @Column(length = 2000)
     private String notes;
-    @Column(length = 2000)
-    private String transitInfo;
 
     // Address Info
     private String address;
     private String neighborhood;
+    @Column(length = 1500)
+    private String neighborhoodOverview;
+
+    @Column(length = 2000)
+    private String transitInfo;
+
     private String city;
     private String state;
     private String country;
@@ -51,13 +52,24 @@ public class Room {
     private String latitude;
     private String longitude;
 
-    // Booking info
+    // Rules
     private int minimumStay;
+    @Column(length = 2000)
+    private String rules;
 
+    // Space info
     private int numOfBeds;
     private int numOfBaths;
     private int numOfBedrooms;
     private int surfaceArea;
+    private int accommodates; // How many people can fit in the room
+    private boolean hasLivingRoom;
+    //TODO: add room type
+
+    // Pricing info
+    private float pricePerNight;
+    private int maxTenants;
+    private float extraCostPerTenant;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "room_amenity_relationship",
@@ -114,6 +126,17 @@ public class Room {
             count += review.getStars();
 
         return (float) count / (float) getReviewCount();
+    }
+
+    public float calculateCost(int numberOfTenants, int numberOfNights){
+        assert(numberOfNights >= minimumStay);
+
+        float extraCost = 0;
+        if(numberOfTenants > maxTenants)
+            extraCost = (numberOfTenants - maxTenants) * extraCostPerTenant;
+
+        float costPerNight = pricePerNight + extraCost;
+        return  costPerNight * numberOfNights;
     }
 
     public int getReviewCount(){
