@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./dropdown.css";
-import { useNavigate } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
 import useImageFetcher from '../../hooks/useImageFetcher';
+import useAuth from '../../hooks/useAuth';
 
 const Dropdown = ({username}) => {
     const dropdownRef = useRef();
+    const { auth } = useAuth();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -50,8 +52,26 @@ const Dropdown = ({username}) => {
             </button>
             {isOpen && (
                 <div className="dropdown-content">
-                <button onClick={logout}>Sign Out</button>
-                <button onClick={handleGoToProfile}>Go to Profile</button>
+                <p style={{ textAlign: 'center', color: 'darkblue', marginTop: '20px' }}>{username}</p>
+                <hr style={{ width: '90%', margin: 'auto' }} />
+                <button onClick={() => logout(false)}>Sign Out</button>
+                <button onClick={() => logout(true)}>Switch account</button>
+                {
+                    auth.roles.includes('admin') && (
+                        <button onClick={() => navigate('/admin')}>Admin Dashboard</button>
+                    )
+                }
+                {
+                    (auth.roles.includes('host') || auth.roles.includes('inactive-host')) && (
+                        <button onClick={() => navigate('/host')}>Host Dashboard</button>
+                    )
+                }
+                {
+                    (auth.roles.includes('host') || auth.roles.includes('inactive-host') || auth.roles.includes('tenant') || auth.roles.includes('admin')) && (
+                        <button onClick={() => navigate('/messages')}>Messages</button>
+                    )
+                }
+                <button onClick={handleGoToProfile}>Profile</button>
                 </div>
             )}
         </div>

@@ -5,6 +5,7 @@ import { faStar, faStarHalfAlt, faBed } from '@fortawesome/free-solid-svg-icons'
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from '../../api/axios';
+import { CircularProgress } from '@mui/material';
 
 const RoomCard = ({room}) => {
     const [imageData, setImageData] = useState(null);
@@ -57,7 +58,7 @@ const RoomCard = ({room}) => {
     <Link to={`/room/${room.roomID}`} style={{ textDecoration: 'none' }}>
       <div className="room-card">
         {
-          loading ? (<p>Loading</p>) : 
+          loading ? (<CircularProgress />) : 
             (<img src={imageData} alt={room.name} className="room-image" />)
         }
         <div className="room-details">

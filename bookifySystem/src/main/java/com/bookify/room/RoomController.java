@@ -13,12 +13,11 @@ import javax.naming.OperationNotSupportedException;
 @RequestMapping("/api/room")
 @AllArgsConstructor
 public class RoomController {
-    //TODO: fix role based authentication when testing is done
 
     private RoomService roomService;
 
     @PostMapping("/registerRoom")
-    @PreAuthorize("hasRole('tenant')")
+    @PreAuthorize("hasRole('host')")
     public ResponseEntity<?> registerRoom(@RequestBody RoomRegistrationDTO roomDTO){
         try {
             Integer result = roomService.registerRoom(roomDTO);
@@ -32,7 +31,7 @@ public class RoomController {
     }
 
     @PutMapping("/editRoom/{roomID}")
-    @PreAuthorize("hasRole('tenant')")
+    @PreAuthorize("hasRole('host')")
     public ResponseEntity<?> editRoom(@PathVariable Integer roomID, @RequestBody RoomRegistrationDTO roomDTO){
         try{
             return ResponseEntity.ok(roomService.editRoom(roomDTO, roomID));
@@ -69,7 +68,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/deleteRoom/{roomID}")
-    @PreAuthorize("hasRole('admin') or hasRole('tenant')")
+    @PreAuthorize("hasRole('admin') or hasRole('host')")
     public ResponseEntity<?> deleteRoom(@PathVariable Integer roomID){
         try {
             roomService.deleteRoom(roomID);

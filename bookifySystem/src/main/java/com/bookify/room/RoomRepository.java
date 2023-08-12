@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -18,11 +19,21 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT r FROM Room r " +
             "JOIN r.amenities a " +
-            "WHERE a IN :amenities " +
+            "WHERE a IN :filterAmenities " +
+            "AND r IN ( " +
+            "   SELECT a.room FROM Availability a " +
+            "   WHERE a.date >= :startDate AND a.date < :endDate " +
+            "   GROUP BY a.room " +
+            "   HAVING COUNT(a) = :availabilityDaysCount" +
+            ") " +
             "GROUP BY r " +
-            "HAVING COUNT(a) = :amenitiesCount")
-    List<Room> filterRoomsByAmenities(@Param("amenities") Set<Amenity> amenities,
-                                       @Param("amenitiesCount") Integer amenitiesCount);
+            "HAVING COUNT(a) = :filterAmenityCount")
+    Page<Room> filterRoomsByAmenitiesAndAvailability(Set<Amenity> filterAmenities,
+                                      Integer filterAmenityCount,
+                                      LocalDate startDate,
+                                      LocalDate endDate,
+                                      long availabilityDaysCount,
+                                      Pageable pageable );
 
     @Query("SELECT r.roomID FROM Room r WHERE r.roomHost.username = :hostUsername")
     List<String> findRoomIDsByHostUsername(@Param("hostUsername") String hostUsername);

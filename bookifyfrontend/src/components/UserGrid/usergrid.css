@@ -1,0 +1,31 @@
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.circular-progress {
+    color: #3f51b5;
+    margin-right: 20px;
+}
+
+.data-grid {
+    margin: 0 auto;
+    width: 90%;
+}
+
+.checkbox {
+    margin: 0 auto;
+}
+
+.checkbox-container {
+    margin-top: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+}

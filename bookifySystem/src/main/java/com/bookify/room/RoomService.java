@@ -62,7 +62,9 @@ public class RoomService{
                 room.getDescription(),
                 getAmenitiesNames(room),
                 getAmenitiesDescriptions(room),
-                room.getThumbnail() != null ? room.getThumbnail().getImageGuid() : ""
+                room.getThumbnail() != null ? room.getThumbnail().getImageGuid() : "",
+                room.getLatitude(),
+                room.getLongitude()
         );
     }
 
@@ -83,6 +85,7 @@ public class RoomService{
         host.unassignRoom(roomToDelete);
         userRepository.save(host);
 
+        //TODO: delete any bookings for given room
         roomRepository.delete(roomToDelete);
     }
 

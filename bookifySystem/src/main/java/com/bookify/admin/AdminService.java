@@ -5,6 +5,10 @@ import com.bookify.role.RoleRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,23 +22,46 @@ public class AdminService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
 
-    public List<UserResponseDTOForAdmin> getAllUsers(){
-        List<User> users = userRepository.findAll();
+    public Page<UserResponseDTOForAdmin> getAllUsers(int pageNumber, int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<User> searchResult = userRepository.findAll(pageable);
+
         List<UserResponseDTOForAdmin> result = new ArrayList<>();
 
-        for(User user : users){
+        for(User user : searchResult){
             if(user.isAdmin()) continue;
 
             result.add(new UserResponseDTOForAdmin(
+                    user.getUserID(),
                     user.getUsername(),
                     user.getFirstName(),
                     user.getLastName(),
-                    user.getEmail(),
-                    user.getRolePreference()
+                    user.getRoleAuthorityList()
             ));
         }
 
-        return result;
+        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
+    }
+
+    public Page<UserResponseDTOForAdmin> getAllInactiveHosts(int pageNumber, int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<User> searchResult = userRepository.findAllInactiveHosts(pageable);
+
+        List<UserResponseDTOForAdmin> result = new ArrayList<>();
+
+        for(User user : searchResult){
+            if(user.isAdmin()) continue;
+
+            result.add(new UserResponseDTOForAdmin(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getRoleAuthorityList()
+            ));
+        }
+
+        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
     }
 
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {

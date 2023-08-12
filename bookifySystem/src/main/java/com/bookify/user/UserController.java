@@ -19,7 +19,6 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/getUser/{username}")
-    @PreAuthorize("hasRole('admin') or #username == authentication.name")
     public ResponseEntity getUser(@PathVariable String username){
         try{
             return ResponseEntity.ok(userService.loadUserData(username));
@@ -32,7 +31,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/updateProfile")
+    @PutMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
     public ResponseEntity<?> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){
         try {
@@ -52,7 +51,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/changePassword")
+    @PutMapping("/changePassword")
     @PreAuthorize("#changePasswordDTO.username() == authentication.name")
     public ResponseEntity changePassword(@RequestBody ChangePasswordDTO changePasswordDTO){
         try {

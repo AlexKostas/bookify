@@ -4,7 +4,7 @@ import { useState } from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-
+import { useNavigate } from "react-router-dom";
 
 const REGISTER_URL = '/registration/register';
 
@@ -12,8 +12,10 @@ const RegistrationPage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
 
-    const { setAuth } = useAuth();
+    const { auth, setAuth } = useAuth();
     const { setItem } = useLocalStorage();
+
+    const navigate = useNavigate();
 
     const submitRegistrationRequest = async (userInfo) => {
         try {
@@ -40,6 +42,13 @@ const RegistrationPage = () => {
                 setItem('refreshToken', refreshToken);
 
                 setSuccess(true);
+
+                if(roles.includes('admin'))
+                    navigate('/admin');
+                else if(roles.includes('host') || roles.includes('inactive-host'))
+                    navigate('/host');   
+                else
+                    navigate('/');         
             }
             catch(err) {
                 let errorMessage = '';

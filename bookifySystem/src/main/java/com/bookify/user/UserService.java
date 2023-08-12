@@ -6,6 +6,8 @@ import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
 import com.bookify.registration.LoginRegistrationResponseDTO;
 import com.bookify.registration.RegistrationDTO;
+import com.bookify.reviews.Review;
+import com.bookify.reviews.ReviewRepository;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.utils.Constants;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,6 +35,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
     private final TokenService tokenService;
 
@@ -103,7 +107,8 @@ public class UserService implements UserDetailsService {
         user.setLastName(newProfile.lastName());
         user.setEmail(newProfile.email());
         user.setPhoneNumber(newProfile.phoneNumber());
-        user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
+        if(!user.isAdmin())
+            user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
 
         userRepository.save(user);
 
@@ -122,6 +127,12 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist"));
 
         if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
+
+        List<Review> reviews = reviewRepository.findAllByReviewerUserID(user.getUserID());
+        for(Review review : reviews)
+            review.setReviewer(null);
+
+        reviewRepository.saveAll(reviews);
 
         userRepository.delete(user);
     }

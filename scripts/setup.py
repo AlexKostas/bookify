@@ -2,6 +2,8 @@ import mysql.connector
 import csv
 from datetime import datetime
 
+guid = 0
+
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
     cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
@@ -24,6 +26,24 @@ def check_user_exists(connection, user_id):
     cursor.close()
 
     return result[0] > 0
+
+def createUniqueUsername(connection, username):
+    cursor = connection.cursor()
+
+    # Check if a user with the same user username already exists
+    query = "SELECT * FROM users WHERE username = %s"
+    values = (username,)
+    cursor.execute(query, values)
+    result = cursor.fetchall()
+
+    cursor.close()
+
+    if len(result) > 1:
+        global guid
+        guid += 1
+        return username + str(guid)
+    else: 
+        return username
 
 def delete_all_data_from_tables(connection):    
     cursor = connection.cursor()
@@ -51,7 +71,7 @@ def insert_users_from_csv(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Review Users --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -61,7 +81,7 @@ def insert_users_from_csv(connection, csv_file):
             if check_user_exists(connection, id): continue
 
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
-            values = (id, username, '1234')
+            values = (id, createUniqueUsername(connection, username), '1234')
 
             try:
                 cursor.execute(insert_query, values)
@@ -76,7 +96,7 @@ def insert_host_users(connection):
     cursor = connection.cursor()
     print("-- Inserting Host Users --")
 
-    with open('listings.csv', newline='') as csvfile:
+    with open('listings.csv', newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -86,7 +106,7 @@ def insert_host_users(connection):
             if check_user_exists(connection, id): continue
 
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
-            values = (id, username, '1234')
+            values = (id, createUniqueUsername(connection, username), '1234')
 
             try:
                 cursor.execute(insert_query, values)
@@ -101,7 +121,7 @@ def insert_listings(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Listings --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -148,7 +168,7 @@ def insert_reviews(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Reviews --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:

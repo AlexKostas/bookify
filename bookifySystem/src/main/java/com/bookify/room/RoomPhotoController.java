@@ -18,7 +18,7 @@ public class RoomPhotoController {
     private final RoomPhotoService roomPhotoService;
 
     @PostMapping("/addPhoto/{roomID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('host')")
     public ResponseEntity<?> addPhoto(@PathVariable Integer roomID, @RequestParam("file") MultipartFile photo){
         try{
             String newPhotoGuid = roomPhotoService.addPhoto(roomID, photo);
@@ -36,7 +36,7 @@ public class RoomPhotoController {
     }
 
     @PostMapping("/addThumbnail/{roomID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('host')")
     public ResponseEntity<?> addThumbnail(@PathVariable Integer roomID, @RequestParam("file") MultipartFile thumbnail){
         try{
             String newThumbnailGuid = roomPhotoService.addThumbnail(roomID, thumbnail);
@@ -84,7 +84,7 @@ public class RoomPhotoController {
     }
 
     @DeleteMapping("/delete/{guid}/{roomID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('host')")
     public ResponseEntity<?> deletePhoto(@PathVariable String guid, @PathVariable Integer roomID){
         try{
             roomPhotoService.deletePhoto(guid, roomID);

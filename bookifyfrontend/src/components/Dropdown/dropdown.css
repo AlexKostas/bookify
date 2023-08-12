@@ -14,16 +14,18 @@
     position: absolute;
     top: 40px;
     right: 0;
+    margin-right: 25%;
     background-color: #f9f9f9;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 2;
+    border: 2px solid rgb(17, 17, 155);
 }
 
 .dropdown-content button {
     display: block;
     width: 100%;
     padding: 8px 16px;
-    text-align: left;
+    text-align: center;
     background-color: transparent;
     border: none;
     cursor: pointer;

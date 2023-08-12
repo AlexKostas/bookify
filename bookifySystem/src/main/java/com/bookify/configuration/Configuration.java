@@ -10,13 +10,13 @@ public class Configuration {
     public static final String DEFAULT_PROFILE_PIC_NAME = "default";
     public static final String DEFAULT_PROFILE_PIC_EXTENSION = "png";
 
-    public static final Long ACCESS_TOKEN_DURATION_SECONDS = 60L;
-    public static final Long REFRESH_TOKEN_DURATION_MINUTES = 5L;
+    public static final Long ACCESS_TOKEN_DURATION_SECONDS = 180L;
+    public static final Long REFRESH_TOKEN_DURATION_MINUTES = 60L;
 
     //This is a string because the default request parameters in the controller can only be strings
     public static final String DEFAULT_PAGE_SIZE = "10";
     public static final String DEFAULT_PAGE_INDEX = "0";
     public static final String DEFAULT_SEARCH_ORDER = "asc";
 
-    public static final String MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS = "10";
+    public static final String MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS = "7";
 }

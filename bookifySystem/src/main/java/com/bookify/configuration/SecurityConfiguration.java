@@ -16,7 +16,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -54,9 +53,10 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/roomPhotos/**").permitAll();
                     auth.requestMatchers("/api/search/**").permitAll();
                     auth.requestMatchers("/api/reviews/**").permitAll();
+                    auth.requestMatchers("/api/book/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
-                    auth.requestMatchers("/api/user/**").hasAnyRole(Constants.ADMIN_ROLE, Constants.HOST_ROLE,
-                            Constants.INACTIVE_HOST_ROLE, Constants.TENANT_ROLE);
+                    auth.requestMatchers("/api/messages").authenticated();
+                    auth.requestMatchers("/api/user/**").permitAll();
                     auth.anyRequest().permitAll();
                 }).
             oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());
