@@ -6,6 +6,8 @@ import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
+import com.bookify.room_type.RoomType;
+import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.Constants;
@@ -24,11 +26,12 @@ public class InitializeDatabase {
     @Bean
     CommandLineRunner initializeDB(RoleRepository roleRepository, UserRepository userRepository,
                                    ImageRepository imageRepository, AmenityRepository amenityRepository,
-                                   PasswordEncoder passwordEncoder){
+                                   RoomTypeRepository roomTypeRepository, PasswordEncoder passwordEncoder){
         return args -> {
             if(roleRepository.findByAuthority(Constants.ADMIN_ROLE).isPresent()) return;
 
             preloadAmenities(amenityRepository);
+            preloadRoomTypes(roomTypeRepository);
             preloadRoles(roleRepository);
             preloadDefaultImages(imageRepository);
             preloadAdminUser(roleRepository, userRepository, imageRepository, passwordEncoder);
@@ -83,5 +86,13 @@ public class InitializeDatabase {
         amenityRepository.save(new Amenity("TV", ""));
         amenityRepository.save(new Amenity("Parking", ""));
         amenityRepository.save(new Amenity("Elevator", ""));
+    }
+
+    private void preloadRoomTypes(RoomTypeRepository roomTypeRepository){
+        log.info("Preloading room types to the database");
+
+        roomTypeRepository.save(new RoomType("Private Room"));
+        roomTypeRepository.save(new RoomType("Shared Room"));
+        roomTypeRepository.save(new RoomType("Entire Home"));
     }
 }
