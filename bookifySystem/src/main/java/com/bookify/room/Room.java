@@ -3,6 +3,7 @@ package com.bookify.room;
 import com.bookify.images.Image;
 import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
+import com.bookify.room_type.RoomType;
 import com.bookify.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -64,7 +65,10 @@ public class Room {
     private int surfaceArea;
     private int accommodates; // How many people can fit in the room
     private boolean hasLivingRoom;
-    //TODO: add room type
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_type_id", nullable = false)
+    private RoomType roomType;
 
     // Pricing info
     private float pricePerNight;
@@ -91,7 +95,7 @@ public class Room {
     private List<Review> reviews = new ArrayList<>();
 
     public Room(String description, int numOfBeds, int numOfBaths, int numOfBedrooms,
-                int surfaceArea, Set<Amenity> amenities, User roomHost) {
+                int surfaceArea, Set<Amenity> amenities, RoomType type, User roomHost) {
         this.description = description;
         this.numOfBeds = numOfBeds;
         this.numOfBaths = numOfBaths;
@@ -103,6 +107,8 @@ public class Room {
         this.thumbnail = null;
         this.photos = new ArrayList<>();
         this.reviews = new ArrayList<>();
+
+        this.roomType = type;
     }
 
     public void addPhoto(Image newPhoto){

@@ -2,6 +2,8 @@ package com.bookify.room;
 
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
+import com.bookify.room_type.RoomType;
+import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +23,7 @@ public class RoomService{
     private RoomRepository roomRepository;
     private AmenityRepository amenityRepository;
     private UserRepository userRepository;
+    private RoomTypeRepository roomTypeRepository;
     private RoomAuthenticationUtility roomAuthenticationUtility;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
@@ -95,6 +98,8 @@ public class RoomService{
 
         assert(userRepository.findByUsername(hostUsername).isPresent());
         User host = userRepository.findByUsername(hostUsername).get();
+        //TODO: test only thing, to be removed once script and room creation functionality is fully implemented
+        RoomType roomType = roomTypeRepository.findByName("Private Room").get();
 
         Room newRoom =  new Room(
                 roomDTO.description(),
@@ -103,6 +108,7 @@ public class RoomService{
                 roomDTO.nBedrooms(),
                 roomDTO.surfaceArea(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
+                roomType,
                 host
         );
 
