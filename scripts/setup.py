@@ -71,7 +71,7 @@ def insert_users_from_csv(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Review Users --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -96,7 +96,7 @@ def insert_host_users(connection):
     cursor = connection.cursor()
     print("-- Inserting Host Users --")
 
-    with open('listings.csv', newline='') as csvfile:
+    with open('listings.csv', newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -121,7 +121,7 @@ def insert_listings(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Listings --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
@@ -168,7 +168,7 @@ def insert_reviews(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Reviews --")
 
-    with open(csv_file, newline='') as csvfile:
+    with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
 
         for row in reader:
