@@ -10,5 +10,5 @@ public record RoomRegistrationDTO(
         int minimumStay, String rules,
         int nBeds, int nBaths, int nBedrooms, int surfaceArea, int accommodates,
         int roomTypeID, float pricePerNight, int maxTenants, float extraCostPerTenant,
-        List<Integer> amenityIDs
+        List<Integer> amenityIDs, List<DatePairDTO> availability
 ){}

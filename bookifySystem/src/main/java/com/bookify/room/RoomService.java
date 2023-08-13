@@ -1,5 +1,7 @@
 package com.bookify.room;
 
+import com.bookify.availability.Availability;
+import com.bookify.availability.AvailabilityRepository;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -29,6 +32,7 @@ public class RoomService{
     private final RoomTypeRepository roomTypeRepository;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
+    private final AvailabilityRepository availabilityRepository;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -141,6 +145,8 @@ public class RoomService{
         host.assignRoom(savedRoom);
         userRepository.save(host);
 
+        setAvailability(roomDTO.availability(), savedRoom);
+
         return savedRoom;
     }
 
@@ -188,5 +194,16 @@ public class RoomService{
             throw new EntityNotFoundException("Room Type with ID " + roomTypeID + " not found");
 
         return roomTypeOptional.get();
+    }
+
+    private void setAvailability(List<DatePairDTO> availability, Room room){
+        for(DatePairDTO datePair : availability){
+            LocalDate date = datePair.startDate();
+
+            while(!date.isAfter(datePair.endDate())){
+                availabilityRepository.save(new Availability(room, date));
+                date = date.plusDays(1);
+            }
+        }
     }
 }
