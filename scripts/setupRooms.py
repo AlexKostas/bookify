@@ -57,9 +57,15 @@ def insert_listings(connection, csv_file):
             # Foreign keys
             room_host_id = row['host_id']
             thumbnail = 'default-room'
-            #TODO: Add room type id
-            room_type_id = 4
 
+            room_type = row['room_type']
+            if room_type == 'Entire home/apt':
+                room_type = 'Entire home'
+            #TODO: Add room type id
+            query = cursor.execute(f"SELECT room_type_id FROM room_types WHERE lower(name) LIKE LOWER('%{room_type}%');")
+            result = cursor.fetchone()
+            room_type_id = result[0]
+            
             insert_query = """
                 INSERT INTO rooms (
                     room_id, accommodates, address, city, country,
