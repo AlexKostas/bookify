@@ -73,7 +73,7 @@ public class RoomService{
                 room.getDescription(),
                 getAmenitiesNames(room),
                 getAmenitiesDescriptions(room),
-                room.getThumbnail() != null ? room.getThumbnail().getImageGuid() : "",
+                room.getThumbnail().getImageGuid(),
                 room.getLatitude(),
                 room.getLongitude()
         );
