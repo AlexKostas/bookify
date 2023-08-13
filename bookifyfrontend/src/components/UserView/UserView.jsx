@@ -1,15 +1,62 @@
 import useImageFetcher from "../../hooks/useImageFetcher";
 import { CircularProgress } from "@mui/material";
-import { useState } from "react";
+import {useRef, useState} from "react";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import './userview.css';
 import UserDetails from "../UserDetails/UserDetails";
+import useAuth from '../../hooks/useAuth';
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const UserView = ({ username }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
+    const editProfilePicUrl = `/upload/uploadProfilePic/${username}`;
+
+    const [error, setError] = useState('');
     const {imageData, loading} = useImageFetcher(profilePicURL);
     const [tabValue, setTabValue] = useState(0);
+    const [profileImage, setProfileImage] = useState('default-profile-image.jpg');
+
+    const { auth } = useAuth();
+    const axiosPrivate = useAxiosPrivate();
+    const valid = (auth.user === username);
+
+    const inputRef = useRef(null)
+
+    const handleClick = () => {
+        inputRef.current.click();
+    };
+
+    const handleImageChange = (event) => {
+        const selectedImage = event.target.files && event.target.files[0];
+        event.target.value = null;
+        if (!selectedImage) {
+            return;
+        }
+        if (selectedImage) {
+            const imageURL = URL.createObjectURL(selectedImage);
+            setProfileImage(imageURL);
+
+            try {
+                const response = axiosPrivate.post(editProfilePicUrl, imageURL);
+            }
+            catch(err) {
+                let errorMessage = '';
+                if (!err?.response)
+                    errorMessage = 'No Server Response';
+                else if (err.response?.status === 400)
+                    errorMessage = 'Illegal argument';
+                else if (err.response?.status === 500)
+                    errorMessage = 'Internal server error';
+                else
+                    errorMessage = 'Edit profile picture Failed'
+
+                setError(errorMessage)
+                console.log(err);
+            }
+            // URL.revokeObjectURL(imageURL)
+        }
+    };
 
     return (
     <>    
@@ -21,11 +68,19 @@ const UserView = ({ username }) => {
             </div>
             ) : imageData ? (
             <div className='profile-picture-container'>
-                <img
-                        className='profile-pic'
-                        src={imageData}
-                        alt="Could not load profile picture"
-                    />
+                <img onClick = {handleClick}
+                    className="profile-pic"
+                    src={imageData}
+                    alt="Could not load profile picture"
+                />
+                <input
+                    style={{display: 'none'}}
+                    ref={inputRef}
+                    type="file"
+                    onChange={handleImageChange}
+                />
+
+                <button onClick={handleClick}>Open file upload box</button>
             </div>
             ) : (
             <p>Could not load profile picture</p>
