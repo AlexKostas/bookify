@@ -1,5 +1,8 @@
 package com.bookify.room;
 
+import com.bookify.configuration.Configuration;
+import com.bookify.images.Image;
+import com.bookify.images.ImageRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
@@ -20,11 +23,12 @@ public class RoomService{
 
     //TODO: when host leaves/changes roles make sure his room entries are deleted/disabled
 
-    private RoomRepository roomRepository;
-    private AmenityRepository amenityRepository;
-    private UserRepository userRepository;
-    private RoomTypeRepository roomTypeRepository;
-    private RoomAuthenticationUtility roomAuthenticationUtility;
+    private final RoomRepository roomRepository;
+    private final AmenityRepository amenityRepository;
+    private final UserRepository userRepository;
+    private final RoomTypeRepository roomTypeRepository;
+    private final RoomAuthenticationUtility roomAuthenticationUtility;
+    private final ImageRepository imageRepository;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -93,22 +97,42 @@ public class RoomService{
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
+        //TODO: maybe some more error handling here
         if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.surfaceArea() < 2)
             throw new OperationNotSupportedException("Incompatible room fields");
 
         assert(userRepository.findByUsername(hostUsername).isPresent());
         User host = userRepository.findByUsername(hostUsername).get();
-        //TODO: test only thing, to be removed once script and room creation functionality is fully implemented
-        RoomType roomType = roomTypeRepository.findByName("Private Room").get();
+        Image defaultThumbnail = imageRepository.findByImageGuid(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME).get();
 
-        Room newRoom =  new Room(
+        Room newRoom = new Room(
+                roomDTO.name(),
+                roomDTO.summary(),
                 roomDTO.description(),
+                roomDTO.notes(),
+                roomDTO.address(),
+                roomDTO.neighborhood(),
+                roomDTO.neighborhoodOverview(),
+                roomDTO.transitInfo(),
+                roomDTO.city(),
+                roomDTO.state(),
+                roomDTO.country(),
+                roomDTO.zipcode(),
+                roomDTO.latitude(),
+                roomDTO.longitude(),
+                roomDTO.minimumStay(),
+                roomDTO.rules(),
                 roomDTO.nBeds(),
                 roomDTO.nBaths(),
                 roomDTO.nBedrooms(),
                 roomDTO.surfaceArea(),
+                roomDTO.accommodates(),
+                getRoomType(roomDTO.roomTypeID()),
+                roomDTO.pricePerNight(),
+                roomDTO.maxTenants(),
+                roomDTO.extraCostPerTenant(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
-                roomType,
+                defaultThumbnail,
                 host
         );
 
@@ -156,5 +180,13 @@ public class RoomService{
             result.add(amenity.getDescription());
 
         return result;
+    }
+
+    private RoomType getRoomType(int roomTypeID){
+        Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);
+        if(roomTypeOptional.isEmpty())
+            throw new EntityNotFoundException("Room Type with ID " + roomTypeID + " not found");
+
+        return roomTypeOptional.get();
     }
 }
