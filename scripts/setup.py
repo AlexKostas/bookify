@@ -126,36 +126,61 @@ def insert_listings(connection, csv_file):
 
         for row in reader:
             room_id = row['id']
-            description = row['description']
-            num_of_baths = row['bathrooms'] if row['bathrooms'] else 0
-            num_of_bedrooms = row['bedrooms'] if row['bedrooms'] else 0
-            num_of_beds = row['beds'] if row['beds'] else 0
-            surface_area = row['square_feet'] if row['square_feet'] else 0
-            room_host_id = row['host_id']
+            accomodates = row['accommodates']
             address = row['street']
             city = row['city']
             country = row['country']
+            description = row['description']
+            extra_cost_per_tenant = row['extra_people']
             latitude = row['latitude']
             longitude = row['longitude']
+            max_tenants = row['guests_included']
+            minimum_stay = row['minimum_nights']
             name = row['name']
             neighborhood = row['neighbourhood_cleansed']
             neighborhood_overview = row['neighborhood_overview']
             notes = row['notes']
+            num_of_baths = row['bathrooms'] if row['bathrooms'] else 0
+            num_of_bedrooms = row['bedrooms'] if row['bedrooms'] else 0
+            num_of_beds = row['beds'] if row['beds'] else 0
+            price_per_night = row['price']
+            rules = 'No rules'
             state = row['state']
             summary = row['summary']
+            surface_area = row['square_feet'] if row['square_feet'] else 0
             transit_info = row['transit']
             zipcode = row['zipcode']
-            minimum_stay = row['minimum_nights']
+
+            # Foreign keys
+            room_host_id = row['host_id']
             thumbnail = 'default-room'
+            #TODO: Add room type id
 
-
-            if check_user_exists(connection, room_id): continue
-
-            insert_query = "INSERT INTO rooms (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, state, summary, transit_info, zipcode, minimum_stay, thumbnail_image_identifier) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, state, summary, transit_info, zipcode, minimum_stay, thumbnail)
+            insert_query = """
+                INSERT INTO rooms (
+                    room_id, accomodates, address, city, country,
+                    description, extra_cost_per_tenant, latitude,
+                    longitude, max_tenants, minimum_stay, name,
+                    neighborhood, neighborhood_overview, notes,
+                    num_of_baths, num_of_bedrooms, num_of_beds,
+                    price_per_night, rules, state, summary,
+                    surface_area, transit_info, zipcode, room_host_id,
+                    thumbnail_image_identifier
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """ 
 
             try:
-                cursor.execute(insert_query, values)
+                cursor.execute(insert_query, (
+                    room_id, accomodates, address, city, country,
+                    description, extra_cost_per_tenant, latitude,
+                    longitude, max_tenants, minimum_stay, name,
+                    neighborhood, neighborhood_overview, notes,
+                    num_of_baths, num_of_bedrooms, num_of_beds,
+                    price_per_night, rules, state, summary,
+                    surface_area, transit_info, zipcode, room_host_id,
+                    thumbnail
+                ))
             except mysql.connector.Error as e:
                 print(f"Error inserting room with id {id}: {e}")
                 connection.rollback()

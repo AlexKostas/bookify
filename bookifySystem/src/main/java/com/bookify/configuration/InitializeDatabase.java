@@ -86,6 +86,7 @@ public class InitializeDatabase {
         amenityRepository.save(new Amenity("TV", ""));
         amenityRepository.save(new Amenity("Parking", ""));
         amenityRepository.save(new Amenity("Elevator", ""));
+        amenityRepository.save(new Amenity("Living Room", ""));
     }
 
     private void preloadRoomTypes(RoomTypeRepository roomTypeRepository){

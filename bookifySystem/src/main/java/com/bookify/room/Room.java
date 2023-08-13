@@ -64,7 +64,6 @@ public class Room {
     private int numOfBedrooms;
     private int surfaceArea;
     private int accommodates; // How many people can fit in the room
-    private boolean hasLivingRoom;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_type_id", nullable = false)
