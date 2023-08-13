@@ -34,11 +34,17 @@ const UserView = ({ username }) => {
             return;
         }
         if (selectedImage) {
+            const formData = new FormData();
+            formData.append('file', selectedImage);
             const imageURL = URL.createObjectURL(selectedImage);
             setProfileImage(imageURL);
 
             try {
-                const response = axiosPrivate.post(editProfilePicUrl, imageURL);
+                const response = axiosPrivate.post(editProfilePicUrl, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
             }
             catch(err) {
                 let errorMessage = '';
