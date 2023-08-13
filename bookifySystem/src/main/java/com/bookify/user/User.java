@@ -5,6 +5,8 @@ import com.bookify.images.Image;
 import com.bookify.role.Role;
 import com.bookify.room.Room;
 import com.bookify.utils.Constants;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,6 +46,8 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
+    @JsonBackReference
+    @XStreamOmitField
     @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 

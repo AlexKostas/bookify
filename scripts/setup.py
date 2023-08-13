@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 
 guid = 0
+usernames = set()
 
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
@@ -28,42 +29,31 @@ def check_user_exists(connection, user_id):
     return result[0] > 0
 
 def createUniqueUsername(connection, username):
-    cursor = connection.cursor()
-
     # Check if a user with the same user username already exists
-    query = "SELECT * FROM users WHERE username = %s"
-    values = (username,)
-    cursor.execute(query, values)
-    result = cursor.fetchall()
+    global usernames
 
-    cursor.close()
-
-    if len(result) > 1:
+    if username in usernames:
         global guid
         guid += 1
         return username + str(guid)
     else: 
         return username
 
-def delete_all_data_from_tables(connection):    
+def delete_users(connection):    
     cursor = connection.cursor()
-    cursor.execute("SHOW TABLES")
-    tables = cursor.fetchall()
 
-    for table in tables:
-        table_name = table[0]
-        # Make sure we don't delete the built in id sequence tables by JPA
-        if table_name.endswith("_seq"): continue
+    delete_query = "DELETE FROM users WHERE username <> 'admin'"
+    cursor.execute(delete_query)
+    connection.commit()
 
-        delete_query = f"DELETE FROM {table_name}"
+    cursor.close()
 
-        try:
-            cursor.execute(delete_query)
-            connection.commit()
-            print(f"Deleted all data from table: {table_name}")
-        except mysql.connector.Error as e:
-            print(f"Error deleting data from table {table_name}: {e}")
-            connection.rollback()
+def delete_reviews(connection):
+    cursor = connection.cursor()
+
+    delete_query = "DELETE FROM reviews"
+    cursor.execute(delete_query)
+    connection.commit()
 
     cursor.close()
 
@@ -79,6 +69,9 @@ def insert_users_from_csv(connection, csv_file):
             username = row['reviewer_name']
 
             if check_user_exists(connection, id): continue
+
+            global usernames
+            usernames.add(username)
 
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
             values = (id, createUniqueUsername(connection, username), '1234')
@@ -105,6 +98,9 @@ def insert_host_users(connection):
 
             if check_user_exists(connection, id): continue
 
+            global usernames
+            usernames.add(username)
+
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
             values = (id, createUniqueUsername(connection, username), '1234')
 
@@ -126,37 +122,61 @@ def insert_listings(connection, csv_file):
 
         for row in reader:
             room_id = row['id']
-            description = row['description']
-            num_of_baths = row['bathrooms'] if row['bathrooms'] else 0
-            num_of_bedrooms = row['bedrooms'] if row['bedrooms'] else 0
-            num_of_beds = row['beds'] if row['beds'] else 0
-            surface_area = row['square_feet'] if row['square_feet'] else 0
-            room_host_id = row['host_id']
+            accomodates = row['accommodates']
             address = row['street']
             city = row['city']
             country = row['country']
+            description = row['description']
+            extra_cost_per_tenant = row['extra_people']
             latitude = row['latitude']
             longitude = row['longitude']
+            max_tenants = row['guests_included']
+            minimum_stay = row['minimum_nights']
             name = row['name']
             neighborhood = row['neighbourhood_cleansed']
             neighborhood_overview = row['neighborhood_overview']
             notes = row['notes']
-            space = row['space']
+            num_of_baths = row['bathrooms'] if row['bathrooms'] else 0
+            num_of_bedrooms = row['bedrooms'] if row['bedrooms'] else 0
+            num_of_beds = row['beds'] if row['beds'] else 0
+            price_per_night = row['price']
+            rules = 'No rules'
             state = row['state']
             summary = row['summary']
+            surface_area = row['square_feet'] if row['square_feet'] else 0
             transit_info = row['transit']
             zipcode = row['zipcode']
-            minimum_stay = row['minimum_nights']
+
+            # Foreign keys
+            room_host_id = row['host_id']
             thumbnail = 'default-room'
+            #TODO: Add room type id
 
-
-            if check_user_exists(connection, room_id): continue
-
-            insert_query = "INSERT INTO rooms (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay, thumbnail_image_identifier) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (room_id, description, num_of_baths, num_of_bedrooms, num_of_beds, surface_area, room_host_id, address, city, country, latitude, longitude, name, neighborhood, neighborhood_overview, notes, space, state, summary, transit_info, zipcode, minimum_stay, thumbnail)
+            insert_query = """
+                INSERT INTO rooms (
+                    room_id, accomodates, address, city, country,
+                    description, extra_cost_per_tenant, latitude,
+                    longitude, max_tenants, minimum_stay, name,
+                    neighborhood, neighborhood_overview, notes,
+                    num_of_baths, num_of_bedrooms, num_of_beds,
+                    price_per_night, rules, state, summary,
+                    surface_area, transit_info, zipcode, room_host_id,
+                    thumbnail_image_identifier
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """ 
 
             try:
-                cursor.execute(insert_query, values)
+                cursor.execute(insert_query, (
+                    room_id, accomodates, address, city, country,
+                    description, extra_cost_per_tenant, latitude,
+                    longitude, max_tenants, minimum_stay, name,
+                    neighborhood, neighborhood_overview, notes,
+                    num_of_baths, num_of_bedrooms, num_of_beds,
+                    price_per_night, rules, state, summary,
+                    surface_area, transit_info, zipcode, room_host_id,
+                    thumbnail
+                ))
             except mysql.connector.Error as e:
                 print(f"Error inserting room with id {id}: {e}")
                 connection.rollback()
@@ -202,13 +222,13 @@ if __name__ == "__main__":
             database='db_bookify'
         )
         disable_foreign_key_checks(connection)
-        delete_all_data_from_tables(connection)
+        delete_users(connection)
+        delete_reviews(connection)
         connection.cursor().execute("SET AUTOCOMMIT = 0;")
         connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
 
         insert_users_from_csv(connection, 'reviews.csv')
         insert_host_users(connection)
-        insert_listings(connection, 'listings.csv')
         insert_reviews(connection, 'reviews.csv')
         enable_foreign_key_checks(connection)
         connection.close()

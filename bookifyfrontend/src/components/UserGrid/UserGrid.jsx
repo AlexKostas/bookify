@@ -1,5 +1,5 @@
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import {DataGrid, GridToolbarContainer} from '@mui/x-data-grid';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { useEffect, useState } from "react";
@@ -11,10 +11,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import CancelIcon from '@mui/icons-material/Cancel';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 
 import './usergrid.css';
+import {Button, MenuItem, Select} from "@mui/material";
 
 const UserGrid = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -25,6 +27,8 @@ const UserGrid = () => {
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [fileLoading, setFileLoading] = useState(false);
+    const [selectedFileType, setSelectedFileType] = useState('JSON');
 
     const navigate = useNavigate();
 
@@ -75,11 +79,54 @@ const UserGrid = () => {
                 setError('No server response. Is the server running?');
             }
             else {
-                setError('An error occured. Please check the console for more details');
+                setError('An error occurred. Please check the console for more details');
             }
 
             setSuccess(null);
             setTimeout(clearError, 5000);
+        }
+    }
+
+    const downloadFile = (content, fileType) => {
+        if (fileType === 'json')
+            content = JSON.stringify(content, null, 2);
+
+        const blob = new Blob([content], {type: `application/${fileType}`})
+        const url = URL.createObjectURL(blob);
+
+        // Create a custom link and call it so we can download the file from the browser
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `data.${fileType}`;
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    const handleExport = async () => {
+        const endpointURL = `admin/getData${selectedFileType}`;
+
+        try{
+            setFileLoading(true);
+
+            const response = await axiosPrivate.get(endpointURL);
+            downloadFile(response.data, selectedFileType.toLowerCase());
+        }
+        catch(error){
+            console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occurred. Please check the console for more details');
+            }
+
+            setSuccess(null);
+            setTimeout(clearError, 5000);
+        }
+        finally {
+            setFileLoading(false);
         }
     }
 
@@ -158,6 +205,34 @@ const UserGrid = () => {
             }
         }
     ];
+
+    const CustomToolbar = () => {
+        return (
+            <GridToolbarContainer>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleExport}
+                    startIcon={<CloudDownloadIcon />}
+                >
+                    Export
+                </Button>
+
+                <Select
+                    id="fileType"
+                    value={selectedFileType}
+                    onChange={(event) => setSelectedFileType(event.target.value)}
+                >
+                    <MenuItem value="JSON">JSON</MenuItem>
+                    <MenuItem value="XML">XML</MenuItem>
+                </Select>
+
+                {
+                    fileLoading && <CircularProgress />
+                }
+            </GridToolbarContainer>
+        );
+    }
 
     const fetchUsers = async (checked) => {
         const endpointURL = checked ? 
@@ -240,6 +315,10 @@ const UserGrid = () => {
                         autoWidth
                         showCellVerticalBorder={true}
                         showColumnVerticalBorder={true}
+
+                        slots = {
+                            {toolbar: CustomToolbar}
+                        }
                     />
                 
                     </div>

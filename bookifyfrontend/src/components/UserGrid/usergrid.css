@@ -29,3 +29,7 @@
 h1 {
     text-align: center;
 }
+
+.MuiDataGrid-root .MuiDataGrid-columnHeader {
+    border-top: 1px solid #ccc;
+}

@@ -3,7 +3,9 @@ package com.bookify.room;
 import com.bookify.images.Image;
 import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
+import com.bookify.room_type.RoomType;
 import com.bookify.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,20 +31,21 @@ public class Room {
     private String name;
     @Column(length =1000)
     private String summary;
-    @Column(length = 1500)
-    private String space;
     @Column(length = 5000)
     private String description;
-    @Column(length = 1500)
-    private String neighborhoodOverview;
+
     @Column(length = 2000)
     private String notes;
-    @Column(length = 2000)
-    private String transitInfo;
 
     // Address Info
     private String address;
     private String neighborhood;
+    @Column(length = 1500)
+    private String neighborhoodOverview;
+
+    @Column(length = 2000)
+    private String transitInfo;
+
     private String city;
     private String state;
     private String country;
@@ -51,13 +54,26 @@ public class Room {
     private String latitude;
     private String longitude;
 
-    // Booking info
+    // Rules
     private int minimumStay;
+    @Column(length = 2000)
+    private String rules;
 
+    // Space info
     private int numOfBeds;
     private int numOfBaths;
     private int numOfBedrooms;
     private int surfaceArea;
+    private int accommodates; // How many people can fit in the room
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_type_id", nullable = false)
+    private RoomType roomType;
+
+    // Pricing info
+    private float pricePerNight;
+    private int maxTenants;
+    private float extraCostPerTenant;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "room_amenity_relationship",
@@ -71,15 +87,17 @@ public class Room {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Image> photos;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
     private User roomHost;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
     public Room(String description, int numOfBeds, int numOfBaths, int numOfBedrooms,
-                int surfaceArea, Set<Amenity> amenities, User roomHost) {
+                int surfaceArea, Set<Amenity> amenities, RoomType type, User roomHost) {
         this.description = description;
         this.numOfBeds = numOfBeds;
         this.numOfBaths = numOfBaths;
@@ -91,6 +109,8 @@ public class Room {
         this.thumbnail = null;
         this.photos = new ArrayList<>();
         this.reviews = new ArrayList<>();
+
+        this.roomType = type;
     }
 
     public void addPhoto(Image newPhoto){
@@ -114,6 +134,17 @@ public class Room {
             count += review.getStars();
 
         return (float) count / (float) getReviewCount();
+    }
+
+    public float calculateCost(int numberOfTenants, int numberOfNights){
+        assert(numberOfNights >= minimumStay);
+
+        float extraCost = 0;
+        if(numberOfTenants > maxTenants)
+            extraCost = (numberOfTenants - maxTenants) * extraCostPerTenant;
+
+        float costPerNight = pricePerNight + extraCost;
+        return  costPerNight * numberOfNights;
     }
 
     public int getReviewCount(){
