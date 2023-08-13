@@ -2,6 +2,7 @@ package com.bookify.admin;
 
 import com.bookify.configuration.Configuration;
 import com.bookify.user.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,10 +100,23 @@ public class AdminController {
         throw new Exception("Method not yet implemented");
     }
 
-    @GetMapping("/getRoomsJSONL")
-    public String getRoomsFileJSON() throws Exception {
-        //TODO: implement this
-        //TODO: delete exception
-        throw new Exception("Method not yet implemented");
+    @GetMapping("/getDataJSON")
+    public ResponseEntity<?> getDataJSON()  {
+        try {
+            return ResponseEntity.ok(adminService.getAppDataJSON());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getDataXML")
+    public ResponseEntity<?> getDataXML()  {
+        try {
+            return ResponseEntity.ok(adminService.getAppDataXML());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

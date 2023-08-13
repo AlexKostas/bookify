@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 
 guid = 0
+usernames = set()
 
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
@@ -28,42 +29,31 @@ def check_user_exists(connection, user_id):
     return result[0] > 0
 
 def createUniqueUsername(connection, username):
-    cursor = connection.cursor()
-
     # Check if a user with the same user username already exists
-    query = "SELECT * FROM users WHERE username = %s"
-    values = (username,)
-    cursor.execute(query, values)
-    result = cursor.fetchall()
+    global usernames
 
-    cursor.close()
-
-    if len(result) > 1:
+    if username in usernames:
         global guid
         guid += 1
         return username + str(guid)
     else: 
         return username
 
-def delete_all_data_from_tables(connection):    
+def delete_users(connection):    
     cursor = connection.cursor()
-    cursor.execute("SHOW TABLES")
-    tables = cursor.fetchall()
 
-    for table in tables:
-        table_name = table[0]
-        # Make sure we don't delete the built in id sequence tables by JPA
-        if table_name.endswith("_seq"): continue
+    delete_query = "DELETE FROM users WHERE username <> 'admin'"
+    cursor.execute(delete_query)
+    connection.commit()
 
-        delete_query = f"DELETE FROM {table_name}"
+    cursor.close()
 
-        try:
-            cursor.execute(delete_query)
-            connection.commit()
-            print(f"Deleted all data from table: {table_name}")
-        except mysql.connector.Error as e:
-            print(f"Error deleting data from table {table_name}: {e}")
-            connection.rollback()
+def delete_reviews(connection):
+    cursor = connection.cursor()
+
+    delete_query = "DELETE FROM reviews"
+    cursor.execute(delete_query)
+    connection.commit()
 
     cursor.close()
 
@@ -79,6 +69,9 @@ def insert_users_from_csv(connection, csv_file):
             username = row['reviewer_name']
 
             if check_user_exists(connection, id): continue
+
+            global usernames
+            usernames.add(username)
 
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
             values = (id, createUniqueUsername(connection, username), '1234')
@@ -104,6 +97,9 @@ def insert_host_users(connection):
             username = row['host_name']
 
             if check_user_exists(connection, id): continue
+
+            global usernames
+            usernames.add(username)
 
             insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
             values = (id, createUniqueUsername(connection, username), '1234')
@@ -226,13 +222,13 @@ if __name__ == "__main__":
             database='db_bookify'
         )
         disable_foreign_key_checks(connection)
-        delete_all_data_from_tables(connection)
+        delete_users(connection)
+        delete_reviews(connection)
         connection.cursor().execute("SET AUTOCOMMIT = 0;")
         connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
 
         insert_users_from_csv(connection, 'reviews.csv')
         insert_host_users(connection)
-        insert_listings(connection, 'listings.csv')
         insert_reviews(connection, 'reviews.csv')
         enable_foreign_key_checks(connection)
         connection.close()

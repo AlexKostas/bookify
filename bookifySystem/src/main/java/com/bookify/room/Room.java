@@ -5,6 +5,7 @@ import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_type.RoomType;
 import com.bookify.user.User;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -86,10 +87,12 @@ public class Room {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Image> photos;
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
     private User roomHost;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 

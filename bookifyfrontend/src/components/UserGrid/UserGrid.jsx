@@ -27,6 +27,7 @@ const UserGrid = () => {
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [fileLoading, setFileLoading] = useState(false);
     const [selectedFileType, setSelectedFileType] = useState('JSON');
 
     const navigate = useNavigate();
@@ -87,9 +88,13 @@ const UserGrid = () => {
     }
 
     const downloadFile = (content, fileType) => {
+        if (fileType === 'json')
+            content = JSON.stringify(content, null, 2);
+
         const blob = new Blob([content], {type: `application/${fileType}`})
         const url = URL.createObjectURL(blob);
 
+        // Create a custom link and call it so we can download the file from the browser
         const a = document.createElement('a');
         a.href = url;
         a.download = `data.${fileType}`;
@@ -99,9 +104,11 @@ const UserGrid = () => {
     }
 
     const handleExport = async () => {
-        const endpointURL = `admin/test${selectedFileType}`;
+        const endpointURL = `admin/getData${selectedFileType}`;
 
         try{
+            setFileLoading(true);
+
             const response = await axiosPrivate.get(endpointURL);
             downloadFile(response.data, selectedFileType.toLowerCase());
         }
@@ -117,6 +124,9 @@ const UserGrid = () => {
 
             setSuccess(null);
             setTimeout(clearError, 5000);
+        }
+        finally {
+            setFileLoading(false);
         }
     }
 
@@ -217,7 +227,9 @@ const UserGrid = () => {
                     <MenuItem value="XML">XML</MenuItem>
                 </Select>
 
-                <hr />
+                {
+                    fileLoading && <CircularProgress />
+                }
             </GridToolbarContainer>
         );
     }
