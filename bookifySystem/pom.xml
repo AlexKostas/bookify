@@ -72,13 +72,13 @@
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
-			<version>1.4.18</version> <!-- Use the latest version -->
+			<version>1.4.20</version> <!-- Use the latest version -->
 		</dependency>
 
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20210307</version> <!-- Use the latest version -->
+			<groupId>com.github.javadev</groupId>
+			<artifactId>underscore</artifactId>
+			<version>1.92</version>
 		</dependency>
 
 	</dependencies>

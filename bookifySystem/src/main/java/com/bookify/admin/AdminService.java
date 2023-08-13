@@ -9,6 +9,7 @@ import com.bookify.user.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.underscore.U;
 import com.thoughtworks.xstream.XStream;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,7 +72,6 @@ public class AdminService {
 
         return new PageImpl<>(result, pageable, searchResult.getTotalElements());
     }
-
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -95,11 +95,8 @@ public class AdminService {
         return json;
     }
 
-    public String getAppDataXML(){
-        List<Room> rooms = roomRepository.findAll();
-
-        XStream xStream = new XStream();
-        xStream.omitField(User.class, "rooms");
-        return xStream.toXML(rooms);
+    public String getAppDataXML() throws JsonProcessingException {
+        String json = getAppDataJSON();
+        return U.jsonToXml(json);
     }
 }
