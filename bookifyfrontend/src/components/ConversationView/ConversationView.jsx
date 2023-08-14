@@ -8,7 +8,7 @@ import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from '@mui/icons-material/Send';
 
-const ConversationView = ({conversationID, onClose}) => {
+const ConversationView = ({conversationID, readonly, onClose}) => {
     const [messages, setMessages] = useState([]);
     const [replyOpen, setReplyOpen] = useState(false);
     const [replyBody, setReplyBody] = useState('');
@@ -117,8 +117,8 @@ const ConversationView = ({conversationID, onClose}) => {
                     </form>
                 ) : (
                     <div className="message-actions">
-                        <Tooltip title="Reply">
-                            <IconButton onClick={() => setReplyOpen(true)} style={{ color: 'blue' }}>
+                        <Tooltip title={readonly ? "This conversation is read-only" : "Reply"}>
+                            <IconButton disabled={readonly} onClick={() => setReplyOpen(true)} style={{ color: 'blue' }}>
                                 <ReplyIcon />
                             </IconButton>
                         </Tooltip>

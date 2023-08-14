@@ -26,8 +26,7 @@ const MessageGrid = () => {
   const [orderDirection, setOrderDirection] = useState('DESC');
 
   const [viewOpen, setViewOpen] = useState(false);
-  const [currentViewMessageID, setCurrentViewMessageID] = useState(null);
-  const [currentTopic, setCurrentTopic] = useState('');
+  const [currentConversation, setCurrentConversation] = useState(null);
 
   const itemsPerPage = 4;
 
@@ -50,8 +49,7 @@ const MessageGrid = () => {
   };
 
   const handleOpenConversation = (conversation) => {
-    setCurrentViewMessageID(conversation.conversationID);
-    setCurrentTopic(conversation.topic);
+    setCurrentConversation(conversation);
     setViewOpen(true);
   }
 
@@ -123,10 +121,13 @@ const MessageGrid = () => {
         </Container>
 
         <Dialog open={viewOpen} onClose={onClose} maxWidth="md">
-          <DialogTitle>{currentTopic || 'An error occured, check console for details'}</DialogTitle>
+          <DialogTitle>{currentConversation?.topic || 'An error occured, check console for details'}</DialogTitle>
           <DialogContent>
             {
-              currentViewMessageID ? <ConversationView conversationID={currentViewMessageID} onClose={onClose} /> : <></>
+              currentConversation ? <ConversationView
+                  conversationID={currentConversation.conversationID}
+                  readonly={currentConversation.readonly}
+                  onClose={onClose} /> : <></>
             }
           </DialogContent>
         </Dialog>
