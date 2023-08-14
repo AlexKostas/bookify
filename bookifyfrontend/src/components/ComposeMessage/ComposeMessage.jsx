@@ -4,8 +4,8 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import ConversationView from "../ConversationView/ConversationView";
 import Dialog from "@mui/material/Dialog";
+import './composeMessage.css'
 
 const ComposeMessage = ({open, onClose}) => {
     const [recipient, setRecipient] = useState('');
@@ -67,7 +67,7 @@ const ComposeMessage = ({open, onClose}) => {
 
                     <form onSubmit={handleSubmit}>
                         <div>
-                            <label>Recipient:</label>
+                            <label className="label" >Recipient:</label>
                             <input
                                 type="text"
                                 value={recipient}
@@ -76,10 +76,12 @@ const ComposeMessage = ({open, onClose}) => {
                                     setError(null);
                                 }}
                                 required
+                                className="recipient-input"
                             />
                         </div>
-                        <div>
-                            <label>Topic:</label>
+
+                        <div className="topic-field">
+                            <label className="label" >Topic:</label>
                             <input
                                 type="text"
                                 value={topic}
@@ -88,6 +90,7 @@ const ComposeMessage = ({open, onClose}) => {
                                     setError(null);
                                 }}
                                 required
+                                className="topic-input"
                             />
                         </div>
 
@@ -99,6 +102,7 @@ const ComposeMessage = ({open, onClose}) => {
                                 setError(null);
                             }}
                             required
+                            className="message-body"
                         />
                         <button type="submit">Send Message</button>
                     </form>

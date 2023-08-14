@@ -98,6 +98,7 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
                                 setReplyBody(e.target.value)
                             }}
                             required
+                            className="reply-body"
                         />
 
 

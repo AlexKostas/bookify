@@ -1,0 +1,17 @@
+.message-body {
+    resize: none;
+    width: 85vh;
+    height: 40vh;
+}
+
+.topic-field {
+    margin-top: 10px;
+}
+
+.label {
+    margin-right: 10px;
+}
+
+.recipient-input, .topic-input {
+    width: 80%
+}
