@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findAllByConversation_ConversationID(Long conversationID);
+    List<Message> findAllByConversation_ConversationIDOrderByTimestampDesc(Long conversationID);
 }

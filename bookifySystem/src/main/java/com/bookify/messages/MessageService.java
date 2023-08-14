@@ -69,9 +69,6 @@ public class MessageService {
         InboxEntry entry = inboxEntryRepository.findByConversationAndUser(conversation, currentUser).get();
         entry.delete();
         inboxEntryRepository.save(entry);
-
-        conversation.markReadonly();
-        conversationRepository.save(conversation);
     }
 
     public Page<ConversationResponseDTO> getConversationsOfUser(int pageNumber, int pageSize, String sortDirection) {
@@ -119,7 +116,7 @@ public class MessageService {
         entry.markRead();
         inboxEntryRepository.save(entry);
 
-        List<Message> messages = messageRepository.findAllByConversation_ConversationID(conversationID);
+        List<Message> messages = messageRepository.findAllByConversation_ConversationIDOrderByTimestampDesc(conversationID);
 
         List<MessageResponseDTO> result = new ArrayList<>();
         for(Message message : messages){

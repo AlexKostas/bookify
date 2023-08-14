@@ -3,9 +3,10 @@ import {Box, Container, Grid, Paper, Typography} from '@material-ui/core';
 import Pagination from '@mui/material/Pagination';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import './messageGrid.css';
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Tooltip from "@mui/material/Tooltip";
+import ConversationView from "../ConversationView/ConversationView";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import Dialog from "@mui/material/Dialog";
 
 const messages = [
   { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
@@ -24,6 +25,10 @@ const MessageGrid = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [orderDirection, setOrderDirection] = useState('DESC');
 
+  const [viewOpen, setViewOpen] = useState(false);
+  const [currentViewMessageID, setCurrentViewMessageID] = useState(null);
+  const [currentTopic, setCurrentTopic] = useState('');
+
   const itemsPerPage = 4;
 
   const fetchMessages = async (currentPage, orderDirection) => {
@@ -39,25 +44,15 @@ const MessageGrid = () => {
     }
   }
 
-  const deleteConversation = async (conversationID) => {
-    try{
-        const endpointURL = `messages/delete/${conversationID}`;
-        await axiosPrivate.delete(endpointURL);
-
-        fetchMessages(currentPage, orderDirection);
-    }
-    catch (error){
-        console.log(error);
-    }
-  }
-
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
     fetchMessages(newPage, orderDirection);
   };
 
   const handleOpenConversation = (conversation) => {
-    console.log(conversation);
+    setCurrentViewMessageID(conversation.conversationID);
+    setCurrentTopic(conversation.topic);
+    setViewOpen(true);
   }
 
   const formatTimestamp = (timestamp) => {
@@ -72,53 +67,57 @@ const MessageGrid = () => {
     });
   }
 
+  const onClose = () => {
+    setViewOpen(false);
+    fetchMessages(currentPage, orderDirection);
+  }
+
   useEffect(() => {
     fetchMessages(currentPage, orderDirection);
   }, []);
 
   return (
-      <Container maxWidth="lg">
-        <div className='grid'>
-          <Grid container spacing={2}>
-            { conversations.length > 0 ? (conversations.map((conversation) => (
-                <Grid item xs={12} key={conversation.conversationID}>
-                  {/* Display message as a clickable card */}
-                  <Paper elevation={3} className="message-card" onClick={() => handleOpenConversation(conversation)}>
-                    <Box display="flex" flexDirection="row" height="100%">
-                      <Typography variant="h6">{conversation.topic}</Typography>
-                      <Typography>{conversation.member2Username}</Typography>
-                      <Typography>{formatTimestamp(conversation.lastUpdated)}</Typography>
-                      {/* <Typography variant="body2" className="message-preview">
-                    {message.content.substring(0, 100)}{message.content.length > 100 ? '...' : ''}
-                  </Typography> */}
-                      <Tooltip title="Delete Conversation" placement="top">
-                        <IconButton
-                            aria-label="delete"
-                            onClick={() => deleteConversation(conversation.conversationID)}
-                            style={{ color: 'red' }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                  </Paper>
-                </Grid>
-            ))) : <p style={{ textAlign: 'center' }}>No messages</p>
+      <>
+        <Container maxWidth="lg">
+          <div className='grid'>
+            <Grid container spacing={2}>
+              { conversations.length > 0 ? (conversations.map((conversation) => (
+                  <Grid item xs={12} key={conversation.conversationID}>
+                    {/* Display message as a clickable card */}
+                    <Paper elevation={3} className="message-card" onClick={() => handleOpenConversation(conversation)}>
+                      <Box display="flex" flexDirection="row" height="100%">
+                        <Typography variant="h6">{conversation.topic}</Typography>
+                        <Typography>{conversation.member2Username}</Typography>
+                        <Typography>{formatTimestamp(conversation.lastUpdated)}</Typography>
+                      </Box>
+                    </Paper>
+                  </Grid>
+              ))) : <p style={{ textAlign: 'center' }}>No messages</p>
 
+              }
+            </Grid>
+
+            <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                color="primary"
+                className="pagination-container"
+                showFirstButton
+                showLastButton
+            />
+          </div>
+        </Container>
+
+        <Dialog open={viewOpen} onClose={onClose} maxWidth="md">
+          <DialogTitle>{currentTopic || 'An error occured, check console for details'}</DialogTitle>
+          <DialogContent>
+            {
+              currentViewMessageID ? <ConversationView conversationID={currentViewMessageID} onClose={onClose} /> : <></>
             }
-          </Grid>
-
-          <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-              className="pagination-container"
-              showFirstButton
-              showLastButton
-          />
-        </div>
-      </Container>
+          </DialogContent>
+        </Dialog>
+      </>
   );
 };
 
