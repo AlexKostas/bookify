@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Integer>  {
 
     Page<User> findAll(Pageable pageable);
 
+    User findByRoles_Authority(String authority);
+
     @Query("select u from User u join u.roles r where r.authority = 'inactive-host'")
     Page<User> findAllInactiveHosts(Pageable pageable);
 }

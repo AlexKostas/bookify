@@ -19,9 +19,7 @@ public class InboxEntry {
     @ManyToOne
     private Conversation conversation;
 
-    //@Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isRead;
-    //@Column(nullable = false, columnDefinition = "boolean default false")
     private boolean isDeleted;
 
     public InboxEntry(){

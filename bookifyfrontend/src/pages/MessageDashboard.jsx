@@ -11,12 +11,14 @@ const MessageDashboard = () => {
     return (
         <div>
             <Navbar />
-            <h1>Message Dashboard</h1>
+            <h1>Inbox</h1>
             <button onClick={() => setComposePanelActive(true)}>Compose</button>
 
             {
                 composePanelActive ?
-                    (<ComposeMessage onClose={() => setComposePanelActive(false)} />)
+                    (<ComposeMessage
+                        open = {composePanelActive}
+                        onClose={() => setComposePanelActive(false)} />)
                     : <MessageGrid />
             }
         </div>

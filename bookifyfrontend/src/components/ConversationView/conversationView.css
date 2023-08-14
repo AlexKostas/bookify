@@ -1,0 +1,16 @@
+.message-actions, .reply-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 8px;
+}
+
+.action-button {
+    margin-left: 8px;
+   margin-right: 8px;
+}
+
+.reply-body {
+    resize: none;
+    width: 100%;
+    height: 30vh;
+}

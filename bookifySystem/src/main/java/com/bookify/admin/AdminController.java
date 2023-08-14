@@ -77,7 +77,22 @@ public class AdminController {
         }
     }
 
-    //TODO: Add rejectHost endpoint
+    @PutMapping("/rejectHost/{username}")
+    public ResponseEntity<?> rejectHost(@PathVariable String username){
+        try{
+            adminService.rejectHost(username);
+            return ResponseEntity.ok().build();
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (UnsupportedOperationException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
 
     @GetMapping("/getUsersXML")
     public String getUserFileXML() throws Exception {

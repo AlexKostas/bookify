@@ -87,6 +87,32 @@ const UserGrid = () => {
         }
     }
 
+    const rejectHost = async (username) => {
+        const endpointURL = 'admin/rejectHost';
+
+        try{
+            await axiosPrivate.put(`${endpointURL}/${username}`);
+            fetchUsers(isChecked);
+
+            setSuccess(`Host ${username} rejected successfully`);
+            setError(null);
+            setTimeout(() => {setSuccess(null)}, 5000);
+        }
+        catch(error){
+            console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occurred. Please check the console for more details');
+            }
+
+            setSuccess(null);
+            setTimeout(clearError, 5000);
+        }
+    }
+
     const downloadFile = (content, fileType) => {
         if (fileType === 'json')
             content = JSON.stringify(content, null, 2);
@@ -184,7 +210,10 @@ const UserGrid = () => {
                                 </Tooltip>
 
                                 <Tooltip title="Reject Host" placement="top">
-                                    <IconButton aria-label="reject">
+                                    <IconButton
+                                        aria-label="reject"
+                                        onClick={() => rejectHost(username)}
+                                    >
                                         <CancelIcon style={{ color: 'red' }} />
                                     </IconButton>
                                 </Tooltip>

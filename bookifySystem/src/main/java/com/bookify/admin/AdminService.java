@@ -1,5 +1,6 @@
 package com.bookify.admin;
 
+import com.bookify.messages.MessageService;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
 import com.bookify.room.Room;
@@ -27,6 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 public class AdminService {
 
+    private final MessageService messageService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RoomRepository roomRepository;
@@ -35,6 +37,7 @@ public class AdminService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<User> searchResult = userRepository.findAll(pageable);
 
+        //TODO: refactor this
         List<UserResponseDTOForAdmin> result = new ArrayList<>();
 
         for(User user : searchResult){
@@ -83,6 +86,32 @@ public class AdminService {
         Role hostRole = roleRepository.findByAuthority("host").get();
         user.activateHost(hostRole);
         userRepository.save(user);
+
+        messageService.sendMessageFromAdmin(
+                user.getUsername(),
+                "Host Application",
+                "We are happy to inform you that your host application has been accepted! \n\nYou are now free to" +
+                        " visit the host dashboard and start registering rooms."
+        );
+    }
+
+    public void rejectHost(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        if(user.isAdmin()) throw new UnsupportedOperationException("Can not reject an admin user");
+        if(!user.isInactiveHost()) throw new UnsupportedOperationException("Can not reject an already active host or" +
+                "a tenant");
+
+        user.rejectHost();
+        userRepository.save(user);
+
+        messageService.sendMessageFromAdmin(
+                user.getUsername(),
+                "Host Application",
+                "We are sorry to inform you that your host application has been rejected! \n\nYou will be" +
+                        " allowed to apply again at a future date."
+        );
     }
 
     public String getAppDataJSON() throws JsonProcessingException {
