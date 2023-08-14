@@ -20,8 +20,8 @@ const ComposeMessage = ({onClose}) => {
         try {
             await axiosPrivate.post('/messages/compose', {
                 recipientUsername: recipient.trim(),
-                topic,
-                body: messageBody
+                topic: topic.trim(),
+                body: messageBody.trim()
             });
 
             setRecipient('');
