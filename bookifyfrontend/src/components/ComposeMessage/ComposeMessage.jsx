@@ -2,8 +2,12 @@ import { useState } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import ConversationView from "../ConversationView/ConversationView";
+import Dialog from "@mui/material/Dialog";
 
-const ComposeMessage = ({onClose}) => {
+const ComposeMessage = ({open, onClose}) => {
     const [recipient, setRecipient] = useState('');
     const [topic, setTopic] = useState('');
     const [messageBody, setMessageBody] = useState('');
@@ -49,55 +53,58 @@ const ComposeMessage = ({onClose}) => {
 
     return (
         <div>
-            <button onClick={() => onClose()}>Close</button>
+            <Dialog open={open} onClose={onClose} maxWidth="md">
+                <DialogTitle>New Message</DialogTitle>
+                <DialogContent>
+                    {
+                        error && (
+                            <Alert severity="error" onClose={clearError}>
+                                <AlertTitle>Error</AlertTitle>
+                                {error}
+                            </Alert>
+                        )
+                    }
 
-            {
-                error && (
-                    <Alert severity="error" onClose={clearError}>
-                        <AlertTitle>Error</AlertTitle>
-                        {error}
-                    </Alert>
-                )
-            }
+                    <form onSubmit={handleSubmit}>
+                        <div>
+                            <label>Recipient:</label>
+                            <input
+                                type="text"
+                                value={recipient}
+                                onChange={(e) => {
+                                    setRecipient(e.target.value);
+                                    setError(null);
+                                }}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label>Topic:</label>
+                            <input
+                                type="text"
+                                value={topic}
+                                onChange={(e) => {
+                                    setTopic(e.target.value);
+                                    setError(null);
+                                }}
+                                required
+                            />
+                        </div>
 
-            <form onSubmit={handleSubmit}>
-            <div>
-                <label>Recipient:</label>
-                <input
-                type="text"
-                value={recipient}
-                onChange={(e) => {
-                    setRecipient(e.target.value);
-                    setError(null);
-                }}
-                required
-                />
-            </div>
-            <div>
-                <label>Topic:</label>
-                <input
-                type="text"
-                value={topic}
-                onChange={(e) => {
-                    setTopic(e.target.value);
-                    setError(null);
-                }}
-                required
-                />
-            </div>
-            <div>
-                <label>Message:</label>
-                <textarea
-                value={messageBody}
-                onChange={(e) => {
-                    setMessageBody(e.target.value);
-                    setError(null);
-                }}
-                required
-                />
-            </div>
-            <button type="submit">Send Message</button>
-            </form>
+                        <label>Message:</label>
+                        <textarea
+                            value={messageBody}
+                            onChange={(e) => {
+                                setMessageBody(e.target.value);
+                                setError(null);
+                            }}
+                            required
+                        />
+                        <button type="submit">Send Message</button>
+                    </form>
+                </DialogContent>
+                <button onClick={() => onClose()}>Close</button>
+            </Dialog>
         </div>
     )
 }

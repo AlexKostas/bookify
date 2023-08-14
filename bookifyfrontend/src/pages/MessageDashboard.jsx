@@ -16,7 +16,9 @@ const MessageDashboard = () => {
 
             {
                 composePanelActive ?
-                    (<ComposeMessage onClose={() => setComposePanelActive(false)} />)
+                    (<ComposeMessage
+                        open = {composePanelActive}
+                        onClose={() => setComposePanelActive(false)} />)
                     : <MessageGrid />
             }
         </div>
