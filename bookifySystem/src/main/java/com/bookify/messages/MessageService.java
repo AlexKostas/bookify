@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -37,9 +38,6 @@ public class MessageService {
 
         Conversation newConversation = new Conversation(currentUser, recipient, messageRequest.topic());
         conversationRepository.save(newConversation);
-
-        inboxEntryRepository.save(new InboxEntry(currentUser, newConversation));
-        inboxEntryRepository.save(new InboxEntry(recipient, newConversation));
 
         createNewMessage(currentUser, newConversation, messageRequest.body());
     }
@@ -89,7 +87,6 @@ public class MessageService {
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize, direction, "lastUpdated");
         Page<Conversation> searchResult = conversationRepository.findAllConversationsOfUser(currentUser.getUserID(), pageable);
-
 
         List<ConversationResponseDTO> finalResult = new ArrayList<>();
         for(Conversation conversation : searchResult){
@@ -141,7 +138,9 @@ public class MessageService {
         Message newMessage = new Message(sender, conversation, body, currentTimestamp);
         messageRepository.save(newMessage);
 
-        InboxEntry entry = inboxEntryRepository.findByConversationAndUser(conversation, conversation.getOtherMember(sender)).get();
+        User recipient = conversation.getOtherMember(sender);
+        Optional<InboxEntry> entryOptional = inboxEntryRepository.findByConversationAndUser(conversation, recipient);
+        InboxEntry entry = entryOptional.orElseGet(() -> new InboxEntry(recipient, conversation));
         entry.markUnread();
         inboxEntryRepository.save(entry);
     }
