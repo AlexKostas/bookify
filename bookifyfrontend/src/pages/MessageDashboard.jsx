@@ -11,7 +11,7 @@ const MessageDashboard = () => {
     return (
         <div>
             <Navbar />
-            <h1>Message Dashboard</h1>
+            <h1>Inbox</h1>
             <button onClick={() => setComposePanelActive(true)}>Compose</button>
 
             {

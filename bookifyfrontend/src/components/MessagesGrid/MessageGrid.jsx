@@ -7,6 +7,7 @@ import ConversationView from "../ConversationView/ConversationView";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
+import {MenuItem, Select} from "@mui/material";
 
 const messages = [
   { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
@@ -30,7 +31,7 @@ const MessageGrid = () => {
 
   const itemsPerPage = 4;
 
-  const fetchMessages = async (currentPage, orderDirection) => {
+  const fetchConversations = async (currentPage, orderDirection) => {
     try {
       const endpointURL = 'messages/getConversations';
       const response = await axiosPrivate.get(`${endpointURL}?pageNumber=${currentPage - 1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`);
@@ -45,7 +46,7 @@ const MessageGrid = () => {
 
   const handlePageChange = (event, newPage) => {
     setCurrentPage(newPage);
-    fetchMessages(newPage, orderDirection);
+    fetchConversations(newPage, orderDirection);
   };
 
   const handleOpenConversation = (conversation) => {
@@ -67,15 +68,30 @@ const MessageGrid = () => {
 
   const onClose = () => {
     setViewOpen(false);
-    fetchMessages(currentPage, orderDirection);
+    fetchConversations(currentPage, orderDirection);
   }
 
   useEffect(() => {
-    fetchMessages(currentPage, orderDirection);
+    fetchConversations(currentPage, orderDirection);
   }, []);
 
   return (
       <>
+        Sort by:
+        <Select
+            id="order"
+            value={orderDirection}
+            onChange={(event) => {
+              setOrderDirection(event.target.value);
+              fetchConversations(currentPage, event.target.value)
+            }}
+        >
+          <MenuItem value="DESC">Latest Messages First</MenuItem>
+          <MenuItem value="ASC">Earliest Messages First</MenuItem>
+        </Select>
+        <br/>
+        <br/>
+
         <Container maxWidth="lg">
           <div className='grid'>
             <Grid container spacing={2}>
