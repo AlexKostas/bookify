@@ -40,7 +40,7 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
             await axiosPrivate.post(endpointURL, {
                 recipientUsername: '',
                 topic: '',
-                body: replyBody
+                body: replyBody.trim()
             });
 
             cancelReply();
