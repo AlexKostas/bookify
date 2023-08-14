@@ -2,6 +2,7 @@ package com.bookify.messages;
 
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Constants;
 import com.bookify.utils.UtilityComponent;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -40,6 +41,22 @@ public class MessageService {
         conversationRepository.save(newConversation);
 
         createNewMessage(currentUser, newConversation, messageRequest.body());
+    }
+
+    public void sendMessageFromAdmin(String recipientUsername, String topic, String message){
+        User admin = userRepository.findByRoles_Authority(Constants.ADMIN_ROLE);
+        Optional<User> recipientOptional = userRepository.findByUsername(recipientUsername);
+
+        assert(recipientOptional.isPresent());
+        User recipient = recipientOptional.get();
+
+        assert(recipient != admin);
+
+        Conversation newConversation = new Conversation(admin, recipient, topic);
+        newConversation.markReadonly();
+        conversationRepository.save(newConversation);
+
+        createNewMessage(admin, newConversation, message);
     }
 
     public void replyToMessage(Long conversationID, MessageRequestDTO messageRequest)

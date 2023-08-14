@@ -118,9 +118,13 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
                 ) : (
                     <div className="message-actions">
                         <Tooltip title={readonly ? "This conversation is read-only" : "Reply"}>
-                            <IconButton disabled={readonly} onClick={() => setReplyOpen(true)} style={{ color: 'blue' }}>
-                                <ReplyIcon />
-                            </IconButton>
+                            <span>
+                                <IconButton disabled={readonly}
+                                            onClick={() => setReplyOpen(true)}
+                                            style={readonly? {color:'gray'} : { color: 'blue' }}>
+                                    <ReplyIcon />
+                                </IconButton>
+                            </span>
                         </Tooltip>
                         <Tooltip title="Delete">
                             <IconButton style={{ color: 'red' }}
