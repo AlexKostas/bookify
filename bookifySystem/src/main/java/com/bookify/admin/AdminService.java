@@ -95,6 +95,25 @@ public class AdminService {
         );
     }
 
+    public void rejectHost(String username){
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+
+        if(user.isAdmin()) throw new UnsupportedOperationException("Can not reject an admin user");
+        if(!user.isInactiveHost()) throw new UnsupportedOperationException("Can not reject an already active host or" +
+                "a tenant");
+
+        user.rejectHost();
+        userRepository.save(user);
+
+        messageService.sendMessageFromAdmin(
+                user.getUsername(),
+                "Host Application",
+                "We are sorry to inform you that your host application has been rejected! \n\nYou will be" +
+                        " allowed to apply again at a future date."
+        );
+    }
+
     public String getAppDataJSON() throws JsonProcessingException {
         List<Room> rooms = roomRepository.findAll();
 

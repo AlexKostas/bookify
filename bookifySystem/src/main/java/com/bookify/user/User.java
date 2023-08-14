@@ -126,6 +126,11 @@ public class User implements UserDetails {
         roles.add(hostRole);
     }
 
+    public void rejectHost(){
+        assert(isInactiveHost());
+        roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
+    }
+
     public void assignRoom(Room room){
         rooms.add(room);
     }
