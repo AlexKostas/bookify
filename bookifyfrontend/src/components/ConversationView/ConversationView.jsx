@@ -55,10 +55,10 @@ const ConversationView = ({conversationID, onClose}) => {
         fetchMessages();
     }, []);
 
-    const formatMessageBody = (body) => {
+    const formatMessageBody = (body, lineBeginning) => {
         return body
             .split('\n')
-            .map((line) => `> ${line}`)
+            .map((line) => `${lineBeginning}${line}`)
             .join('\n');
     };
 
@@ -141,17 +141,17 @@ const ConversationView = ({conversationID, onClose}) => {
                     {
                         index > 0 ? (
                             <>
-                                <pre><i>{formatMessageBody(`On ${formatTimestamp(message.timestamp)} user ${message.senderUsername} wrote:`)}</i></pre>
-                                <pre>{formatMessageBody(message.body)}</pre>
+                                <pre><i>{formatMessageBody(`On ${formatTimestamp(message.timestamp)} user ${message.senderUsername} wrote:`, '> ')}</i></pre>
+                                <pre>{formatMessageBody(message.body, '> ')}</pre>
                             </>
                         ) :
                             <>
-                                <p><i>On {formatTimestamp(message.timestamp)} user {message.senderUsername} wrote:</i></p>
-                                <br />
-                                <p>{message.body}</p>
-                                <br />
+                                <pre><i>{formatMessageBody(`On ${formatTimestamp(message.timestamp)} user ${message.senderUsername} wrote:`, '')}</i></pre>
+                                <br/>
+                                <pre>{formatMessageBody(message.body, '')}</pre>
                             </>
                     }
+                    <br/>
                 </div>
                 ))
             }

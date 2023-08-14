@@ -86,9 +86,22 @@ const MessageGrid = () => {
                     {/* Display message as a clickable card */}
                     <Paper elevation={3} className="message-card" onClick={() => handleOpenConversation(conversation)}>
                       <Box display="flex" flexDirection="row" height="100%">
-                        <Typography variant="h6">{conversation.topic}</Typography>
-                        <Typography>{conversation.member2Username}</Typography>
-                        <Typography>{formatTimestamp(conversation.lastUpdated)}</Typography>
+                        <Typography
+                            variant="h6"
+                            className={conversation.isRead ? 'read' : 'unread'}
+                        >
+                          {conversation.topic}
+                        </Typography>
+                        <Typography
+                            className={conversation.isRead ? 'read' : 'unread'}
+                        >
+                          {conversation.member2Username}
+                        </Typography>
+                        <Typography
+                            className={conversation.isRead ? 'read' : 'unread'}
+                        >
+                          {formatTimestamp(conversation.lastUpdated)}
+                        </Typography>
                       </Box>
                     </Paper>
                   </Grid>
