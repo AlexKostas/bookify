@@ -8,7 +8,7 @@
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.container {
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
