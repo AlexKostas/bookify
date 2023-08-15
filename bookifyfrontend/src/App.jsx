@@ -7,7 +7,6 @@ import PersistentLogin from './components/PersistentLogin';
 import { Routes, Route } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage';
-import useAuth from './hooks/useAuth';
 import RoomViewPage from './pages/RoomViewPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
@@ -17,6 +16,7 @@ import MessageDashboard from './pages/MessageDashboard';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import Layout from './components/Layout';
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import SearchPage from "./pages/SearchPage";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -24,8 +24,6 @@ export const Tenant = "tenant";
 export const InactiveHost = "inactive-host";
 
 function App() {
-    const auth = useAuth();
-
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
@@ -37,6 +35,7 @@ function App() {
           <Route path="unauthorized" element={<UnauthorizedPage />} />
           <Route path="room/:roomID" element={<RoomViewPage />} />
           <Route path="user/:username" element={<ViewUserPage />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="/" element={<HomePage />} />
 
           <Route element={<RequireAuth allowedRoles={[Admin]} />}>
@@ -60,7 +59,7 @@ function App() {
           </Route>
         </Route>
 
-        {/* catch all */}
+        {/* Page not found */}
         <Route path="*" element={<NotFoundPage />} />
         </Route>
     </Routes>

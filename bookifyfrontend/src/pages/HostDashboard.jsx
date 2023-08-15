@@ -2,11 +2,18 @@ import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import RoomDashboard from "../components/RoomDashboard/RoomDashboard";
+import {useSearchContext} from "../context/SearchContext";
+import {useEffect} from "react";
 
 const HostDashboard = () => {
     const { auth } = useAuth();
     const isInactiveHost = auth.roles.includes('inactive-host');
     const navigate = useNavigate();
+    const { resetSearch } = useSearchContext();
+
+    useEffect(() => {
+        resetSearch();
+    }, []);
 
     return (
         <div>

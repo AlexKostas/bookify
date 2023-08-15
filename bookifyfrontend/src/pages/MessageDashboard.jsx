@@ -1,12 +1,16 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
 import Navbar from "../components/Navbar/Navbar";
 import ComposeMessage from "../components/ComposeMessage/ComposeMessage";
 import MessageGrid from "../components/MessagesGrid/MessageGrid";
+import {useSearchContext} from "../context/SearchContext";
 
 const MessageDashboard = () => {
-    const navigate = useNavigate();
     const [composePanelActive, setComposePanelActive] = useState(false);
+    const { resetSearch } = useSearchContext();
+
+    useEffect(() => {
+        resetSearch();
+    }, []);
 
     return (
         <div>

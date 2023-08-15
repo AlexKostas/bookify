@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./dropdown.css";
-import { redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
 import useImageFetcher from '../../hooks/useImageFetcher';
 import useAuth from '../../hooks/useAuth';
