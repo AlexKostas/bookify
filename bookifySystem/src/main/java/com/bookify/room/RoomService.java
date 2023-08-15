@@ -2,6 +2,8 @@ package com.bookify.room;
 
 import com.bookify.availability.Availability;
 import com.bookify.availability.AvailabilityRepository;
+import com.bookify.booking.Booking;
+import com.bookify.booking.BookingRepository;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
@@ -30,6 +32,7 @@ public class RoomService{
     private final AmenityRepository amenityRepository;
     private final UserRepository userRepository;
     private final RoomTypeRepository roomTypeRepository;
+    private final BookingRepository bookingRepository;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
     private final AvailabilityRepository availabilityRepository;
@@ -40,6 +43,7 @@ public class RoomService{
         return newRoom.getRoomID();
     }
 
+    //TODO: check availability within editRoom
     public Integer editRoom(RoomRegistrationDTO roomDTO, Integer roomID) throws IllegalAccessException {
         Room room = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
@@ -133,16 +137,37 @@ public class RoomService{
 
         roomAuthenticationUtility.verifyRoomEditingPrivileges(roomToDelete);
 
-        host.unassignRoom(roomToDelete);
-        userRepository.save(host);
+        host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
+        userRepository.save(host);          // updates the host
 
         //TODO: delete any bookings for given room
+        List<Booking> roomBookings = bookingRepository.findByRoomId(roomID);
+        if (roomBookings.size()>0)
+            bookingRepository.deleteAll(roomBookings);
+
+        //TODO: delete any availabilities for given room
+        List<Availability> roomAvailabilities = availabilityRepository.findAvailabilitiesByRoomId(roomID);
+        if (roomAvailabilities.size()>0)
+            availabilityRepository.deleteAll(roomAvailabilities);
+
+        //TODO: delete images of given room
+        imageRepository.deleteAll(roomToDelete.getPhotos());
+        imageRepository.delete(roomToDelete.getThumbnail());
+
+        // finally delete the room
         roomRepository.delete(roomToDelete);
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
         //TODO: maybe some more error handling here
-        if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.surfaceArea() < 2)
+        if (
+            roomDTO.name() == null       || roomDTO.summary() == null   || roomDTO.description() == null    ||
+            roomDTO.zipcode() == null    || roomDTO.latitude() == null  || roomDTO.longitude() == null      ||
+            roomDTO.minimumStay() < 1    || roomDTO.nBeds() < 1         || roomDTO.nBaths() < 0             ||
+            roomDTO.surfaceArea() < 2    || roomDTO.accommodates() < 1  || roomDTO.country() == null        ||
+            roomDTO.maxTenants() < 1     || roomDTO.pricePerNight() < 1 || roomDTO.extraCostPerTenant() < 0 ||
+            roomDTO.amenityIDs() == null
+        )
             throw new OperationNotSupportedException("Incompatible room fields");
 
         assert(userRepository.findByUsername(hostUsername).isPresent());
