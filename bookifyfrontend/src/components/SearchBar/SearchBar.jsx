@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./searchbar.css";
 import { DateRange } from "react-date-range";
-import { useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
@@ -28,9 +28,13 @@ const SearchBar = ({ type }) => {
     const [options, setOptions] = useState({
         people: 1,
     });
+    const [error, setError] = useState(false);
 
     const navigate = useNavigate();
     const { searchInfo, setSearchInfo } = useSearchContext();
+
+    const dateRef = useRef();
+    const optionsRef = useRef();
 
     const handleOption = (name, operation) => {
         setOptions((prev) => {
@@ -43,6 +47,7 @@ const SearchBar = ({ type }) => {
 
     const handleSearch = () => {
         if (destination === "" || dates[0].startDate === undefined || dates[0].endDate === undefined){
+            setError(true);
             return;
         }
 
@@ -60,6 +65,28 @@ const SearchBar = ({ type }) => {
         setDestination(value);
     }
 
+    const handleClickOutside = (event) => {
+        if (dateRef.current && !dateRef.current.contains(event.target)) {
+            setOpenDate(false);
+        }
+
+        if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+            setOpenOptions(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        setError(false);
+    }, [destination, dates, options]);
+
+    let headerSearchError = 'headerSearchError';
     return (
         <div className="header">
             <div
@@ -69,7 +96,7 @@ const SearchBar = ({ type }) => {
             >
                 {type !== "list" && (
                     <>
-                        <div className="headerSearch">
+                        <div className={`headerSearch ${error && headerSearchError}`}>
                             <div className="headerSearchItem">
                                 <FontAwesomeIcon icon={faBed} className="headerIcon" />
                                 <SearchField
@@ -78,7 +105,7 @@ const SearchBar = ({ type }) => {
                                 />
                             </div>
 
-                            <div className="headerSearchItem">
+                            <div className="headerSearchItem" ref={dateRef}>
                                 <FontAwesomeIcon icon={faCalendarDays} className="headerIcon" />
                                 <span
                                     onClick={() => setOpenDate(!openDate)}
@@ -100,7 +127,7 @@ const SearchBar = ({ type }) => {
                             </div>
 
 
-                            <div className="headerSearchItem">
+                            <div className="headerSearchItem" ref={optionsRef}>
                                 <FontAwesomeIcon icon={faPerson} className="headerIcon" />
                                 <span
                                     onClick={() => setOpenOptions(!openOptions)}
