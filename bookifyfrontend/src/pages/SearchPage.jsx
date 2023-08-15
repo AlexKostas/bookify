@@ -54,20 +54,17 @@ const SearchPage = () => {
             top: 0,
             behavior: 'smooth',
         });
-        fetchRooms(newPage);
     }
 
     const onOptionsChanged = (newOptions) => {
-        console.log(newOptions);
         setOrderDirection(newOptions.orderDirection);
         setCurrentPage(1);
         setOptions(newOptions);
-        fetchRooms(1);
     }
 
     useEffect(() => {
         fetchRooms(currentPage);
-    }, []);
+    }, [currentPage, options]);
 
     return (
         <>
