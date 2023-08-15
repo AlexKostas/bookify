@@ -1,10 +1,10 @@
 import { Grid, Typography } from '@mui/material';
-import { CircularProgress } from "@mui/material";
+import { useCallback } from 'react'
 import React, {useEffect, useState} from "react";
 import axios from "../../api/axios";
 import './roomview.css';
 import 'leaflet/dist/leaflet.css';
-import L, { icon } from 'leaflet';
+import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 const RoomView = ({ roomID }) => {
@@ -21,7 +21,7 @@ const RoomView = ({ roomID }) => {
         iconAnchor: [16, 32],
     });
 
-    const fetchRoomDetails = async () => {
+    const fetchRoomDetails = useCallback(async () => {
         if (room === '') {
             setRoom(null);
             return;
@@ -29,54 +29,122 @@ const RoomView = ({ roomID }) => {
 
         try {
             const response = await axios.get(ROOM_URL);
-
             setRoom(response?.data ?? null);
-
         } catch (error) {
             console.log(error);
             setRoom(null);
         }
-
-    };
-
+    }, [ROOM_URL, room]);
 
     useEffect(() => {
         fetchRoomDetails();
-    }, [roomID]);
+    }, [fetchRoomDetails]);
 
     return (
         <>
             <div className="user-info">
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Number of Beds: {room?.nBeds}</Typography>
+                        <Typography variant="body2">Host: {room?.hostUsername}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Number of Baths: {room?.nBaths}</Typography>
+                        <Typography variant="body2">Summary: {room?.summary}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Number of Bedrooms: {room?.nBedrooms}</Typography>
+                        <Typography variant="body2">Description: {room?.description}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Total surface area: {room?.surfaceArea}</Typography>
+                        <Typography variant="body2">Number of Beds: {room?.nBeds}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Description: {room?.description}</Typography>
+                        <Typography variant="body2">Number of Baths: {room?.nBaths}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Amenities: {room?.amenityNames}</Typography>
+                        <Typography variant="body2">Number of Bedrooms: {room?.nBedrooms}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Amenity Description: {room?.amenityDescriptions}</Typography>
+                        <Typography variant="body2">Total surface area: {room?.surfaceArea}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Thumbnail Photo: {room?.thumbnailGuid}</Typography>
+                        <Typography variant="body2">Amenities: {room?.amenityNames}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Latitude: {latitude}</Typography>
+                        <Typography variant="body2">Amenity Description: {room?.amenityDescriptions}</Typography>
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body1">Longitude: {longitude}</Typography>
+                        <Typography variant="body2">Thumbnail Photo: {room?.thumbnailGuid}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Country: {room?.country}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">City: {room?.city}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Address: {room?.address}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Neighborhood: {room?.state}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Transit Info: {room?.zipcode}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Room Type: {room?.roomType}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Price per night (eur): {room?.pricePerNight}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Maximum number of tenants: {room?.maxTenants}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Extra cost per tenant: {room?.extraCostPerTenant}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">
+                            Amenities:
+                            <div>
+                                {room?.amenityNames.map(amenity => {
+                                    return(
+                                        <div key={amenity.id}>
+                                            {amenity}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">
+                            Amenities' Descriptions:
+                            <div>
+                                {room?.amenityDescriptions.map(amenityDescr => {
+                                    return(
+                                        <div key={amenityDescr.id}>
+                                            {amenityDescr}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">Thumbnail: {room?.thumbnailGuid}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Typography variant="body2">
+                            Photo Guids:
+                            <div>
+                                {room?.photosGUIDs.map(photoGUID => {
+                                    return(
+                                        <div key={photoGUID.id}>
+                                            {photoGUID}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </Typography>
                     </Grid>
                 </Grid>
             </div>
