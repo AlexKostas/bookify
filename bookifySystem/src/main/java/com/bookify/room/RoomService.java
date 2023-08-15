@@ -43,7 +43,6 @@ public class RoomService{
         return newRoom.getRoomID();
     }
 
-    //TODO: check availability within editRoom
     public Integer editRoom(RoomRegistrationDTO roomDTO, Integer roomID) throws IllegalAccessException {
         Room room = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
@@ -52,7 +51,6 @@ public class RoomService{
 
         roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
-        //TODO: keep this up to date with the new fields of rooms
         room.setName(roomDTO.name());
         room.setSummary(roomDTO.summary());
         room.setDescription(roomDTO.description());
@@ -79,7 +77,10 @@ public class RoomService{
         room.setMaxTenants(roomDTO.maxTenants());
         room.setExtraCostPerTenant(roomDTO.extraCostPerTenant());
         room.setAmenities(generateAmenitiesSet(roomDTO.amenityIDs()));
+
+        //TODO: delete old availability
         setAvailability(roomDTO.availability(), room);
+
         roomRepository.save(room);
 
         return roomID;
@@ -119,7 +120,7 @@ public class RoomService{
                 room.getAmenitiesNames(),
                 room.getAmenitiesDescriptions(),
                 room.getThumbnail().getImageGuid(),
-                room.getphotosGUIDs()
+                room.getPhotosGUIDs()
         );
     }
 
@@ -133,9 +134,9 @@ public class RoomService{
 
         assert(roomToDelete.getRoomID() == roomID);
 
-        User host = roomToDelete.getRoomHost();
-
         roomAuthenticationUtility.verifyRoomEditingPrivileges(roomToDelete);
+
+        User host = roomToDelete.getRoomHost();
 
         host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
         userRepository.save(host);          // updates the host

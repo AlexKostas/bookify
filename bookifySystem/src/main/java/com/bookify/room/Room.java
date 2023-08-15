@@ -206,8 +206,7 @@ public class Room {
         return result;
     }
 
-    public List<String> getphotosGUIDs() {
-        List<Image> photos = this.getPhotos();
+    public List<String> getPhotosGUIDs() {
         List<String> result = new ArrayList<>();
 
         for (Image photo : photos)
