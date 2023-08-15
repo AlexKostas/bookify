@@ -14,12 +14,14 @@ const Navbar = () => {
                 </Link>
                 {auth ? <Dropdown username={auth.user} /> : (
                     <div className="navItems">
-                        <Link to='/register'>
-                            <button className="navButton">Register</button>
-                        </Link>
-                        <Link to='/login'>
-                            <button className="navButton">Login</button>
-                        </Link>
+                        <div className="buttons">
+                            <Link to='/register'>
+                                <button className="navButton">Register</button>
+                            </Link>
+                            <Link to='/login'>
+                                <button className="navButton">Login</button>
+                            </Link>
+                        </div>
                     </div>
                 )}
             </div>

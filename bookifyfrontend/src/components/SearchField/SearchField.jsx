@@ -5,7 +5,7 @@ import axios from '../../api/axios';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import './searchField.css';
 
-const SearchField = () => {
+const SearchField = ( {onSelection} ) => {
     const [suggestions, setSuggestions] = useState([]);
     const [inputValue, setInputValue] = useState('');
 
@@ -29,7 +29,7 @@ const SearchField = () => {
     }
 
     const handleSelect = (event, value) => {
-
+        onSelection(value);
     }
 
     useEffect(() => {

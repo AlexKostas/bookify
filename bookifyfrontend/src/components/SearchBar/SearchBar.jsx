@@ -42,17 +42,23 @@ const SearchBar = ({ type }) => {
     };
 
     const handleSearch = () => {
-        //TODO: make sure all parameters are set
+        if (destination === "" || dates[0].startDate === undefined || dates[0].endDate === undefined){
+            return;
+        }
 
         setSearchInfo({
-            location: "Athens",
-            checkInDate: 'hi',
-            checkOutDate: 'bye',
-            people: 4
+            location: destination,
+            checkInDate: dates[0].startDate,
+            checkOutDate: dates[0].endDate,
+            people: options.people
         });
 
         navigate('/search');
     };
+
+    const onLocationSelection = (value) => {
+        setDestination(value);
+    }
 
     return (
         <div className="header">
@@ -66,7 +72,10 @@ const SearchBar = ({ type }) => {
                         <div className="headerSearch">
                             <div className="headerSearchItem">
                                 <FontAwesomeIcon icon={faBed} className="headerIcon" />
-                                <SearchField className="headerSearchInput" />
+                                <SearchField
+                                    onSelection={onLocationSelection}
+                                    className="headerSearchInput"
+                                />
                             </div>
 
                             <div className="headerSearchItem">
@@ -81,7 +90,7 @@ const SearchBar = ({ type }) => {
                                 {openDate && (
                                     <DateRange
                                         editableDateInputs={true}
-                                        onChange={(item) => setDates([item.selection])}
+                                        onChange={(item) => setDates([item.selection[0]])}
                                         moveRangeOnFirstSelection={false}
                                         ranges={dates}
                                         className="date"
