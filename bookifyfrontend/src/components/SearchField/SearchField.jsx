@@ -37,28 +37,28 @@ const SearchField = () => {
     }, []);
 
     return (
-    <Autocomplete
-        options={suggestions} // Use the fetched suggestions
-        getOptionLabel={(option) => option} // Return the raw string as the option label
-        onChange={handleSelect}
-        onInputChange={handleInputChange}
-        renderInput={(params) => (
-            <TextField
-            {...params}
-            value={inputValue ? 'Location...' : ''}
-            variant="outlined"
-            InputProps={{
-                ...params.InputProps,
-                startAdornment: (
-                <>
-                    <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
-                    {params.InputProps.startAdornment}
-                </>
-                ),
-            }}
-            className="search-bar-root" // Apply the CSS class here
-            />
-        )}
+        <Autocomplete
+            options={suggestions}
+            getOptionLabel={(option) => option}
+            onChange={handleSelect}
+            onInputChange={handleInputChange}
+            renderInput={(params) => (
+                <TextField
+                {...params}
+                value={inputValue ? 'Location...' : ''}
+                variant="outlined"
+                InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                    <>
+                        <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
+                        {params.InputProps.startAdornment}
+                    </>
+                    ),
+                }}
+                className="search-bar-root"
+                />
+            )}
         />
   );
 }
