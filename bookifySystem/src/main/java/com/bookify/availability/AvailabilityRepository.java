@@ -1,5 +1,6 @@
 package com.bookify.availability;
 
+import com.bookify.room.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,8 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Long
             "where a.room.roomID = :roomID " +
             "and a.date >= :startDate and a.date < :endDate")
     long countAvailableDaysBetween(int roomID, LocalDate startDate, LocalDate endDate);
+
+    void deleteByRoom(Room room);
 
     @Modifying
     @Query("delete from Availability a " +

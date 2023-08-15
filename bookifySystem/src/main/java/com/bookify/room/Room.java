@@ -17,7 +17,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 @Table(name="rooms")
 public class Room {
@@ -96,21 +95,43 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
 
-    public Room(String description, int numOfBeds, int numOfBaths, int numOfBedrooms,
-                int surfaceArea, Set<Amenity> amenities, RoomType type, User roomHost) {
+    public Room(String name, String summary, String description, String notes, String address, String neighborhood,
+                String neighborhoodOverview, String transitInfo, String city, String state, String country,
+                String zipcode, String latitude, String longitude, int minimumStay, String rules, int numOfBeds,
+                int numOfBaths, int numOfBedrooms, int surfaceArea, int accommodates, RoomType roomType,
+                float pricePerNight, int maxTenants, float extraCostPerTenant, Set<Amenity> amenities,
+                Image thumbnail, User roomHost) {
+        this.name = name;
+        this.summary = summary;
         this.description = description;
+        this.notes = notes;
+        this.address = address;
+        this.neighborhood = neighborhood;
+        this.neighborhoodOverview = neighborhoodOverview;
+        this.transitInfo = transitInfo;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.zipcode = zipcode;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.minimumStay = minimumStay;
+        this.rules = rules;
         this.numOfBeds = numOfBeds;
         this.numOfBaths = numOfBaths;
         this.numOfBedrooms = numOfBedrooms;
         this.surfaceArea = surfaceArea;
+        this.accommodates = accommodates;
+        this.roomType = roomType;
+        this.pricePerNight = pricePerNight;
+        this.maxTenants = maxTenants;
+        this.extraCostPerTenant = extraCostPerTenant;
         this.amenities = amenities;
+        this.thumbnail = thumbnail;
         this.roomHost = roomHost;
 
-        this.thumbnail = null;
         this.photos = new ArrayList<>();
         this.reviews = new ArrayList<>();
-
-        this.roomType = type;
     }
 
     public void addPhoto(Image newPhoto){
@@ -149,6 +170,35 @@ public class Room {
 
     public int getReviewCount(){
         return reviews.size();
+    }
+
+    public List<String> getAmenitiesNames(){
+        Set<Amenity> roomAmenities = this.getAmenities();
+        List<String> result = new ArrayList<>();
+
+        for (Amenity amenity : roomAmenities)
+            result.add(amenity.getName());
+
+        return result;
+    }
+
+    public List<String> getAmenitiesDescriptions(){
+        Set<Amenity> roomAmenities = this.getAmenities();
+        List<String> result = new ArrayList<>();
+
+        for (Amenity amenity : roomAmenities)
+            result.add(amenity.getDescription());
+
+        return result;
+    }
+
+    public List<String> getPhotosGUIDs() {
+        List<String> result = new ArrayList<>();
+
+        for (Image photo : photos)
+            result.add(photo.getImageGuid());
+
+        return result;
     }
 
     @Override

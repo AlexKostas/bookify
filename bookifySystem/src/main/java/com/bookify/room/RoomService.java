@@ -1,5 +1,12 @@
 package com.bookify.room;
 
+import com.bookify.availability.Availability;
+import com.bookify.availability.AvailabilityRepository;
+import com.bookify.booking.BookingRepository;
+import com.bookify.configuration.Configuration;
+import com.bookify.images.Image;
+import com.bookify.images.ImageRepository;
+import com.bookify.images.ImageStorage;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
@@ -12,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -20,11 +28,15 @@ public class RoomService{
 
     //TODO: when host leaves/changes roles make sure his room entries are deleted/disabled
 
-    private RoomRepository roomRepository;
-    private AmenityRepository amenityRepository;
-    private UserRepository userRepository;
-    private RoomTypeRepository roomTypeRepository;
-    private RoomAuthenticationUtility roomAuthenticationUtility;
+    private final RoomRepository roomRepository;
+    private final AmenityRepository amenityRepository;
+    private final UserRepository userRepository;
+    private final RoomTypeRepository roomTypeRepository;
+    private final BookingRepository bookingRepository;
+    private final RoomAuthenticationUtility roomAuthenticationUtility;
+    private final ImageRepository imageRepository;
+    private final ImageStorage imageStorage;
+    private final AvailabilityRepository availabilityRepository;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -40,13 +52,36 @@ public class RoomService{
 
         roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
-        //TODO: keep this up to date with the new fields of rooms
+        room.setName(roomDTO.name());
+        room.setSummary(roomDTO.summary());
+        room.setDescription(roomDTO.description());
+        room.setNotes(roomDTO.notes());
+        room.setAddress(roomDTO.address());
+        room.setNeighborhood(roomDTO.neighborhood());
+        room.setNeighborhoodOverview(roomDTO.neighborhoodOverview());
+        room.setTransitInfo(roomDTO.transitInfo());
+        room.setCity(roomDTO.city());
+        room.setState(roomDTO.state());
+        room.setCountry(roomDTO.country());
+        room.setZipcode(roomDTO.zipcode());
+        room.setLatitude(roomDTO.latitude());
+        room.setLongitude(roomDTO.longitude());
+        room.setMinimumStay(roomDTO.minimumStay());
+        room.setRules(roomDTO.rules());
         room.setNumOfBeds(roomDTO.nBeds());
         room.setNumOfBaths(roomDTO.nBaths());
         room.setNumOfBedrooms(roomDTO.nBedrooms());
         room.setSurfaceArea(roomDTO.surfaceArea());
-        room.setDescription(roomDTO.description());
+        room.setAccommodates(roomDTO.accommodates());
+        room.setRoomType(getRoomType(roomDTO.roomTypeID()));
+        room.setPricePerNight(roomDTO.pricePerNight());
+        room.setMaxTenants(roomDTO.maxTenants());
+        room.setExtraCostPerTenant(roomDTO.extraCostPerTenant());
         room.setAmenities(generateAmenitiesSet(roomDTO.amenityIDs()));
+
+        // delete old availability and update with new one
+        availabilityRepository.deleteByRoom(room);
+        setAvailability(roomDTO.availability(), room);
 
         roomRepository.save(room);
 
@@ -58,16 +93,36 @@ public class RoomService{
 
         assert(room.getRoomID() == roomID);
         return new RoomResponseDTO(
+                room.getRoomHost().getUsername(),
+                room.getName(),
+                room.getSummary(),
+                room.getDescription(),
+                room.getNotes(),
+                room.getAddress(),
+                room.getNeighborhood(),
+                room.getNeighborhoodOverview(),
+                room.getTransitInfo(),
+                room.getCity(),
+                room.getState(),
+                room.getCountry(),
+                room.getZipcode(),
+                room.getLatitude(),
+                room.getLongitude(),
+                room.getMinimumStay(),
+                room.getRules(),
                 room.getNumOfBeds(),
                 room.getNumOfBaths(),
                 room.getNumOfBedrooms(),
                 room.getSurfaceArea(),
-                room.getDescription(),
-                getAmenitiesNames(room),
-                getAmenitiesDescriptions(room),
-                room.getThumbnail() != null ? room.getThumbnail().getImageGuid() : "",
-                room.getLatitude(),
-                room.getLongitude()
+                room.getRoomID(),
+                room.getRoomType().getName(),
+                room.getPricePerNight(),
+                room.getMaxTenants(),
+                room.getExtraCostPerTenant(),
+                room.getAmenitiesNames(),
+                room.getAmenitiesDescriptions(),
+                room.getThumbnail().getImageGuid(),
+                room.getPhotosGUIDs()
         );
     }
 
@@ -81,34 +136,70 @@ public class RoomService{
 
         assert(roomToDelete.getRoomID() == roomID);
 
-        User host = roomToDelete.getRoomHost();
-
         roomAuthenticationUtility.verifyRoomEditingPrivileges(roomToDelete);
 
-        host.unassignRoom(roomToDelete);
-        userRepository.save(host);
+        User host = roomToDelete.getRoomHost();
 
-        //TODO: delete any bookings for given room
+        host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
+        userRepository.save(host);          // updates the host
+
+        // delete any bookings for given room
+        bookingRepository.deleteByRoom(roomToDelete);
+
+        // delete availability rows of given room
+        availabilityRepository.deleteByRoom(roomToDelete);
+
+        // delete images of given room
+        imageStorage.deleteImages(roomToDelete.getPhotos());
+        imageStorage.deleteImage(roomToDelete.getThumbnail());
+
+        // finally delete the room
         roomRepository.delete(roomToDelete);
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
-        if (roomDTO.nBeds() < 1 || roomDTO.nBaths()<0 || roomDTO.surfaceArea() < 2)
+        if (
+            roomDTO.name() == null       || roomDTO.summary() == null   || roomDTO.description() == null    ||
+            roomDTO.zipcode() == null    || roomDTO.latitude() == null  || roomDTO.longitude() == null      ||
+            roomDTO.minimumStay() < 1    || roomDTO.nBeds() < 1         || roomDTO.nBaths() < 0             ||
+            roomDTO.surfaceArea() < 2    || roomDTO.accommodates() < 1  || roomDTO.country() == null        ||
+            roomDTO.maxTenants() < 1     || roomDTO.pricePerNight() < 1 || roomDTO.extraCostPerTenant() < 0 ||
+            roomDTO.amenityIDs() == null
+        )
             throw new OperationNotSupportedException("Incompatible room fields");
 
         assert(userRepository.findByUsername(hostUsername).isPresent());
         User host = userRepository.findByUsername(hostUsername).get();
-        //TODO: test only thing, to be removed once script and room creation functionality is fully implemented
-        RoomType roomType = roomTypeRepository.findByName("Private Room").get();
+        Image defaultThumbnail = imageRepository.findByImageGuid(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME).get();
 
-        Room newRoom =  new Room(
+        Room newRoom = new Room(
+                roomDTO.name(),
+                roomDTO.summary(),
                 roomDTO.description(),
+                roomDTO.notes(),
+                roomDTO.address(),
+                roomDTO.neighborhood(),
+                roomDTO.neighborhoodOverview(),
+                roomDTO.transitInfo(),
+                roomDTO.city(),
+                roomDTO.state(),
+                roomDTO.country(),
+                roomDTO.zipcode(),
+                roomDTO.latitude(),
+                roomDTO.longitude(),
+                roomDTO.minimumStay(),
+                roomDTO.rules(),
                 roomDTO.nBeds(),
                 roomDTO.nBaths(),
                 roomDTO.nBedrooms(),
                 roomDTO.surfaceArea(),
+                roomDTO.accommodates(),
+                getRoomType(roomDTO.roomTypeID()),
+                roomDTO.pricePerNight(),
+                roomDTO.maxTenants(),
+                roomDTO.extraCostPerTenant(),
                 generateAmenitiesSet(roomDTO.amenityIDs()),
-                roomType,
+                defaultThumbnail,
                 host
         );
 
@@ -116,6 +207,8 @@ public class RoomService{
 
         host.assignRoom(savedRoom);
         userRepository.save(host);
+
+        setAvailability(roomDTO.availability(), savedRoom);
 
         return savedRoom;
     }
@@ -138,23 +231,23 @@ public class RoomService{
         return amenities;
     }
 
-    private List<String> getAmenitiesNames(Room room){
-        Set<Amenity> roomAmenities = room.getAmenities();
-        List<String> result = new ArrayList<>();
 
-        for (Amenity amenity : roomAmenities)
-            result.add(amenity.getName());
+    private RoomType getRoomType(int roomTypeID){
+        Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);
+        if(roomTypeOptional.isEmpty())
+            throw new EntityNotFoundException("Room Type with ID " + roomTypeID + " not found");
 
-        return result;
+        return roomTypeOptional.get();
     }
 
-    private List<String> getAmenitiesDescriptions(Room room){
-        Set<Amenity> roomAmenities = room.getAmenities();
-        List<String> result = new ArrayList<>();
+    private void setAvailability(List<DatePairDTO> availability, Room room){
+        for(DatePairDTO datePair : availability){
+            LocalDate date = datePair.startDate();
 
-        for (Amenity amenity : roomAmenities)
-            result.add(amenity.getDescription());
-
-        return result;
+            while(!date.isAfter(datePair.endDate())){
+                availabilityRepository.save(new Availability(room, date));
+                date = date.plusDays(1);
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @Component
 @Slf4j
@@ -69,6 +70,11 @@ public class ImageStorage {
                 orElseThrow(() -> new EntityNotFoundException("Image with guid "+ guid + " not found"));
         String finalPath = pathRoot + image.getImageFilename();
         return new FileSystemResource(finalPath);
+    }
+
+    public void deleteImages(List<Image> images) throws UnsupportedOperationException {
+        for (Image image : images)
+            deleteImage(image);
     }
 
     public void deleteImage(Image image) throws UnsupportedOperationException {
