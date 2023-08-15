@@ -117,7 +117,7 @@ const SearchBar = ({ type }) => {
                                 {openDate && (
                                     <DateRange
                                         editableDateInputs={true}
-                                        onChange={(item) => setDates([item.selection[0]])}
+                                        onChange={(item) => setDates([item.selection])}
                                         moveRangeOnFirstSelection={false}
                                         ranges={dates}
                                         className="date"
