@@ -27,7 +27,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "   HAVING COUNT(a) = :availabilityDaysCount" +
             ") " +
             "GROUP BY r " +
-            "HAVING COUNT(a) = :filterAmenityCount")
+            "HAVING COUNT(a) = :filterAmenityCount " +
+            "ORDER BY r.calculateCost(5, 6) ASC")
     Page<Room> filterRoomsByAmenitiesAndAvailability(Set<Amenity> filterAmenities,
                                       Integer filterAmenityCount,
                                       LocalDate startDate,

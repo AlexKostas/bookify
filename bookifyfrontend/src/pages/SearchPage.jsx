@@ -55,7 +55,7 @@ const SearchPage = () => {
                 searchInfo ? (
                     <>
                         <h1>Search Results</h1>
-                        <div className="container">
+                        <div className="search-container">
 
                             <div className="filter-container">
                                 <FiltersPanel onFiltersChanged={onOptionsChanged} />
