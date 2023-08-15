@@ -2,7 +2,6 @@ import axios from "../../api/axios";
 import RoomCard from "../RoomCard/RoomCard";
 import { useEffect, useState } from "react";
 import './roomGrid.css';
-import FilterPanel from "../FilterPanel/FilterPanel";
 import PaginationControls from "../PaginationControls/PaginationControls";
 
 const RoomGrid = ({endpointURL}) => {
@@ -33,7 +32,6 @@ const RoomGrid = ({endpointURL}) => {
       {
         rooms.length === 0 ? <h3>No rooms found</h3> : (
           <div>
-            <FilterPanel />
             <PaginationControls onPageChanged={onPageChanged} totalPages={totalPages}>
               <div className="room-grid">
                   {
