@@ -34,13 +34,11 @@ public class SearchController {
             @RequestBody SearchRequestDTO searchRequestDTO
     ){
         try {
-            Page<SearchPreviewDTO> searchResults = searchService.searchByFilterAndAvailability(
+            Page<SearchPreviewDTO> searchResults = searchService.search(
                     pageNumber,
                     pageSize,
                     orderDirection,
-                    searchRequestDTO.startDate(),
-                    searchRequestDTO.endDate(),
-                    searchRequestDTO.amenitiesIDs()
+                    searchRequestDTO
             );
             return ResponseEntity.ok(searchResults);
         }

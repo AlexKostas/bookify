@@ -4,13 +4,14 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
+import com.bookify.room_type.RoomType;
+import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -20,6 +21,7 @@ public class SearchService {
 
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
+    private final RoomTypeRepository roomTypeRepository;
 
     //TODO: to be deleted once the recommendation system is done
     public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
@@ -42,9 +44,8 @@ public class SearchService {
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
 
-    public Page<SearchPreviewDTO> searchByFilterAndAvailability(int pageNumber, int pageSize, String sortDirection,
-                                                                LocalDate startDate, LocalDate endDate,
-                                                                List<Integer> amenitiesIDs){
+    public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
+                                         SearchRequestDTO searchDTO){
         Sort.Direction direction = Sort.Direction.ASC;
         if(sortDirection.equalsIgnoreCase("desc"))
             direction = Sort.Direction.DESC;
@@ -58,7 +59,7 @@ public class SearchService {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Set<Amenity> amenitiesFilter = new HashSet<>();
-        for(int amenityID : amenitiesIDs){
+        for(int amenityID : searchDTO.amenitiesIDs()){
             Optional<Amenity> amenityOptional = amenityRepository.findById(amenityID);
             if(!amenityOptional.isPresent()){
                 log.warn("Skipping amenity with id " + amenityID + ". REASON: Amenity not found");
@@ -68,18 +69,28 @@ public class SearchService {
             amenitiesFilter.add(amenityOptional.get());
         }
 
-        Page<Room> searchResult = roomRepository.filterRoomsByAmenitiesAndAvailability(
+        Set<RoomType> roomTypesFilter = new HashSet<>();
+        for(Integer roomTypeID: searchDTO.roomTypesIDs()){
+            Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);
+
+            if(!roomTypeOptional.isPresent()){
+                log.warn("Skipping room type with id " + roomTypeID + ". REASON: Room type not found");
+                continue;
+            }
+
+            roomTypesFilter.add(roomTypeOptional.get());
+        }
+
+        Page<Room> searchResult = roomRepository.filterRooms(
                 amenitiesFilter,
                 amenitiesFilter.size(),
-                startDate,
-                endDate,
-                Utils.getDaysBetween(startDate, endDate),
+                searchDTO.startDate(),
+                searchDTO.endDate(),
+                Utils.getDaysBetween(searchDTO.startDate(), searchDTO.endDate()),
+                roomTypesFilter,
+                roomTypesFilter.size(),
                 pageable
         );
-
-//        Page<Room> searchResult = roomRepository.filterByAvailability(startDate, endDate, Utils.getDaysBetween(startDate, endDate), pageable);
-
-//        Page<Room> searchResult = roomRepository.filterByAmenities(amenitiesFilter, amenitiesFilter.size(), pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
                 map(this::mapRoomToDTO).toList();
