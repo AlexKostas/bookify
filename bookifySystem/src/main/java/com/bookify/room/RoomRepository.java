@@ -18,8 +18,8 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     Page<Room> findAll(Pageable pageable);
 
     @Query("SELECT r FROM Room r " +
-            "JOIN r.amenities a " +
-            "WHERE a IN :filterAmenities " +
+            "LEFT JOIN r.amenities a " +
+            "WHERE a IN :filterAmenities OR a IS NULL " +
             "AND r IN ( " +
             "   SELECT a.room FROM Availability a " +
             "   WHERE a.date >= :startDate AND a.date < :endDate " +
@@ -28,12 +28,36 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             ") " +
             "GROUP BY r " +
             "HAVING COUNT(a) = :filterAmenityCount")
-    Page<Room> filterRoomsByAmenitiesAndAvailability(Set<Amenity> filterAmenities,
-                                      Integer filterAmenityCount,
-                                      LocalDate startDate,
-                                      LocalDate endDate,
-                                      long availabilityDaysCount,
-                                      Pageable pageable );
+    Page<Room> filterRoomsByAmenitiesAndAvailability(
+            Set<Amenity> filterAmenities,
+            Integer filterAmenityCount,
+            LocalDate startDate,
+            LocalDate endDate,
+            long availabilityDaysCount,
+            Pageable pageable
+    );
+
+    @Query("SELECT r FROM Room r where r IN ( " +
+            "   SELECT a.room FROM Availability a " +
+            "   WHERE a.date >= :startDate AND a.date < :endDate " +
+            "   GROUP BY a.room " +
+            "   HAVING COUNT(a) = :availabilityDaysCount" +
+            ")")
+    Page<Room> filterByAvailability(LocalDate startDate,
+                                    LocalDate endDate,
+                                    long availabilityDaysCount,
+                                    Pageable pageable);
+
+    @Query("SELECT r FROM Room r " +
+            "LEFT JOIN r.amenities a " +
+            "WHERE a IN :filterAmenities OR a IS NULL " +
+            "GROUP BY r " +
+            "HAVING COUNT(a) = :filterAmenityCount")
+    Page<Room> filterByAmenities(
+            Set<Amenity> filterAmenities,
+            Integer filterAmenityCount,
+            Pageable pageable
+    );
 
     @Query("SELECT r.roomID FROM Room r WHERE r.roomHost.username = :hostUsername")
     List<String> findRoomIDsByHostUsername(@Param("hostUsername") String hostUsername);

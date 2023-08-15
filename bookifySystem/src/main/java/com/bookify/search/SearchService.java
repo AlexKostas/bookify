@@ -32,7 +32,6 @@ public class SearchService {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
                     "Please use 'asc' or 'desc' to specify the order of the search results");
 
-        //TODO: Add sorting direction and property to sort by
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Page<Room> searchResult = roomRepository.findAll(pageable);
@@ -77,6 +76,10 @@ public class SearchService {
                 Utils.getDaysBetween(startDate, endDate),
                 pageable
         );
+
+//        Page<Room> searchResult = roomRepository.filterByAvailability(startDate, endDate, Utils.getDaysBetween(startDate, endDate), pageable);
+
+//        Page<Room> searchResult = roomRepository.filterByAmenities(amenitiesFilter, amenitiesFilter.size(), pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
                 map(this::mapRoomToDTO).toList();

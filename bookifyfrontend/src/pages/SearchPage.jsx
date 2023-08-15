@@ -14,11 +14,31 @@ const SearchPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [orderDirection, setOrderDirection] = useState('ASC');
+    const [options, setOptions] = useState({
+        amenities: [],
+        maxPrice: 120,
+        roomTypes: [],
+        orderDirection: 'ASC'
+    });
 
     const fetchRooms = async (currentPage) => {
-        const endpointURL = '/search/searchAll';
+        const endpointURL = '/search/search';
         try{
-            const response = await axios.get(`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`);
+            console.log(searchInfo);
+            console.log(options);
+            const response = await axios.put
+            (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
+                JSON.stringify(
+                    {
+                        startDate: searchInfo.checkInDate,
+                        endDate: searchInfo.checkOutDate,
+                        amenitiesIDs: options.amenities,
+                        maxPrice: options.maxPrice,
+                        roomTypesIDs: options.roomTypes,
+                    }
+                )
+
+            );
 
             setRooms(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -41,6 +61,7 @@ const SearchPage = () => {
         console.log(newOptions);
         setOrderDirection(newOptions.orderDirection);
         setCurrentPage(1);
+        setOptions(newOptions);
         fetchRooms(1);
     }
 

@@ -26,7 +26,7 @@ public class SearchController {
         return ResponseEntity.ok(searchResults);
     }
 
-    @GetMapping("/search")
+    @PutMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
             @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize,
