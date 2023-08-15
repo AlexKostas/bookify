@@ -54,6 +54,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/search/**").permitAll();
                     auth.requestMatchers("/api/reviews/**").permitAll();
                     auth.requestMatchers("/api/book/**").permitAll();
+                    auth.requestMatchers("/api/roomType/**").permitAll();
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/messages").authenticated();
                     auth.requestMatchers("/api/user/**").permitAll();
