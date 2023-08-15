@@ -32,8 +32,6 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
     const handleSortingChange = (value) => {
         setOrderDirection(value);
 
-        //TODO: move this logic in the room grid
-        // setCurrentPage(1);
         window.scrollTo({
             top: 0,
             behavior: 'smooth',
