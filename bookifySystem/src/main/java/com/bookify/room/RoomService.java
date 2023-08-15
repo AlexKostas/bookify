@@ -49,13 +49,33 @@ public class RoomService{
         roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
         //TODO: keep this up to date with the new fields of rooms
+        room.setName(roomDTO.name());
+        room.setSummary(roomDTO.summary());
+        room.setDescription(roomDTO.description());
+        room.setNotes(roomDTO.notes());
+        room.setAddress(roomDTO.address());
+        room.setNeighborhood(roomDTO.neighborhood());
+        room.setNeighborhoodOverview(roomDTO.neighborhoodOverview());
+        room.setTransitInfo(roomDTO.transitInfo());
+        room.setCity(roomDTO.city());
+        room.setState(roomDTO.state());
+        room.setCountry(roomDTO.country());
+        room.setZipcode(roomDTO.zipcode());
+        room.setLatitude(roomDTO.latitude());
+        room.setLongitude(roomDTO.longitude());
+        room.setMinimumStay(roomDTO.minimumStay());
+        room.setRules(roomDTO.rules());
         room.setNumOfBeds(roomDTO.nBeds());
         room.setNumOfBaths(roomDTO.nBaths());
         room.setNumOfBedrooms(roomDTO.nBedrooms());
         room.setSurfaceArea(roomDTO.surfaceArea());
-        room.setDescription(roomDTO.description());
+        room.setAccommodates(roomDTO.accommodates());
+        room.setRoomType(getRoomType(roomDTO.roomTypeID()));
+        room.setPricePerNight(roomDTO.pricePerNight());
+        room.setMaxTenants(roomDTO.maxTenants());
+        room.setExtraCostPerTenant(roomDTO.extraCostPerTenant());
         room.setAmenities(generateAmenitiesSet(roomDTO.amenityIDs()));
-
+        setAvailability(roomDTO.availability(), room);
         roomRepository.save(room);
 
         return roomID;
@@ -66,16 +86,36 @@ public class RoomService{
 
         assert(room.getRoomID() == roomID);
         return new RoomResponseDTO(
+                room.getRoomHost().getUsername(),
+                room.getName(),
+                room.getSummary(),
+                room.getDescription(),
+                room.getNotes(),
+                room.getAddress(),
+                room.getNeighborhood(),
+                room.getNeighborhoodOverview(),
+                room.getTransitInfo(),
+                room.getCity(),
+                room.getState(),
+                room.getCountry(),
+                room.getZipcode(),
+                room.getLatitude(),
+                room.getLongitude(),
+                room.getMinimumStay(),
+                room.getRules(),
                 room.getNumOfBeds(),
                 room.getNumOfBaths(),
                 room.getNumOfBedrooms(),
                 room.getSurfaceArea(),
-                room.getDescription(),
-                getAmenitiesNames(room),
-                getAmenitiesDescriptions(room),
+                room.getRoomID(),
+                room.getRoomType().getName(),
+                room.getPricePerNight(),
+                room.getMaxTenants(),
+                room.getExtraCostPerTenant(),
+                room.getAmenitiesNames(),
+                room.getAmenitiesDescriptions(),
                 room.getThumbnail().getImageGuid(),
-                room.getLatitude(),
-                room.getLongitude()
+                room.getphotosGUIDs()
         );
     }
 
@@ -168,25 +208,6 @@ public class RoomService{
         return amenities;
     }
 
-    private List<String> getAmenitiesNames(Room room){
-        Set<Amenity> roomAmenities = room.getAmenities();
-        List<String> result = new ArrayList<>();
-
-        for (Amenity amenity : roomAmenities)
-            result.add(amenity.getName());
-
-        return result;
-    }
-
-    private List<String> getAmenitiesDescriptions(Room room){
-        Set<Amenity> roomAmenities = room.getAmenities();
-        List<String> result = new ArrayList<>();
-
-        for (Amenity amenity : roomAmenities)
-            result.add(amenity.getDescription());
-
-        return result;
-    }
 
     private RoomType getRoomType(int roomTypeID){
         Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);

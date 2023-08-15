@@ -185,4 +185,34 @@ public class Room {
         Room otherRoom = (Room) o;
         return roomID == otherRoom.roomID;
     }
+
+    public List<String> getAmenitiesNames(){
+        Set<Amenity> roomAmenities = this.getAmenities();
+        List<String> result = new ArrayList<>();
+
+        for (Amenity amenity : roomAmenities)
+            result.add(amenity.getName());
+
+        return result;
+    }
+
+    public List<String> getAmenitiesDescriptions(){
+        Set<Amenity> roomAmenities = this.getAmenities();
+        List<String> result = new ArrayList<>();
+
+        for (Amenity amenity : roomAmenities)
+            result.add(amenity.getDescription());
+
+        return result;
+    }
+
+    public List<String> getphotosGUIDs() {
+        List<Image> photos = this.getPhotos();
+        List<String> result = new ArrayList<>();
+
+        for (Image photo : photos)
+            result.add(photo.getImageGuid());
+
+        return result;
+    }
 }
