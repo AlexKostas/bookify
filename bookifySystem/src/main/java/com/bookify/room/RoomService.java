@@ -2,11 +2,11 @@ package com.bookify.room;
 
 import com.bookify.availability.Availability;
 import com.bookify.availability.AvailabilityRepository;
-import com.bookify.booking.Booking;
 import com.bookify.booking.BookingRepository;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
+import com.bookify.images.ImageStorage;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
@@ -35,6 +35,7 @@ public class RoomService{
     private final BookingRepository bookingRepository;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
+    private final ImageStorage imageStorage;
     private final AvailabilityRepository availabilityRepository;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
@@ -43,6 +44,7 @@ public class RoomService{
         return newRoom.getRoomID();
     }
 
+    // TODO: check availability here
     public Integer editRoom(RoomRegistrationDTO roomDTO, Integer roomID) throws IllegalAccessException {
         Room room = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
@@ -78,7 +80,8 @@ public class RoomService{
         room.setExtraCostPerTenant(roomDTO.extraCostPerTenant());
         room.setAmenities(generateAmenitiesSet(roomDTO.amenityIDs()));
 
-        //TODO: delete old availability
+        // delete old availability and update with new one
+        availabilityRepository.deleteByRoom(room);
         setAvailability(roomDTO.availability(), room);
 
         roomRepository.save(room);
@@ -141,19 +144,15 @@ public class RoomService{
         host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
         userRepository.save(host);          // updates the host
 
-        //TODO: delete any bookings for given room
-        List<Booking> roomBookings = bookingRepository.findByRoomId(roomID);
-        if (roomBookings.size()>0)
-            bookingRepository.deleteAll(roomBookings);
+        // delete any bookings for given room
+        bookingRepository.deleteByRoom(roomToDelete);
 
-        //TODO: delete any availabilities for given room
-        List<Availability> roomAvailabilities = availabilityRepository.findAvailabilitiesByRoomId(roomID);
-        if (roomAvailabilities.size()>0)
-            availabilityRepository.deleteAll(roomAvailabilities);
+        // delete availability rows of given room
+        availabilityRepository.deleteByRoom(roomToDelete);
 
-        //TODO: delete images of given room
-        imageRepository.deleteAll(roomToDelete.getPhotos());
-        imageRepository.delete(roomToDelete.getThumbnail());
+        // delete images of given room
+        imageStorage.deleteImages(roomToDelete.getPhotos());
+        imageStorage.deleteImage(roomToDelete.getThumbnail());
 
         // finally delete the room
         roomRepository.delete(roomToDelete);
