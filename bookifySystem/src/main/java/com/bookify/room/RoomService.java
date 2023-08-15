@@ -44,7 +44,6 @@ public class RoomService{
         return newRoom.getRoomID();
     }
 
-    // TODO: check availability here
     public Integer editRoom(RoomRegistrationDTO roomDTO, Integer roomID) throws IllegalAccessException {
         Room room = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
@@ -159,7 +158,6 @@ public class RoomService{
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
-        //TODO: maybe some more error handling here
         if (
             roomDTO.name() == null       || roomDTO.summary() == null   || roomDTO.description() == null    ||
             roomDTO.zipcode() == null    || roomDTO.latitude() == null  || roomDTO.longitude() == null      ||
