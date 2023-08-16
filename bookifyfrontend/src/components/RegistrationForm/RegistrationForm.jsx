@@ -130,7 +130,7 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
                 </section>
             ) : (
                 <div className="main">
-                <section>
+                <section className="form-background">
                     <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                     
                     <form onSubmit={handleSubmit}>

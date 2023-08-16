@@ -58,19 +58,44 @@ const RoomView = ({ roomID }) => {
 
                 </div>
 
-                <br/>
-
                 <div className="main-content-parent">
 
                     <div className="main-room-content" >
-                        fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
-                        kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
-                        vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
-                        faskdgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjvjlsjjmjjjmjmjmjmjmjmjjmgkvfvgkmfmvb
-                        sakfdggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-                        sdgvkljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljlj
-                        gkljvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvd
-                        gfksl;vbm
+
+                        <section className="room-section">
+                            fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
+                            kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
+                            vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
+                            faskdgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjvjlsjjmjjjmjmjmjmjmjmjjmgkvfvgkmfmvb
+                            sakfdggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+                            sdgvkljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljlj
+                            gkljvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvd
+                            gfksl;vbm
+                        </section>
+
+
+                        <section className="room-section">
+                            <h3>Location</h3>
+
+                            {latitude && longitude && (
+                                <MapContainer center={[latitude, longitude]} zoom={16} style={{ height: '400px', width: '100%' }}>
+                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                    <Marker position={[latitude, longitude]} icon={customIcon}>
+                                        <Popup>
+                                            {label && (
+                                                <div style={{  maxWidth: '200px' }}>
+                                                    <div style={{ fontWeight: 'bold' }}>{label}</div>
+                                                    <div>
+                                                        Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Popup>
+                                    </Marker>
+                                </MapContainer>
+                            )}
+                        </section>
+
                     </div>
 
                     <div className="room-view-side-panel">
@@ -78,6 +103,17 @@ const RoomView = ({ roomID }) => {
                         <FiltersPanel />
                     </div>
 
+                </div>
+
+                <div className="review-parent">
+                    fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
+                    kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
+                    vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
+                    faskdgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjvjlsjjmjjjmjmjmjmjmjmjjmgkvfvgkmfmvb
+                    sakfdggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+                    sdgvkljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljlj
+                    gkljvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvd
+                    gfksl;vbm
                 </div>
             </div>
 

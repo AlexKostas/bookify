@@ -116,7 +116,7 @@ const ChangePasswordForm = () => {
     return (
         <>
             <div className="main">
-                <section>
+                <section className='form-background'>
                     <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive">{error}</p>
 
                     <form onSubmit={handleSubmit}>
