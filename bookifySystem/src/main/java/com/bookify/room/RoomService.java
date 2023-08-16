@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.bookify.utils.Constants.MAX_AVAILABILITIES;
+import static com.bookify.utils.Constants.MAX_AVAILABILITY_DAYS_PER_ROOM;
 
 
 @Slf4j
@@ -270,8 +270,8 @@ public class RoomService{
             LocalDate date = datePair.startDate();
 
             while(!date.isAfter(datePair.endDate())){
-                if(counter == MAX_AVAILABILITIES) {
-                    log.warn("Maximum number of available booking dates is set to: "+ MAX_AVAILABILITIES);
+                if(counter == MAX_AVAILABILITY_DAYS_PER_ROOM) {
+                    log.warn("Maximum number of available booking dates is set to: "+ MAX_AVAILABILITY_DAYS_PER_ROOM);
                     reachedMax = true;
                     break;
                 }
