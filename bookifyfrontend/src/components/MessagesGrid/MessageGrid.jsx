@@ -9,6 +9,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import {MenuItem, Select} from "@mui/material";
 import Badge from "../Badge/Badge";
+import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
@@ -21,8 +22,9 @@ const MessageGrid = () => {
   const [viewOpen, setViewOpen] = useState(false);
   const [currentConversation, setCurrentConversation] = useState(null);
 
+  const unreadMessages = useAutoFetchMessages();
+
   const itemsPerPage = 4;
-  const fetchInterval = 2000;
 
   const fetchConversations = async (currentPage, orderDirection) => {
     try {
@@ -31,20 +33,6 @@ const MessageGrid = () => {
 
       setConversations(response.data.content);
       setTotalPages(response.data.totalPages);
-    }
-    catch (error) {
-      console.log(error);
-    }
-  }
-
-  const checkForNewMessages = async () => {
-    const endpointURL = 'messages/getUnreadMessagesCount';
-
-    try {
-      const response = await axiosPrivate.get(endpointURL);
-      const unreadMessageCount = response.data;
-
-      if(unreadMessageCount > 0) fetchConversations(currentPage, orderDirection);
     }
     catch (error) {
       console.log(error);
@@ -80,13 +68,11 @@ const MessageGrid = () => {
 
   useEffect(() => {
     fetchConversations(currentPage, orderDirection);
-
-    const intervalId = setInterval(checkForNewMessages, fetchInterval);
-
-    return () => {
-      clearInterval(intervalId);
-    }
   }, []);
+
+  useEffect(() => {
+    if(unreadMessages > 0) fetchConversations(currentPage, orderDirection);
+  }, [unreadMessages]);
 
   return (
       <>
