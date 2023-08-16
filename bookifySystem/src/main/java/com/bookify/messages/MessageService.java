@@ -147,6 +147,11 @@ public class MessageService {
         return result;
     }
 
+    public int getUnreadMessagesCount(){
+        User currentUser = utility.getCurrentAuthenticatedUser();
+        return conversationRepository.getNumberOfUnreadMessagesOfUser(currentUser.getUserID());
+    }
+
     private void createNewMessage(User sender, Conversation conversation, String body) {
         Timestamp currentTimestamp = Timestamp.from(Instant.now());
         Message newMessage = new Message(sender, conversation, body, currentTimestamp);

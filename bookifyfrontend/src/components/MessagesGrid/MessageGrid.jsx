@@ -36,8 +36,18 @@ const MessageGrid = () => {
     }
   }
 
-  const checkForNewMessages = () => {
-    console.log("test");//
+  const checkForNewMessages = async () => {
+    const endpointURL = 'messages/getUnreadMessagesCount';
+
+    try {
+      const response = await axiosPrivate.get(endpointURL);
+      const unreadMessageCount = response.data;
+
+      if(unreadMessageCount > 0) fetchConversations(currentPage, orderDirection);
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   const handlePageChange = (event, newPage) => {
