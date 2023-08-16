@@ -31,6 +31,33 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserStats/{username}")
+    public ResponseEntity getUserStats(@PathVariable String username){
+        try{
+            return ResponseEntity.ok(userService.loadUserStats(username));
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/updateAboutInfo")
+    @PreAuthorize("hasRole('admin') or #updateUserAboutDTO.username() == authentication.name")
+    public ResponseEntity<?> updateAboutInfo(@RequestBody UpdateUserAboutDTO updateUserAboutDTO){
+        try {
+            return ResponseEntity.ok(userService.updateUserAboutInfo(updateUserAboutDTO));
+        }
+        catch (UsernameNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @PutMapping("/updateProfile")
     @PreAuthorize("hasRole('admin') or #updateUserProfileDTO.oldUsername() == authentication.name")
     public ResponseEntity<?> updateProfile(@RequestBody UpdateUserProfileDTO updateUserProfileDTO){

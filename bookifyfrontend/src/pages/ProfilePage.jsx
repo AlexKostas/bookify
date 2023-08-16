@@ -25,6 +25,10 @@ const ProfilePage = () => {
             <FontAwesomeIcon icon={faEdit} />
             Edit Profile
         </button>
+        <button onClick={() => navigate('/updateAboutInfo')}>
+            <FontAwesomeIcon icon={faEdit} />
+            Edit About Info
+        </button>
     </>
   );
 };
