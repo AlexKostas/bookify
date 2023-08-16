@@ -18,6 +18,8 @@ import Layout from './components/Layout';
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import SearchPage from "./pages/SearchPage";
 import UpdateUserAboutPage from "./pages/UpdateUserAboutPage";
+import {useEffect} from "react";
+import useAutoFetchMessages from "./hooks/useAutoFetchMessages";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -25,6 +27,15 @@ export const Tenant = "tenant";
 export const InactiveHost = "inactive-host";
 
 function App() {
+
+  const unreadMessages = useAutoFetchMessages();
+
+  useEffect(() => {
+    // Update the document title with unread message count
+    document.title = `${unreadMessages > 0 ? `(${unreadMessages}) ` : ''}Bookify`;
+  }, [unreadMessages]);
+
+
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

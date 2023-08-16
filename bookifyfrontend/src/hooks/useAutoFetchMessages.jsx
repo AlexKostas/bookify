@@ -4,7 +4,7 @@ import useAxiosPrivate from "./useAxiosPrivate";
 function useAutoFetchMessages() {
     const [messages, setMessages] = useState([]);
     const axiosPrivate = useAxiosPrivate();
-    const fetchInterval = 2000;
+    const fetchInterval = 6000;
 
     useEffect(() => {
         let isMounted = true;

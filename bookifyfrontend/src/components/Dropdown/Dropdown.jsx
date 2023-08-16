@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import useLogout from '../../hooks/useLogout';
 import useImageFetcher from '../../hooks/useImageFetcher';
 import useAuth from '../../hooks/useAuth';
+import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 
 const Dropdown = ({username}) => {
     const dropdownRef = useRef();
@@ -16,6 +17,8 @@ const Dropdown = ({username}) => {
 
     const profilePicURL = `/upload/getProfilePic/${username}`;
     const {imageData, loading} = useImageFetcher(profilePicURL);
+
+    const unreadMessages = useAutoFetchMessages();
 
     const handleToggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -68,7 +71,13 @@ const Dropdown = ({username}) => {
                 }
                 {
                     (auth.roles.includes('host') || auth.roles.includes('inactive-host') || auth.roles.includes('tenant') || auth.roles.includes('admin')) && (
-                        <button onClick={() => navigate('/messages')}>Messages</button>
+                        <button
+                            style={{
+                                color: unreadMessages > 0 ? 'red' : 'white',
+                            }}
+                        >
+                            Messages ({unreadMessages})
+                        </button>
                     )
                 }
                 <button onClick={handleGoToProfile}>Profile</button>
