@@ -1,20 +1,20 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 import { useEffect, useState } from "react";
 
-const useGetUserStats = (usrname) => {
+const useGetUserStats = (username) => {
     const axiosPrivate = useAxiosPrivate();
 
     const [userStats, setUserStats] = useState(null);
 
     useEffect(() => {
         const fetchUserStats = async () => {
-            if (usrname === '') {
+            if (username === '') {
                 setUserStats(null);
                 return;
             }
 
             try {
-                const response = await axiosPrivate.get(`/user/getUserStats/${usrname}`);
+                const response = await axiosPrivate.get(`/user/getUserStats/${username}`);
 
                 setUserStats(response?.data ?? null);
 

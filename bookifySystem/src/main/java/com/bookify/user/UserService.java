@@ -100,7 +100,7 @@ public class UserService implements UserDetailsService {
         return new UserStatsDTO(
                 user.getAboutInfo(),
                 user.getMemberSince(),
-                reviewRepository.findNumberOfReviewsByUser(user.getUsername())
+                reviewRepository.countByReviewerUsername(user.getUsername())
         );
     }
 
@@ -132,21 +132,12 @@ public class UserService implements UserDetailsService {
                 user.getRoleAuthorityList());
     }
 
-    public LoginRegistrationResponseDTO updateUserAboutInfo(UpdateUserAboutDTO newAbout) throws UsernameNotFoundException {
+    public void updateUserAboutInfo(UpdateUserAboutDTO newAbout) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(newAbout.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + newAbout.username() + " does not exist"));
 
         user.setAboutInfo(newAbout.aboutInfo());
         userRepository.save(user);
-
-        // Generate and return a new token as user info is updated
-        String newAccessToken = generateNewJWTToken(user);
-
-        return new LoginRegistrationResponseDTO(
-                newAbout.username(),
-                newAccessToken,
-                user.getRefreshToken().getToken(),
-                user.getRoleAuthorityList());
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {

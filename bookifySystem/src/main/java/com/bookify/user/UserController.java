@@ -19,7 +19,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/getUser/{username}")
-    public ResponseEntity getUser(@PathVariable String username){
+    public ResponseEntity<?> getUser(@PathVariable String username){
         try{
             return ResponseEntity.ok(userService.loadUserData(username));
         }
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/getUserStats/{username}")
-    public ResponseEntity getUserStats(@PathVariable String username){
+    public ResponseEntity<?> getUserStats(@PathVariable String username){
         try{
             return ResponseEntity.ok(userService.loadUserStats(username));
         }
@@ -48,7 +48,8 @@ public class UserController {
     @PreAuthorize("hasRole('admin') or #updateUserAboutDTO.username() == authentication.name")
     public ResponseEntity<?> updateAboutInfo(@RequestBody UpdateUserAboutDTO updateUserAboutDTO){
         try {
-            return ResponseEntity.ok(userService.updateUserAboutInfo(updateUserAboutDTO));
+            userService.updateUserAboutInfo(updateUserAboutDTO);
+            return ResponseEntity.ok("OK");
         }
         catch (UsernameNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

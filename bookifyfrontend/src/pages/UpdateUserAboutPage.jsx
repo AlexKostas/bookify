@@ -2,11 +2,10 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
-import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
+import {faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import AboutInfoForm from "../components/AboutInfoForm/AboutInfoForm";
 
 const UPDATE_USER_ABOUT_URL = '/user/updateAboutInfo';
@@ -15,7 +14,6 @@ const UpdateUserAboutPage = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const { auth, setAuth } = useAuth();
-    const { setItem } = useLocalStorage();
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
 
@@ -29,14 +27,6 @@ const UpdateUserAboutPage = () => {
                     }
                 )
             );
-
-            const responseUsername = response?.data?.username;
-            const accessToken = response?.data?.accessToken;
-            const refreshToken = response?.data?.refreshToken;
-            const roles = response?.data?.roles;
-
-            setAuth({ user: responseUsername, accessToken, refreshToken, roles });
-            setItem('refreshToken', refreshToken);
 
             setSuccess(true);
             navigate('/profile');
