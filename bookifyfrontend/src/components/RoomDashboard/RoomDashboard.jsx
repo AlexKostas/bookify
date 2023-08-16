@@ -1,5 +1,5 @@
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import {DataGrid, GridToolbar, GridToolbarContainer} from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from "react";
 import Alert from '@mui/material/Alert';
@@ -10,8 +10,10 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
-import './roomdashboard.css';
 import useAuth from "../../hooks/useAuth";
+import {Button, MenuItem, Select} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import './roomdashboard.css'
 
 const RoomDashboard = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -106,6 +108,21 @@ const RoomDashboard = () => {
         }
     ];
 
+    const CustomToolbar = () => {
+        return (
+            <GridToolbarContainer>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    // onClick={handleExport}
+                    startIcon={<AddIcon />}
+                >
+                    Create
+                </Button>
+            </GridToolbarContainer>
+        );
+    }
+
     const fetchRooms = async () => {
         const endpointURL = `room/getRoomsOfHost/${auth.user}`
 
@@ -176,6 +193,12 @@ const RoomDashboard = () => {
                         autoWidth
                         showCellVerticalBorder={true}
                         showColumnVerticalBorder={true}
+
+                        className="datagrid"
+
+                        slots = {
+                            {toolbar: CustomToolbar}
+                        }
                     />
                 
                     </div>
