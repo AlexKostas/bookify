@@ -9,7 +9,7 @@ export const useLocalStorage = () => {
     }
 
     const getItem = (key) => {
-        const valueToReturn = localStorage.getItem(key);
+        const valueToReturn = localStorage.getItem(key) || undefined;
         setValue(valueToReturn);
         return valueToReturn;
     }

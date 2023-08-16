@@ -26,7 +26,7 @@ public class SearchController {
         return ResponseEntity.ok(searchResults);
     }
 
-    @GetMapping("/search")
+    @PutMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
             @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize,
@@ -34,13 +34,11 @@ public class SearchController {
             @RequestBody SearchRequestDTO searchRequestDTO
     ){
         try {
-            Page<SearchPreviewDTO> searchResults = searchService.searchByFilterAndAvailability(
+            Page<SearchPreviewDTO> searchResults = searchService.search(
                     pageNumber,
                     pageSize,
                     orderDirection,
-                    searchRequestDTO.startDate(),
-                    searchRequestDTO.endDate(),
-                    searchRequestDTO.amenitiesIDs()
+                    searchRequestDTO
             );
             return ResponseEntity.ok(searchResults);
         }

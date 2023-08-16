@@ -1,6 +1,10 @@
 import mysql.connector
+import datetime
 import csv
 import re
+
+current_date = datetime.datetime.now()
+dates = [current_date + datetime.timedelta(days=x) for x in range(11)]
 
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
@@ -20,12 +24,21 @@ def delete_rooms(connection):
     connection.commit()
     cursor.close()
 
+def delete_availability(connection):
+    print("-- Deleting Availability --")
+
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM availability")
+    connection.commit()
+    cursor.close()
+
 def insert_listings(connection, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Listings --")
 
     with open(csv_file, newline='', encoding="utf8") as csvfile:
         reader = csv.DictReader(csvfile)
+        count = 0
 
         for row in reader:
             room_id = row['id']
@@ -61,8 +74,8 @@ def insert_listings(connection, csv_file):
             room_type = row['room_type']
             if room_type == 'Entire home/apt':
                 room_type = 'Entire home'
-            #TODO: Add room type id
-            query = cursor.execute(f"SELECT room_type_id FROM room_types WHERE lower(name) LIKE LOWER('%{room_type}%');")
+            
+            cursor.execute(f"SELECT room_type_id FROM room_types WHERE lower(name) LIKE LOWER('%{room_type}%');")
             result = cursor.fetchone()
             room_type_id = result[0]
             
@@ -80,6 +93,7 @@ def insert_listings(connection, csv_file):
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
             """
 
+            availability_query = "INSERT INTO availability (availability_id, room_id, date) VALUES (%s, %s, %s)"
 
             try:
                 cursor.execute(insert_query, (
@@ -92,6 +106,11 @@ def insert_listings(connection, csv_file):
                     surface_area, transit_info, zipcode, room_host_id,
                     thumbnail, room_type_id
                 ))
+
+                for date in dates:
+                    count += 1
+                    cursor.execute(availability_query, (count, room_id, date))
+
                 connection.commit()  # Commit the transaction after successful insertion
             except mysql.connector.Error as e:
                 print(f"Error inserting room with id {room_id}: {e}")
@@ -110,12 +129,17 @@ if __name__ == "__main__":
             database='db_bookify'
         )
         disable_foreign_key_checks(connection)
+
+        delete_availability(connection)
         delete_rooms(connection)
+
+
         connection.cursor().execute("SET AUTOCOMMIT = 0;")
         connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
 
         insert_listings(connection, 'listings.csv')
         enable_foreign_key_checks(connection)
         connection.close()
+
     except mysql.connector.Error as e:
         print(f"Error connecting to MySQL: {e}")

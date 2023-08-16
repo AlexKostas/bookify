@@ -13,9 +13,11 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import SearchField from "../SearchField/SearchField";
 import {useSearchContext} from "../../context/SearchContext";
+import {useLocalStorage} from "../../hooks/useLocalStorage";
 
 const SearchBar = ({ type }) => {
     const [destination, setDestination] = useState("");
+    const { setItem } = useLocalStorage();
     const [openDate, setOpenDate] = useState(false);
     const [dates, setDates] = useState([
         {
@@ -51,12 +53,16 @@ const SearchBar = ({ type }) => {
             return;
         }
 
-        setSearchInfo({
+        const newSearchInfo = {
             location: destination,
             checkInDate: dates[0].startDate,
             checkOutDate: dates[0].endDate,
-            people: options.people
-        });
+            tenants: options.people
+        }
+
+        setSearchInfo(newSearchInfo);
+
+        setItem("searchInfo", JSON.stringify(newSearchInfo));
 
         navigate('/search');
     };

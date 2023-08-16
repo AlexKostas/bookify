@@ -6,19 +6,42 @@ import FiltersPanel from "../components/FiltersPanel/FiltersPanel";
 import './styles/searchPage.css'
 import axios from "../api/axios";
 import {Pagination} from "@mui/material";
+import {useLocalStorage} from "../hooks/useLocalStorage";
 
 const SearchPage = () => {
-    const { searchInfo } = useSearchContext();
+    const { searchInfo, setSearchInfo } = useSearchContext();
+    const { getItem } = useLocalStorage();
     const itemsPerPage = 9;
     const [rooms, setRooms] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
     const [orderDirection, setOrderDirection] = useState('ASC');
+    const [options, setOptions] = useState({
+        amenities: [],
+        maxPrice: 600,
+        roomTypes: [],
+        orderDirection: 'ASC',
+    });
 
     const fetchRooms = async (currentPage) => {
-        const endpointURL = '/search/searchAll';
+        if(!searchInfo) return;
+
+        const endpointURL = '/search/search';
         try{
-            const response = await axios.get(`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`);
+            const response = await axios.put
+            (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
+                JSON.stringify(
+                    {
+                        tenants: searchInfo.tenants,
+                        startDate: searchInfo.checkInDate,
+                        endDate: searchInfo.checkOutDate,
+                        amenitiesIDs: options.amenities,
+                        maxPrice: options.maxPrice,
+                        roomTypesIDs: options.roomTypes,
+                    }
+                )
+
+            );
 
             setRooms(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -34,18 +57,26 @@ const SearchPage = () => {
             top: 0,
             behavior: 'smooth',
         });
-        fetchRooms(newPage);
     }
 
     const onOptionsChanged = (newOptions) => {
-        console.log(newOptions);
         setOrderDirection(newOptions.orderDirection);
         setCurrentPage(1);
-        fetchRooms(1);
+        setOptions(newOptions);
     }
 
     useEffect(() => {
         fetchRooms(currentPage);
+    }, [currentPage, options, searchInfo]);
+
+    useEffect(() => {
+        if(searchInfo) return;
+        const rawInfo = getItem('searchInfo')
+        if(!rawInfo) return;
+
+        const info = JSON.parse(rawInfo);
+
+        if(info) setSearchInfo(info);
     }, []);
 
     return (
