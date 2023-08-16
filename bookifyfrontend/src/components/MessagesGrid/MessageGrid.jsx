@@ -37,7 +37,7 @@ const MessageGrid = () => {
   }
 
   const checkForNewMessages = () => {
-    console.log("test");
+    console.log("test");//
   }
 
   const handlePageChange = (event, newPage) => {
