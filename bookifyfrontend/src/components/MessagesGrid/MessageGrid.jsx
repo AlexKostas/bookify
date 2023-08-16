@@ -8,15 +8,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import {MenuItem, Select} from "@mui/material";
-
-const messages = [
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-];
+import Badge from "../Badge/Badge";
+import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
@@ -28,6 +21,8 @@ const MessageGrid = () => {
 
   const [viewOpen, setViewOpen] = useState(false);
   const [currentConversation, setCurrentConversation] = useState(null);
+
+  const unreadMessages = useAutoFetchMessages();
 
   const itemsPerPage = 4;
 
@@ -75,6 +70,10 @@ const MessageGrid = () => {
     fetchConversations(currentPage, orderDirection);
   }, []);
 
+  useEffect(() => {
+    if(unreadMessages > 0) fetchConversations(currentPage, orderDirection);
+  }, [unreadMessages]);
+
   return (
       <>
         Sort by:
@@ -116,6 +115,11 @@ const MessageGrid = () => {
                         >
                           {formatTimestamp(conversation.lastUpdated)}
                         </Typography>
+
+                        {
+                          !conversation.isRead && <Badge bg="secondary">New</Badge>
+                        }
+
                       </Box>
                     </Paper>
                   </Grid>

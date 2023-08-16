@@ -1,5 +1,5 @@
 .navbar {
-    height: 50px;
+    height: 8vh;
     background-color: #003580;
     display: flex;
     justify-content: center;
@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-left: 10px;
 }
 
 .logo {
@@ -23,4 +24,16 @@
     padding: 5px 10px;
     cursor: pointer;
     color: #003580;
+}
+
+.navItems {
+    flex-direction: row;
+    justify-content: center;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10%;
+    margin-right: 10px;
 }

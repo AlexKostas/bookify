@@ -29,3 +29,13 @@
 h1 {
     text-align: center;
 }
+
+.MuiDataGrid-root .MuiDataGrid-columnHeader {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+}
+
+/*.datagrid .MuiDataGrid-toolbarContainer {*/
+/*    margin-bottom: 10px;*/
+/*    border-bottom: 1px solid #e0e0e0;*/
+/*}*/

@@ -4,13 +4,15 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
+import com.bookify.room_type.RoomType;
+import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.utils.Utils;
+import jakarta.persistence.criteria.Order;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -20,6 +22,11 @@ public class SearchService {
 
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
+    private final RoomTypeRepository roomTypeRepository;
+
+    private enum OrderDirection {
+        UP, DOWN
+    }
 
     //TODO: to be deleted once the recommendation system is done
     public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
@@ -32,34 +39,32 @@ public class SearchService {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
                     "Please use 'asc' or 'desc' to specify the order of the search results");
 
-        //TODO: Add sorting direction and property to sort by
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Page<Room> searchResult = roomRepository.findAll(pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
-                map(this::mapRoomToDTO).toList();
+                map((room) -> mapRoomToDTO(room, 1, 3)).toList();
 
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
 
-    public Page<SearchPreviewDTO> searchByFilterAndAvailability(int pageNumber, int pageSize, String sortDirection,
-                                                                LocalDate startDate, LocalDate endDate,
-                                                                List<Integer> amenitiesIDs){
-        Sort.Direction direction = Sort.Direction.ASC;
-        if(sortDirection.equalsIgnoreCase("desc"))
-            direction = Sort.Direction.DESC;
+    //TODO: also search by location
+    public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
+                                         SearchRequestDTO searchDTO){
 
-        if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc"))
+        if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc")) {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
                     "Please use 'asc' or 'desc' to specify the order of the search results");
+        }
 
-        //TODO: Add sorting direction and property to sort by
-        //TODO: filter by minimum stay, max price and other search filters
+        OrderDirection direction = sortDirection.equalsIgnoreCase("desc") ?
+                OrderDirection.DOWN : OrderDirection.UP;
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Set<Amenity> amenitiesFilter = new HashSet<>();
-        for(int amenityID : amenitiesIDs){
+        for(int amenityID : searchDTO.amenitiesIDs()){
             Optional<Amenity> amenityOptional = amenityRepository.findById(amenityID);
             if(!amenityOptional.isPresent()){
                 log.warn("Skipping amenity with id " + amenityID + ". REASON: Amenity not found");
@@ -69,17 +74,49 @@ public class SearchService {
             amenitiesFilter.add(amenityOptional.get());
         }
 
-        Page<Room> searchResult = roomRepository.filterRoomsByAmenitiesAndAvailability(
+        Set<RoomType> roomTypesFilter = new HashSet<>();
+        for(Integer roomTypeID: searchDTO.roomTypesIDs()){
+            Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);
+
+            if(!roomTypeOptional.isPresent()){
+                log.warn("Skipping room type with id " + roomTypeID + ". REASON: Room type not found");
+                continue;
+            }
+
+            roomTypesFilter.add(roomTypeOptional.get());
+        }
+
+        long nights = Utils.getDaysBetween(searchDTO.startDate(), searchDTO.endDate());
+
+        // Unfortunately, due to the way JPA works it is not allowed to use named parameters in the order by clause
+        // and although it works, it is non-standard and could break at any moment. Since there is no way to conveniently
+        // parameterize the order direction, two separate queries are needed
+        Page<Room> searchResult = direction == OrderDirection.UP ?
+                roomRepository.filterRoomsASC(
                 amenitiesFilter,
                 amenitiesFilter.size(),
-                startDate,
-                endDate,
-                Utils.getDaysBetween(startDate, endDate),
+                searchDTO.startDate(),
+                searchDTO.endDate(),
+                nights,
+                roomTypesFilter,
+                roomTypesFilter.size(),
+                searchDTO.maxPrice(),
+                searchDTO.tenants(),
                 pageable
-        );
+        ) : roomRepository.filterRoomsDESC(
+                amenitiesFilter,
+                amenitiesFilter.size(),
+                searchDTO.startDate(),
+                searchDTO.endDate(),
+                nights,
+                roomTypesFilter,
+                roomTypesFilter.size(),
+                searchDTO.maxPrice(),
+                searchDTO.tenants(),
+                pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
-                map(this::mapRoomToDTO).toList();
+                map((room) -> mapRoomToDTO(room, searchDTO.tenants(), nights)).toList();
 
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
@@ -97,14 +134,13 @@ public class SearchService {
         return suggestions;
     }
 
-    private SearchPreviewDTO mapRoomToDTO(Room room){
-        //TODO: review this code when we have all the search parameters available
+    private SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
         return new SearchPreviewDTO(room.getRoomID(),
                 room.getName(),
                 room.getRating(),
                 room.getReviewCount(),
                 room.getNumOfBeds(),
-                100,
+                room.calculateCost(tenants, (int) nights),
                 room.getRoomType().getName(),
                 room.getThumbnail().getImageGuid());
     }

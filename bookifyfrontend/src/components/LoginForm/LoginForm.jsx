@@ -85,7 +85,7 @@ const LoginForm = () => {
     }
 
     return (
-        <div className='container'>
+        <div className='login-container'>
             <div className='login-form'>
                 <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
                 <h1>Sign In</h1>

@@ -1,5 +1,6 @@
 package com.bookify.room;
 
+import com.bookify.configuration.Configuration;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,9 +59,13 @@ public class RoomController {
     }
 
     @GetMapping("/getRoomsOfHost/{username}")
-    public ResponseEntity<?> getRoomsOfHost(@PathVariable String username){
+    public ResponseEntity<?> getRoomsOfHost(
+            @PathVariable String username,
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
+            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize
+    ){
         try {
-            return ResponseEntity.ok(roomService.getRoomsOfHost(username));
+            return ResponseEntity.ok(roomService.getRoomsOfHost(username, pageNumber, pageSize));
         }
         catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());

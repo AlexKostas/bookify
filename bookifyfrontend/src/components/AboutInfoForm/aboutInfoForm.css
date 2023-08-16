@@ -1,0 +1,25 @@
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.errmsg {
+    background-color: lightpink;
+    color: firebrick;
+    font-weight: bold;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.offscreen {
+    position: absolute;
+    left: -9999px;
+}
+
+.about-label {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 0px;
+    color: #222;
+}

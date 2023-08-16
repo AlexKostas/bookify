@@ -25,7 +25,7 @@ const useImageFetcher = (url) => {
         fetchImage();
     }, [url]);
 
-    return {imageData, loading, error};
+    return {imageData, loading, error, setImageData};
 }
 
 export default useImageFetcher;

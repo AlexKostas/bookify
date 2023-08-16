@@ -7,7 +7,6 @@ import PersistentLogin from './components/PersistentLogin';
 import { Routes, Route } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage';
 import RegistrationPage from './pages/RegistrationPage';
-import useAuth from './hooks/useAuth';
 import RoomViewPage from './pages/RoomViewPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
@@ -17,6 +16,10 @@ import MessageDashboard from './pages/MessageDashboard';
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import Layout from './components/Layout';
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import SearchPage from "./pages/SearchPage";
+import UpdateUserAboutPage from "./pages/UpdateUserAboutPage";
+import {useEffect} from "react";
+import useAutoFetchMessages from "./hooks/useAutoFetchMessages";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -24,7 +27,14 @@ export const Tenant = "tenant";
 export const InactiveHost = "inactive-host";
 
 function App() {
-    const auth = useAuth();
+
+  const unreadMessages = useAutoFetchMessages();
+
+  useEffect(() => {
+    // Update the document title with unread message count
+    document.title = `${unreadMessages > 0 ? `(${unreadMessages}) ` : ''}Bookify`;
+  }, [unreadMessages]);
+
 
   return (
     <Routes>
@@ -37,6 +47,7 @@ function App() {
           <Route path="unauthorized" element={<UnauthorizedPage />} />
           <Route path="room/:roomID" element={<RoomViewPage />} />
           <Route path="user/:username" element={<ViewUserPage />} />
+          <Route path="search" element={<SearchPage />} />
           <Route path="/" element={<HomePage />} />
 
           <Route element={<RequireAuth allowedRoles={[Admin]} />}>
@@ -55,12 +66,13 @@ function App() {
             [Host, InactiveHost, Tenant, Admin]} />}>
             <Route path ="profile" element={<ProfilePage />} />
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
+            <Route path ="updateAboutInfo" element={<UpdateUserAboutPage />} />
             <Route path="messages" element={<MessageDashboard />} />
             <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>
         </Route>
 
-        {/* catch all */}
+        {/* Page not found */}
         <Route path="*" element={<NotFoundPage />} />
         </Route>
     </Routes>
