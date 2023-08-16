@@ -1,6 +1,7 @@
 package com.bookify.reviews;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,4 +10,6 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findAllByRoomRoomID(int roomID);
     List<Review> findAllByReviewerUserID(Long userID);
+
+    int countByReviewerUsername(String username);
 }

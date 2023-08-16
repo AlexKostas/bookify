@@ -13,6 +13,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,10 @@ public class User implements UserDetails {
     private String email;
     private String phoneNumber;
     private String password;
+    private LocalDate memberSince;
+
+    @Column(length=1000)
+    private String aboutInfo;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
@@ -65,6 +70,8 @@ public class User implements UserDetails {
         this.password = password;
         this.profilePicture = profilePicture;
         this.roles = roles;
+        this.memberSince = LocalDate.now();
+        this.aboutInfo = "";
 
         this.refreshToken = null;
     }
