@@ -95,4 +95,17 @@ public class MessageController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/getUnreadMessagesCount")
+    public ResponseEntity<?> getUnreadMessagesCount(){
+        try{
+            return ResponseEntity.ok(messageService.getUnreadMessagesCount());
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

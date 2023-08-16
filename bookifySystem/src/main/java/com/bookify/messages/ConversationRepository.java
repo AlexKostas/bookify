@@ -15,4 +15,12 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
             "AND e.user.userID = :userID " +
             "AND e.isDeleted = false ")
     Page<Conversation> findAllConversationsOfUser(Long userID, Pageable pageable);
+
+    @Query("SELECT COUNT(c) FROM Conversation c, InboxEntry e " +
+            "WHERE (c.member1.userID = :userID or c.member2.userID = :userID) " +
+            "AND e.conversation.conversationID = c.conversationID " +
+            "AND e.user.userID = :userID " +
+            "AND e.isDeleted = false " +
+            "AND e.isRead = false")
+    int getNumberOfUnreadMessagesOfUser(Long userID);
 }
