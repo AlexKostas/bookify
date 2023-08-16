@@ -48,3 +48,20 @@
     cursor: pointer;
     z-index: 1;
 }
+
+/*.dropdown-profile-container {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    position: relative;*/
+/*}*/
+
+.unread-dot {
+    position: absolute;
+    bottom: -15%;
+    right: 80%;
+    width: 70%;
+    height: 35%;
+    background-color: red;
+    border-radius: 50%;
+    z-index: 2;
+}

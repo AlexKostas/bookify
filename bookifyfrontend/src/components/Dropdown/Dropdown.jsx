@@ -46,11 +46,16 @@ const Dropdown = ({username}) => {
                 {loading ? 
                     (<p>Loading...</p>) 
                     :imageData ? (
-                        <img
-                        src={imageData}
-                        alt="Could not load profile picture"
-                        className="profile-picture"
-                        />) : username
+                        <div className="dropdown-profile-container">
+                            <img
+                            src={imageData}
+                            alt="Could not load profile picture"
+                            className="profile-picture"
+                            />
+
+                            {(unreadMessages > 0 && !isOpen) && <div className="unread-dot"></div>}
+                        </div>
+                    ) : username
                 }
             </button>
             {isOpen && (
@@ -73,8 +78,9 @@ const Dropdown = ({username}) => {
                     (auth.roles.includes('host') || auth.roles.includes('inactive-host') || auth.roles.includes('tenant') || auth.roles.includes('admin')) && (
                         <button
                             style={{
-                                color: unreadMessages > 0 ? 'red' : 'white',
+                                color: unreadMessages > 0 ? 'red' : 'black',
                             }}
+                            onClick={() => navigate('/messages')}
                         >
                             Messages ({unreadMessages})
                         </button>
