@@ -1,5 +1,6 @@
 .user-dropdown {
     position: relative;
+    height: 100%;
 }
 
 .user-name {
@@ -36,9 +37,9 @@
 }
 
 .profile-picture {
-    width: 200%;
-    height: auto;
-    border-radius: 30%;
+    width: 2.95vw;
+    height: 2.95vw;
+    border-radius: 50%;
     object-fit: cover;
     margin-right: 8px;
     position: absolute;
@@ -46,4 +47,5 @@
     right: 12px;
     cursor: pointer;
     z-index: 1;
+    margin-bottom: 100px;
 }
