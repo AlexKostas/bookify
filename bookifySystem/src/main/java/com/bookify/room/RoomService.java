@@ -14,7 +14,12 @@ import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -126,10 +131,20 @@ public class RoomService{
         );
     }
 
-    public List<String> getRoomsOfHost(String username){
-        return roomRepository.findRoomIDsByHostUsername(username);
+    public Page<RoomDashboardDTO> getRoomsOfHost(String username, int pageNumber, int pageSize){
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Room> rooms = roomRepository.findByRoomHost_Username(username, pageable);
+
+        List<RoomDashboardDTO> result = rooms.getContent().stream().map((room -> new RoomDashboardDTO(
+                room.getRoomID(),
+                room.getName(),
+                room.getAddress()
+        ))).toList();
+
+        return new PageImpl<>(result, pageable, rooms.getTotalElements());
     }
 
+    @Transactional
     public void deleteRoom(Integer roomID) throws IllegalAccessException {
         Room roomToDelete = roomRepository.findById(roomID)
                 .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
@@ -151,7 +166,8 @@ public class RoomService{
 
         // delete images of given room
         imageStorage.deleteImages(roomToDelete.getPhotos());
-        imageStorage.deleteImage(roomToDelete.getThumbnail());
+        if(!roomToDelete.getThumbnail().getImageGuid().equals(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME))
+            imageStorage.deleteImage(roomToDelete.getThumbnail());
 
         // finally delete the room
         roomRepository.delete(roomToDelete);

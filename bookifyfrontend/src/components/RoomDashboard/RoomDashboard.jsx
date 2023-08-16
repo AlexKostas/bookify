@@ -1,7 +1,6 @@
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
+import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useState } from "react";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -29,9 +28,35 @@ const RoomDashboard = () => {
 
     const clearError = () => setError(null);
 
+    const deleteRoom = async (roomID, roomName) => {
+        const endpointURL = 'room/deleteRoom';
+
+        try{
+            await axiosPrivate.delete(`${endpointURL}/${roomID}`);
+            fetchRooms();
+
+            setSuccess(`Room '${roomName}' deleted successfully`);
+            setError(null);
+            setTimeout(() => {setSuccess(null)}, 2000);
+        }
+        catch(error){
+            console.log(error);
+
+            if(!error.response){
+                setError('No server response. Is the server running?');
+            }
+            else {
+                setError('An error occurred. Please check the console for more details');
+            }
+
+            setSuccess(null);
+            setTimeout(clearError, 3500);
+        }
+    }
+
     const columns = [
-        { field: 'username', headerName: 'Room Name', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
-        { field: 'firstName', headerName: 'Address', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
+        { field: 'name', headerName: 'Room Name', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
+        { field: 'address', headerName: 'Address', width: 130, align: 'center', headerAlign: 'center', sortable: false, flex: 1, filterable:false },
         {
             field: 'action',
             headerName: 'Action',
@@ -42,8 +67,8 @@ const RoomDashboard = () => {
             filterable: false,
             flex: 1,
             renderCell: (params) => {
-                const username = params.row.username;
-                const roles = params.row.roles;
+                const roomID = params.row.roomID;
+                const roomName = params.row.name;
 
                 return (
                     <div>
@@ -51,16 +76,25 @@ const RoomDashboard = () => {
                         <Tooltip title="View Room" placement="top">
                             <IconButton
                                 aria-label="view"
-                                // onClick={() => navigate(`/user/${username}`)}
+                                onClick={() => navigate(`/room/${roomID}`)}
                             >
                                 <VisibilityIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Edit Room" placement="top">
+                            <IconButton
+                                aria-label="rdit"
+                                // onClick={() => navigate(`/room/${roomID}`)}
+                            >
+                                <EditIcon />
                             </IconButton>
                         </Tooltip>
 
                         <Tooltip title="Delete Room" placement="top">
                             <IconButton
                                 aria-label="delete"
-                                // onClick={() => deleteUser(username)}
+                                onClick={() => deleteRoom(roomID, roomName)}
                                 style={{ color: 'red' }}
                             >
                                 <DeleteIcon />
@@ -131,9 +165,9 @@ const RoomDashboard = () => {
                         rows={rooms}
                         columns={columns}
                         rowCount={totalItems}
-                        pageSizeOptions={[5, 10, 20]}
+                        pageSizeOptions={[3, 5, 10]}
                         disableColumnMenu
-                        getRowId={(row) => row.id}
+                        getRowId={(row) => row.roomID}
                         paginationMode="server"
                         paginationModel={paginationModel}
                         onPaginationModelChange={setPaginationModel}

@@ -79,7 +79,7 @@ public class ImageStorage {
 
     public void deleteImage(Image image) throws UnsupportedOperationException {
         String guid = image.getImageGuid();
-        if(guid.equals(Configuration.DEFAULT_PROFILE_PIC_NAME))
+        if(guid.equals(Configuration.DEFAULT_PROFILE_PIC_NAME) || guid.equals(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME))
             throw new UnsupportedOperationException("Can not delete default profile pic");
 
         deleteImageFile(image.getImageFilename());

@@ -76,8 +76,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             Pageable pageable
     );
 
-    @Query("SELECT r.roomID FROM Room r WHERE r.roomHost.username = :hostUsername")
-    List<String> findRoomIDsByHostUsername(@Param("hostUsername") String hostUsername);
+    Page<Room> findByRoomHost_Username(String hostUsername, Pageable pageable);
 
     // Running native query, so we are able to use LIMIT keyword
     @Query(nativeQuery = true, value =
