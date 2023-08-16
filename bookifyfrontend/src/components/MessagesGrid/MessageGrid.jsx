@@ -9,15 +9,6 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import {MenuItem, Select} from "@mui/material";
 
-const messages = [
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-  { id: 1, sender: 'John Doe', subject: 'Greetings', content: 'Hello, how are you?' },
-];
-
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
   const axiosPrivate = useAxiosPrivate();
@@ -30,6 +21,7 @@ const MessageGrid = () => {
   const [currentConversation, setCurrentConversation] = useState(null);
 
   const itemsPerPage = 4;
+  const fetchInterval = 2000;
 
   const fetchConversations = async (currentPage, orderDirection) => {
     try {
@@ -42,6 +34,10 @@ const MessageGrid = () => {
     catch (error) {
       console.log(error);
     }
+  }
+
+  const checkForNewMessages = () => {
+    console.log("test");
   }
 
   const handlePageChange = (event, newPage) => {
@@ -73,6 +69,12 @@ const MessageGrid = () => {
 
   useEffect(() => {
     fetchConversations(currentPage, orderDirection);
+
+    const intervalId = setInterval(checkForNewMessages, fetchInterval);
+
+    return () => {
+      clearInterval(intervalId);
+    }
   }, []);
 
   return (
