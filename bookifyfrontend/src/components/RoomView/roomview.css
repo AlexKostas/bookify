@@ -58,4 +58,20 @@
 
 .room-section {
     margin-bottom: 2vh;
+    margin-left: 2%;
+}
+
+.room-view-map-container {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-view-map {
+    width: 60%;
+    height: 40vh;
+
+    margin-top: 15px;
 }

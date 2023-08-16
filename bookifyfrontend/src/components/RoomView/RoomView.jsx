@@ -77,8 +77,13 @@ const RoomView = ({ roomID }) => {
                         <section className="room-section">
                             <h3>Location</h3>
 
+                            <div className="room-view-map-container">
                             {latitude && longitude && (
-                                <MapContainer center={[latitude, longitude]} zoom={16} style={{ height: '400px', width: '100%' }}>
+                                <MapContainer
+                                    center={[latitude, longitude]}
+                                    zoom={16}
+                                    className="room-view-map"
+                                >
                                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                     <Marker position={[latitude, longitude]} icon={customIcon}>
                                         <Popup>
@@ -94,6 +99,8 @@ const RoomView = ({ roomID }) => {
                                     </Marker>
                                 </MapContainer>
                             )}
+
+                            </div>
                         </section>
 
                     </div>
