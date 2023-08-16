@@ -18,9 +18,9 @@ const SearchPage = () => {
     const [orderDirection, setOrderDirection] = useState('ASC');
     const [options, setOptions] = useState({
         amenities: [],
-        maxPrice: 120,
+        maxPrice: 600,
         roomTypes: [],
-        orderDirection: 'ASC'
+        orderDirection: 'ASC',
     });
 
     const fetchRooms = async (currentPage) => {
@@ -32,6 +32,7 @@ const SearchPage = () => {
             (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
                 JSON.stringify(
                     {
+                        tenants: searchInfo.tenants,
                         startDate: searchInfo.checkInDate,
                         endDate: searchInfo.checkOutDate,
                         amenitiesIDs: options.amenities,

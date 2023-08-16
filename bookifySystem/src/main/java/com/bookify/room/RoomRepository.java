@@ -22,23 +22,28 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "LEFT JOIN r.amenities a " +
             "WHERE a IN :filterAmenities OR a IS NULL " +
             "AND (r.roomType IN :roomTypeFilter OR :roomTypeFilterCount = 0) " +
-            "AND :availabilityDaysCount >= r.minimumStay " +
+            "AND :nights >= r.minimumStay " +
+            "AND (r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights <= :maxPrice " +
             "AND r IN ( " +
             "   SELECT a.room FROM Availability a " +
             "   WHERE a.date >= :startDate AND a.date < :endDate " +
             "   GROUP BY a.room " +
-            "   HAVING COUNT(a) = :availabilityDaysCount" +
+            "   HAVING COUNT(a) = :nights" +
             ") " +
             "GROUP BY r " +
-            "HAVING COUNT(a) = :filterAmenityCount")
+            "HAVING COUNT(a) = :filterAmenityCount " +
+            "ORDER BY " +
+            "(r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights ASC")
     Page<Room> filterRooms(
             Set<Amenity> filterAmenities,
             Integer filterAmenityCount,
             LocalDate startDate,
             LocalDate endDate,
-            long availabilityDaysCount,
+            long nights,
             Set<RoomType> roomTypeFilter,
             Integer roomTypeFilterCount,
+            float maxPrice,
+            int tenants,
             Pageable pageable
     );
 

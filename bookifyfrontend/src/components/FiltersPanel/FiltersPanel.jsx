@@ -2,11 +2,28 @@ import './filtersPanel.css'
 import CheckboxSelection from "../FilterPanel/CheckboxSelection";
 import {useEffect, useState} from "react";
 import {Slider, Stack} from "@mui/material";
+import MuiInput from '@mui/material/Input';
+import { styled } from '@mui/material/styles';
+
+const Input = styled(MuiInput)`
+  width: 40%;
+  color: lightgray;
+`;
+
+function clamp(value, min, max) {
+    if (value < min) {
+        return min;
+    } else if (value > max) {
+        return max;
+    } else {
+        return value;
+    }
+}
 
 const FiltersPanel = ( {onFiltersChanged} ) => {
     const [selectedAmenities, setSelectedAmenities] = useState([]);
     const [selectedRoomTypes, setSelectedRoomTypes] = useState([]);
-    const [maxPrice, setMaxPrice] = useState(120);
+    const [maxPrice, setMaxPrice] = useState(600);
     const [orderDirection, setOrderDirection] = useState('ASC');
     const [isMounted, setIsMounted] = useState(false);
 
@@ -79,12 +96,27 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                         aria-label="Always visible"
                         min = {50}
                         max = {3000}
-                        defaultValue={120}
+                        defaultValue={600}
                         getAriaValueText={valueToText}
                         step={5}
                         valueLabelDisplay="auto"
                         onChange ={(event, newValue) => {
                             setMaxPrice(newValue);
+                        }}
+                    />
+
+                    <Input
+                        value={maxPrice}
+                        size="small"
+                        onChange ={(event) => {
+                            setMaxPrice(clamp(event.target.value, 10, 15000));
+                        }}
+                        inputProps={{
+                            step: 10,
+                            min: 0,
+                            max: 15000,
+                            type: 'number',
+                            'aria-labelledby': 'input-slider',
                         }}
                     />
                 </Stack>

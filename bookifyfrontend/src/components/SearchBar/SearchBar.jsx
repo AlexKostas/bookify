@@ -57,7 +57,7 @@ const SearchBar = ({ type }) => {
             location: destination,
             checkInDate: dates[0].startDate,
             checkOutDate: dates[0].endDate,
-            people: options.people
+            tenants: options.people
         }
 
         setSearchInfo(newSearchInfo);
