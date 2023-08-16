@@ -8,6 +8,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import {MenuItem, Select} from "@mui/material";
+import Badge from "../Badge/Badge";
 
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
@@ -128,6 +129,11 @@ const MessageGrid = () => {
                         >
                           {formatTimestamp(conversation.lastUpdated)}
                         </Typography>
+
+                        {
+                          !conversation.isRead && <Badge bg="secondary">New</Badge>
+                        }
+
                       </Box>
                     </Paper>
                   </Grid>
