@@ -20,7 +20,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN r.amenities a " +
-            "WHERE a IN :filterAmenities OR a IS NULL " +
+            "WHERE ((:filterAmenityCount = 0 OR a IN :filterAmenities) OR a IS NULL) " +
             "AND (r.roomType IN :roomTypeFilter OR :roomTypeFilterCount = 0) " +
             "AND :nights >= r.minimumStay " +
             "AND (r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights <= :maxPrice " +
@@ -31,7 +31,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "   HAVING COUNT(a) = :nights" +
             ") " +
             "GROUP BY r " +
-            "HAVING COUNT(a) = :filterAmenityCount " +
+            "HAVING COUNT(a) = :filterAmenityCount OR :filterAmenityCount = 0 " +
             "ORDER BY " +
             "(r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights ASC")
     Page<Room> filterRoomsASC(
@@ -49,7 +49,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN r.amenities a " +
-            "WHERE a IN :filterAmenities OR a IS NULL " +
+            "WHERE ((:filterAmenityCount = 0 OR a IN :filterAmenities) OR a IS NULL) " +
             "AND (r.roomType IN :roomTypeFilter OR :roomTypeFilterCount = 0) " +
             "AND :nights >= r.minimumStay " +
             "AND (r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights <= :maxPrice " +
@@ -60,7 +60,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "   HAVING COUNT(a) = :nights" +
             ") " +
             "GROUP BY r " +
-            "HAVING COUNT(a) = :filterAmenityCount " +
+            "HAVING COUNT(a) = :filterAmenityCount OR :filterAmenityCount = 0 " +
             "ORDER BY " +
             "(r.pricePerNight + r.extraCostPerTenant * GREATEST(0, :tenants - r.maxTenants)) * :nights DESC")
     Page<Room> filterRoomsDESC(

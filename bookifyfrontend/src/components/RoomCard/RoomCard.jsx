@@ -71,7 +71,7 @@ const RoomCard = ({room}) => {
             </p>
             <p>{room.roomType}</p>
           </div>
-          <p>Total Price: ${room.price}</p>
+          <p>Total Price: ${room.price.toFixed(2)}</p>
         </div>
       </div>
     </Link>
