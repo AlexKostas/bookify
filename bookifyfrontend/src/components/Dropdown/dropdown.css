@@ -53,10 +53,10 @@
 
 .unread-dot {
     position: absolute;
-    bottom: -15%;
+    bottom: 10%;
     right: 80%;
-    width: 70%;
-    height: 35%;
+    width: 1vw;
+    height: 1vw;
     background-color: red;
     border-radius: 50%;
     z-index: 2;
