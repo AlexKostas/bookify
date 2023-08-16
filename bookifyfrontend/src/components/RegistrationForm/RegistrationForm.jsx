@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import useAuth from "../../hooks/useAuth";
-import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faTimes, faInfoCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../../api/axios";
 import { Link } from "react-router-dom";
@@ -305,7 +305,7 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
                             )
                         }
 
-                        {!inRegistration ? <button>Edit Profile</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
+                        {!inRegistration ? <button><FontAwesomeIcon icon={faEdit} />Edit</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
                     </form>
                     {inRegistration &&
                     <p>

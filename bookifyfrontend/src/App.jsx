@@ -17,6 +17,7 @@ import UpdateProfilePage from './pages/UpdateProfilePage';
 import Layout from './components/Layout';
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 import SearchPage from "./pages/SearchPage";
+import UpdateUserAboutPage from "./pages/UpdateUserAboutPage";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -54,6 +55,7 @@ function App() {
             [Host, InactiveHost, Tenant, Admin]} />}>
             <Route path ="profile" element={<ProfilePage />} />
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
+            <Route path ="updateAboutInfo" element={<UpdateUserAboutPage />} />
             <Route path="messages" element={<MessageDashboard />} />
             <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>

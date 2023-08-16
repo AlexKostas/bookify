@@ -1,10 +1,9 @@
 import { Grid, Typography } from '@mui/material';
-import { CircularProgress } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import axios from "../../api/axios";
 import './roomview.css';
 import 'leaflet/dist/leaflet.css';
-import L, { icon } from 'leaflet';
+import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 const RoomView = ({ roomID }) => {

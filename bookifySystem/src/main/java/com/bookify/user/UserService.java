@@ -95,6 +95,16 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    public UserStatsDTO loadUserStats(String username) throws UsernameNotFoundException {
+        User user = loadUserDataByUsername(username.trim());
+        return new UserStatsDTO(
+                user.getAboutInfo(),
+                user.getMemberSince(),
+                reviewRepository.countByReviewerUsername(user.getUsername())
+        );
+    }
+
+
     public LoginRegistrationResponseDTO updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
             OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
@@ -120,6 +130,14 @@ public class UserService implements UserDetailsService {
                 newAccessToken,
                 user.getRefreshToken().getToken(),
                 user.getRoleAuthorityList());
+    }
+
+    public void updateUserAboutInfo(UpdateUserAboutDTO newAbout) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(newAbout.username())
+                .orElseThrow(() -> new UsernameNotFoundException("User " + newAbout.username() + " does not exist"));
+
+        user.setAboutInfo(newAbout.aboutInfo());
+        userRepository.save(user);
     }
 
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {

@@ -12,6 +12,7 @@ import AlertTitle from "@mui/material/AlertTitle";
 import EditIcon from '@mui/icons-material/Edit';
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import UserStats from "../UserStats/UserStats";
 
 const UserView = ({ username }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
@@ -154,7 +155,7 @@ const UserView = ({ username }) => {
             <Tab label="User Stats" />
           </Tabs>
           {tabValue === 0 && <UserDetails username={username} />}
-          {tabValue === 1 && <h1>User Stats</h1>}
+          {tabValue === 1 && <UserStats username={username}/>}
     </>
     );
 }
