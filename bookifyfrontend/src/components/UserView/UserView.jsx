@@ -9,6 +9,9 @@ import useAuth from '../../hooks/useAuth';
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import EditIcon from '@mui/icons-material/Edit';
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const UserView = ({ username }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
@@ -102,11 +105,29 @@ const UserView = ({ username }) => {
                             className={"button"}
                             disabled = {!valid}
                     >
-                        <img
-                            className="profile-pic"
-                            src={imageData}
-                            alt="Could not load profile picture"
-                        />
+                        <div className="image-container">
+                            <img
+                                className={`profile-pic ${valid && 'profile-pic-hover'}`}
+                                src={imageData}
+                                alt="Could not load profile picture"
+                            />
+                            {
+                                valid && (
+                                    <div className="overlay">
+                                        <span><FontAwesomeIcon icon={faEdit}/></span>
+                                    </div>
+                                )
+                            }
+                        </div>
+
+                        {
+                            valid && (
+                                <div className="edit-icon">
+                                    <EditIcon />
+                                </div>
+                            )
+                        }
+
                         <input
                             style={{display: 'none'}}
                             ref={inputRef}
@@ -119,7 +140,7 @@ const UserView = ({ username }) => {
             ) : (
             <p>Could not load profile picture</p>
             )}
-            <h2>{username}</h2>
+            <h2 className="username-label">{username}</h2>
         </div>
 
         <Tabs

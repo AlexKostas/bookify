@@ -19,7 +19,7 @@ h1 {
 }
 
 
-h2 {
+.username-label {
     margin-top: 130px;
 }
 
@@ -28,6 +28,11 @@ h2 {
     width: 10vw;
     height: 10vw;
     border-radius: 50%;
+    transition: filter 0.3s ease-in-out;
+}
+
+.profile-pic-hover:hover {
+    filter: brightness(40%);
 }
 
 .MuiTabs-root {
@@ -47,7 +52,7 @@ h2 {
 .profile-picture-container {
     margin-top: 50px;
     text-align: center;
-    position: relative; /* Make the container relative for positioning */
+    position: relative;
 }
 
 .profile-pic {
@@ -64,6 +69,49 @@ h2 {
     background-color: transparent;
     color: transparent;
     border: none;
-    cursor: pointer;
     padding: 0; /* Remove any default padding */
+}
+
+.button:enabled {
+    cursor: pointer;
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 5%;
+    right: 3%;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.overlay {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust to center the overlay */
+    width: 60%;
+    height: 40%;
+    /*background-color: rgba(0, 0, 0, 0.5);*/
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.image-container:hover .overlay {
+    opacity: 1;
 }
