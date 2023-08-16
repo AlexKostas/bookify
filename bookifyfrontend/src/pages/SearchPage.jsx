@@ -6,9 +6,11 @@ import FiltersPanel from "../components/FiltersPanel/FiltersPanel";
 import './styles/searchPage.css'
 import axios from "../api/axios";
 import {Pagination} from "@mui/material";
+import {useLocalStorage} from "../hooks/useLocalStorage";
 
 const SearchPage = () => {
-    const { searchInfo } = useSearchContext();
+    const { searchInfo, setSearchInfo } = useSearchContext();
+    const { getItem } = useLocalStorage();
     const itemsPerPage = 9;
     const [rooms, setRooms] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -22,10 +24,10 @@ const SearchPage = () => {
     });
 
     const fetchRooms = async (currentPage) => {
+        if(!searchInfo) return;
+
         const endpointURL = '/search/search';
         try{
-            console.log(searchInfo);
-            console.log(options);
             const response = await axios.put
             (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
                 JSON.stringify(
@@ -64,7 +66,17 @@ const SearchPage = () => {
 
     useEffect(() => {
         fetchRooms(currentPage);
-    }, [currentPage, options]);
+    }, [currentPage, options, searchInfo]);
+
+    useEffect(() => {
+        if(searchInfo) return;
+        const rawInfo = getItem('searchInfo')
+        if(!rawInfo) return;
+
+        const info = JSON.parse(rawInfo);
+
+        if(info) setSearchInfo(info);
+    }, []);
 
     return (
         <>
