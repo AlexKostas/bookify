@@ -1,5 +1,52 @@
-.room-detail {
+.room-view-container {
+    margin-top: 1%;
 }
 
-.room-images {
+general-room-info {
+
+}
+
+.centered-container {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.room-view-images {
+    background-color: green;
+    display: flex;
+    justify-content: center;
+
+    width: 93%;
+}
+
+.main-content-parent {
+    background-color: red;
+
+    width: 93%;
+
+    height: auto;
+
+    display: grid;
+    grid-template-columns: 60% auto;
+    /*gap: 1%;*/
+    position: relative;
+}
+
+.main-room-content {
+    background-color: blue;
+    word-wrap: break-word;
+}
+
+.room-view-side-panel {
+    background-color: yellow;
+
+    position: absolute;
+    right: 0.8%;
+
+    display: flex;
+    flex-direction: column;
 }
