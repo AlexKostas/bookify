@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 import './roomdashboard.css';
+import useAuth from "../../hooks/useAuth";
 
 const RoomDashboard = () => {
     const axiosPrivate = useAxiosPrivate();
@@ -21,6 +22,8 @@ const RoomDashboard = () => {
     const [success, setSuccess] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const { auth } = useAuth();
 
     const navigate = useNavigate();
 
@@ -70,7 +73,7 @@ const RoomDashboard = () => {
     ];
 
     const fetchRooms = async () => {
-        const endpointURL = 'test'
+        const endpointURL = `room/getRoomsOfHost/${auth.user}`
 
         try{
             const response = await axiosPrivate.get(`${endpointURL}?pageNumber=${paginationModel.page}&pageSize=${paginationModel.pageSize}`);
