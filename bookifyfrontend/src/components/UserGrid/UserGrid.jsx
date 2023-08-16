@@ -35,7 +35,6 @@ const UserGrid = () => {
     const clearError = () => setError(null);
 
     const deleteUser = async (username) => {
-        console.log(username);
         const endpointURL = 'admin/deleteUser';
 
         try{

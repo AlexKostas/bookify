@@ -53,7 +53,7 @@ public class User implements UserDetails {
 
     @JsonBackReference
     @XStreamOmitField
-    @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Room> rooms;
 
     public User(){
