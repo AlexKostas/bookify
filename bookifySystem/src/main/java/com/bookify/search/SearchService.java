@@ -7,6 +7,7 @@ import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
 import com.bookify.room_type.RoomTypeRepository;
 import com.bookify.utils.Utils;
+import jakarta.persistence.criteria.Order;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -22,6 +23,10 @@ public class SearchService {
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
     private final RoomTypeRepository roomTypeRepository;
+
+    private enum OrderDirection {
+        UP, DOWN
+    }
 
     //TODO: to be deleted once the recommendation system is done
     public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
@@ -44,17 +49,18 @@ public class SearchService {
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
 
+    //TODO: also search by location
     public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
                                          SearchRequestDTO searchDTO){
 
         if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc")) {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
                     "Please use 'asc' or 'desc' to specify the order of the search results");
-            sortDirection = "asc";
         }
 
-        //TODO: Add sorting direction and property to sort by
-        //TODO: filter by minimum stay, max price and other search filters
+        OrderDirection direction = sortDirection.equalsIgnoreCase("desc") ?
+                OrderDirection.DOWN : OrderDirection.UP;
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Set<Amenity> amenitiesFilter = new HashSet<>();
@@ -82,7 +88,11 @@ public class SearchService {
 
         long nights = Utils.getDaysBetween(searchDTO.startDate(), searchDTO.endDate());
 
-        Page<Room> searchResult = roomRepository.filterRooms(
+        // Unfortunately, due to the way JPA works it is not allowed to use named parameters in the order by clause
+        // and although it works, it is non-standard and could break at any moment. Since there is no way to conveniently
+        // parameterize the order direction, two separate queries are needed
+        Page<Room> searchResult = direction == OrderDirection.UP ?
+                roomRepository.filterRoomsASC(
                 amenitiesFilter,
                 amenitiesFilter.size(),
                 searchDTO.startDate(),
@@ -93,7 +103,17 @@ public class SearchService {
                 searchDTO.maxPrice(),
                 searchDTO.tenants(),
                 pageable
-        );
+        ) : roomRepository.filterRoomsDESC(
+                amenitiesFilter,
+                amenitiesFilter.size(),
+                searchDTO.startDate(),
+                searchDTO.endDate(),
+                nights,
+                roomTypesFilter,
+                roomTypesFilter.size(),
+                searchDTO.maxPrice(),
+                searchDTO.tenants(),
+                pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
                 map((room) -> mapRoomToDTO(room, searchDTO.tenants(), nights)).toList();
