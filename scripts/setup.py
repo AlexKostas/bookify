@@ -73,8 +73,8 @@ def insert_users_from_csv(connection, csv_file):
             global usernames
             usernames.add(username)
 
-            insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
-            values = (id, createUniqueUsername(connection, username), '1234')
+            insert_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
+            values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
             try:
                 cursor.execute(insert_query, values)
@@ -101,8 +101,8 @@ def insert_host_users(connection):
             global usernames
             usernames.add(username)
 
-            insert_query = "INSERT INTO users (app_user_id, username, password) VALUES (%s, %s, %s)"
-            values = (id, createUniqueUsername(connection, username), '1234')
+            insert_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
+            values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
             try:
                 cursor.execute(insert_query, values)

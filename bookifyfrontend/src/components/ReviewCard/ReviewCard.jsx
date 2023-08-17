@@ -4,10 +4,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from '@mui/material/Tooltip';
 import Rating from '@mui/material/Rating';
+import axios from "../../api/axios";
+import {CircularProgress} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const ReviewCard = ( {review} ) => {
     const textRef = useRef();
     const [isOverflowed, setIsOverflowed] = useState(false);
+    const [imageData, setImageData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [expanded, setExpanded] = useState(false);
+
+    const fetchImage = async () => {
+        const link = `/upload/getProfilePic/${review.username}`;
+
+        await axios.get(link, { responseType: 'blob' })
+            .then(response => {
+                    const url = URL.createObjectURL(response.data);
+                    setLoading(false);
+                    setImageData(url);
+                }
+
+            )
+            .catch(error => {
+                console.error('Failed to fetch image:', error);
+                setLoading(false);
+                setImageData(null);
+            });
+    }
 
     useEffect(() => {
         const textElement = textRef.current;
@@ -16,25 +42,53 @@ const ReviewCard = ( {review} ) => {
         }
     }, []);
 
+    useEffect(() => {
+        fetchImage();
+    }, [review]);
+
     return (
-        <div className="review-card-container">
+        <div className={`review-card-container ${expanded ? 'expanded' : 'not-expanded'}`}>
             <div className="review-content">
 
                 <div className="review-user-info">
                     <div className= "review-user-info-items">
 
-                        <img
-                            src={'https://xx.bstatic.com/xdata/images/xphoto/square64/53668816.jpg?k=5c54b0401f64e7fe55f6b2a2e57c3606c0be15716fc872a3154a121a5a8b1317&o='}
+                        { loading ? <CircularProgress /> :
+                            <img
+                            src={imageData}
                             className="review-profile-pic"
-                        />
-
-                        <h4>Host Name</h4>
-
-                        <Tooltip title="Username has previously stayed in this room" placement="top">
-                            <FontAwesomeIcon
-                                icon={faCheckCircle}
-                                className="verified-icon"
                             />
+                        }
+
+                        <h4>{review.username}</h4>
+
+                        { !review.reviewerVisitedRoom &&
+                            <Tooltip
+                            title={`${review.username} has previously stayed in this room`}
+                            placement="top"
+                            classes={{tooltip: 'centered-tooltip'}}
+                            arrow
+                            >
+                                <FontAwesomeIcon
+                                    icon={faCheckCircle}
+                                    className="verified-icon"
+                                />
+                            </Tooltip>
+                        }
+
+                        <Tooltip
+                            title={expanded ? "View less" : "View more"}
+                            placement="top"
+                            classes={{tooltip: 'centered-tooltip'}}
+                            arrow
+                        >
+                            <IconButton onClick={() => {
+                                            setExpanded(!expanded);
+                                         }}
+                                        color="primary"
+                                        className="expand-button">
+                                {expanded ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                            </IconButton>
                         </Tooltip>
 
                     </div>
@@ -42,24 +96,19 @@ const ReviewCard = ( {review} ) => {
 
                 <Rating
                     name="half-rating-read"
-                    defaultValue={2.5}
-                    precision={0.5}
+                    value={review.stars}
                     readOnly
                     className="view-review-rating"
                 />
 
+
                 <div ref={textRef} className="review-comment-container">
                     <span>
-                        fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
-                        kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
-                        vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
-                        fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
-                        kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
-                        vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
+                        {review.comment}
                     </span>
                 </div>
 
-                {isOverflowed && <button>Click to view more</button>}
+                {/*{isOverflowed && <button>Click to view more</button>}*/}
 
             </div>
         </div>

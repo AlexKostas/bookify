@@ -1,22 +1,18 @@
 .review-card-container {
     border: 2px solid gray;
     width: 50vw;
-    height: 17vw;
-
-    word-break: break-word;
-    /*white-space: nowrap;*/
-    overflow: hidden;
-    text-overflow: ellipsis;
+    height: 18.3vw;
 
     margin-bottom: 2%;
 }
 
 .review-content {
     margin: 3%;
+    position: relative;
 }
 
 .review-comment-container {
-    margin-top: 2%;
+    margin-top: 0.5%;
 }
 
 .review-user-info-items {
@@ -39,14 +35,33 @@
     font-size: 1.5rem;
 }
 
-.review-comment-container {
-    height: 100%;
+/*.review-comment-container {*/
+/*    background-color: green;*/
+
+/*    word-break: break-word;*/
+/*    !*white-space: nowrap;*!*/
+/*    overflow: hidden;*/
+/*    text-overflow: ellipsis;*/
+/*}*/
+
+.expanded {
+    height: auto;
 }
 
-.review-text {
+.not-expanded{
+    height: 18.3vw;
+    word-break: break-word;
+    /*white-space: nowrap;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
+.expand-button{
+    position: absolute;
+    right: 0;
 }
 
 .view-review-rating {
     margin-left: 1%;
+    margin-top: 1%;
 }

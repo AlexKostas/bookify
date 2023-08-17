@@ -5,11 +5,11 @@ const useFetchItems = (endpointURL) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchItems = async () => {
+    const fetchItems = async (newURL = null) => {
         setLoading(true);
 
         try{
-            const response = await axios.get(endpointURL);
+            const response = await axios.get(newURL || endpointURL);
 
             setItems(response.data);
         }
@@ -21,7 +21,7 @@ const useFetchItems = (endpointURL) => {
         }
     }
 
-    const refetch = () => fetchItems();
+    const refetch = (newURL) => fetchItems(newURL);
 
     useEffect(() => {
         fetchItems();
