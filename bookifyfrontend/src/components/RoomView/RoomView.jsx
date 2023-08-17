@@ -65,21 +65,6 @@ const RoomView = ({ roomID }) => {
                     <div className="main-room-content" >
 
                         <section className="room-section">
-                            <h3 className="room-section-title">Room characteristics</h3>
-                            <ul>
-                                <ul>
-                                    <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
-                                    <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
-                                    <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
-                                    <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} ㎡` : "—"}</li>
-                                    <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
-                                    <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
-                                    <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
-                                </ul>
-                            </ul>
-                        </section>
-
-                        <section className="room-section">
                             <h3 className="room-section-title">Summary</h3>
                             {room?.summary ? (
                                 <p>{room.summary}</p>
@@ -97,6 +82,20 @@ const RoomView = ({ roomID }) => {
                             )}
                         </section>
 
+                        <section className="room-section">
+                            <h3 className="room-section-title">Room characteristics</h3>
+                            <ul>
+                                <ul>
+                                    <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
+                                    <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
+                                    <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
+                                    <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} ㎡` : "—"}</li>
+                                    <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
+                                    <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
+                                    <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
+                                </ul>
+                            </ul>
+                        </section>
 
                         <section className="room-section">
                             <h3 className="room-section-title">Location</h3>
@@ -125,12 +124,13 @@ const RoomView = ({ roomID }) => {
                             </div>
                             <ul>
                                 <li>Address: {room?.address ? room.address : "No address provided"}</li>
-                                <li>Zipcode: {room?.zipcode ? room.zipcode : "No zipcode provided"}</li>
                                 <li>City: {room?.city ? room.city : "No city provided"}</li>
                                 <li>State: {room?.state ? room.state : "No state provided"}</li>
                                 <li>Country: {room?.country ? room.country : "No country provided"}</li>
+                                <li>Zipcode: {room?.zipcode ? room.zipcode : "No zipcode provided"}</li>
                             </ul>
                         </section>
+
 
                         <section className="room-section">
                             <h3 className="room-section-title">Neighborhood</h3>
@@ -149,6 +149,36 @@ const RoomView = ({ roomID }) => {
                             ) : (
                                 <p>No transit information provided</p>
                             )}
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Amenities</h3>
+                            <div>
+                                {room?.amenityNames && room.amenityNames.length > 0 ? (
+                                    <ul>
+                                        {room.amenityNames.map((amenity, index) => (
+                                            <li key={index}>{amenity}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p>No amenities' information provided</p>
+                                )}
+                            </div>
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Amenities' Descriptions</h3>
+                                <div>
+                                    {room?.amenityDescriptions && room.amenityDescriptions.length > 0 ? (
+                                        <ul>
+                                            {room.amenityDescriptions.map((amenityDescr, index) => (
+                                                <li key={index}>{amenityDescr}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>No amenities' descriptions provided</p>
+                                    )}
+                                </div>
                         </section>
 
                     </div>
