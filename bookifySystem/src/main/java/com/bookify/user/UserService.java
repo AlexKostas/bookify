@@ -97,11 +97,15 @@ public class UserService implements UserDetailsService {
 
     public UserStatsDTO loadUserStats(String username) throws UsernameNotFoundException {
         User user = loadUserDataByUsername(username.trim());
+
+        Object[] avgRatingAndCount = reviewRepository.calculateAverageStarsAndCountByHost(user);
+
         return new UserStatsDTO(
                 user.getAboutInfo(),
                 user.getMemberSince(),
                 reviewRepository.countByReviewerUsername(user.getUsername()),
-                getHostAvgRating(user)
+                (double) avgRatingAndCount[0],
+                (int) avgRatingAndCount[1]
         );
     }
 
@@ -234,12 +238,4 @@ public class UserService implements UserDetailsService {
         return tokenService.generateJWTToken(updatedAuth);
     }
 
-    private float getHostAvgRating(User host) {
-        if(!host.isHost())
-            return 0;
-        Double avgStars = reviewRepository.calculateAverageStarsByHost(host);
-        if(avgStars==null)
-            return 0;
-        return avgStars.floatValue();
-    }
 }
