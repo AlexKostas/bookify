@@ -4,6 +4,7 @@ import com.bookify.authentication.RefreshToken;
 import com.bookify.authentication.RefreshTokenRepository;
 import com.bookify.authentication.TokenService;
 import com.bookify.configuration.Configuration;
+import com.bookify.messages.MessageService;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.user.UserService;
@@ -34,6 +35,8 @@ public class RegistrationService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final MessageService messageService;
+
     private final RefreshTokenRepository refreshTokenRepository;
 
     public LoginRegistrationResponseDTO registerUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException,
@@ -41,6 +44,9 @@ public class RegistrationService {
 
         User newUser = userService.createUser(registrationDTO);
         String refreshToken = generateRefreshToken(newUser);
+
+        String message = "Hello " + newUser.getFirstName() +",\n\n" + "welcome to bookify!";
+        messageService.sendMessageFromAdmin(newUser.getUsername(), "Welcoming Message", message);
 
         return new LoginRegistrationResponseDTO(newUser.getUsername(), generateAccessToken(registrationDTO.username(),
                 registrationDTO.password()), refreshToken, newUser.getRoleAuthorityList());
