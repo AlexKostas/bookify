@@ -238,6 +238,8 @@ public class UserService implements UserDetailsService {
         if(!host.isHost())
             return 0;
         Double avgStars = reviewRepository.calculateAverageStarsByHost(host);
+        if(avgStars==null)
+            return 0;
         return avgStars.floatValue();
     }
 }
