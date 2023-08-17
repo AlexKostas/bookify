@@ -178,6 +178,24 @@ const RoomView = ({ roomID }) => {
                             </div>
                         </section>
 
+                        <section className="room-section">
+                            <h3 className="room-section-title">Rules</h3>
+                            {room?.rules ? (
+                                <p>{room.rules}</p>
+                            ) : (
+                                <p>No rules provided</p>
+                            )}
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Notes</h3>
+                            {room?.notes ? (
+                                <p>{room.notes}</p>
+                            ) : (
+                                <p>No notes notes</p>
+                            )}
+                        </section>
+
                     </div>
 
                     <div className="room-view-side-panel">
