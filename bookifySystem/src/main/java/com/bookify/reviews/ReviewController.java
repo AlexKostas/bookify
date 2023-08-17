@@ -41,10 +41,12 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/getAllReviews/{roomID}")
-    public ResponseEntity<?> getAllReviews(@PathVariable Integer roomID){
+    @GetMapping("/getNReviews/{roomID}")
+    public ResponseEntity<?> getNReviews(
+            @PathVariable Integer roomID,
+            @RequestParam(defaultValue = "5") int N){
         try {
-            return ResponseEntity.ok(reviewService.getAllReviews(roomID));
+            return ResponseEntity.ok(reviewService.getNReviews(roomID, N));
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
