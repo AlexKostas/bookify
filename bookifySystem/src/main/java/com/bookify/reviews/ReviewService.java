@@ -50,7 +50,7 @@ public class ReviewService {
         return new ReviewResponseDTO(
                 review.getStars(),
                 review.getComment(),
-                isReviewerVisitedRoom(review.getReviewer().getUserID(), review.getRoom().getRoomID()),
+                isReviewerVisitedRoom(review.getReviewer(), review.getRoom()),
                 review.getReviewer().getUsername());
     }
 
@@ -65,7 +65,7 @@ public class ReviewService {
             result.add(new ReviewResponseDTO(
                     review.getStars(),
                     review.getComment(),
-                    isReviewerVisitedRoom(review.getReviewer().getUserID(), review.getRoom().getRoomID()),
+                    isReviewerVisitedRoom(review.getReviewer(), review.getRoom()),
                     review.getReviewer().getUsername()
             ));
 
@@ -105,7 +105,7 @@ public class ReviewService {
                     review.getReviewID());
     }
 
-    private Boolean isReviewerVisitedRoom(Long reviewerId, int roomReviewedId) {
-        return bookingRepository.countByUserIdAndRoomId(reviewerId, roomReviewedId) > 0;
+    private Boolean isReviewerVisitedRoom(User reviewer, Room roomReviewed) {
+        return bookingRepository.countByUserAndRoom(reviewer, roomReviewed) > 0;
     }
 }

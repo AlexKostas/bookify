@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
     void deleteByRoom(Room room);
 
-    int countByUserIdAndRoomId(Long userId, int roomId);
+    int countByUserAndRoom(User user, Room room);
 }
