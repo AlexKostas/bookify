@@ -88,3 +88,36 @@ ul, ol {
     justify-content: center;
     align-items: center;
 }
+
+.room-info-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2%
+}
+
+.review-link {
+    cursor: pointer;
+    margin-left: 8px;
+}
+
+.room-info-reviews, .room-info-host {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+}
+
+.room-info-host {
+    cursor: pointer;
+    margin-right: 1%;
+}
+
+.room-info-profile-pic {
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
+    margin-right: 5%;
+    margin-left: 4%;
+    margin-bottom: 3%;
+}

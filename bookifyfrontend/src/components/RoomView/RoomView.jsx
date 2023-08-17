@@ -5,16 +5,23 @@ import './roomview.css';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import FiltersPanel from "../FiltersPanel/FiltersPanel";
 import ReviewPanel from "../ReviewPanel/ReviewPanel";
 import RoomUserView from "../RoomUserView/RoomUserView";
 import Tooltip from "@mui/material/Tooltip";
 import BookingPanel from "../BookingPanel/BookingPanel";
+import StarIcon from "@mui/icons-material/Star";
+import { Link as ScrollLink } from 'react-scroll';
+import { Link } from 'react-router-dom';
+import useImageFetcher from "../../hooks/useImageFetcher";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
 
-    const [room, setRoom] = useState({})
+    const [room, setRoom] = useState({});
+
+    const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
+    const { imageData } = useImageFetcher(profilePicURL);
+
     const latitude = parseFloat(room?.latitude);
     const longitude = parseFloat(room?.longitude);
 
@@ -24,6 +31,17 @@ const RoomView = ({ roomID }) => {
         iconSize: [34, 39],
         iconAnchor: [16, 32],
     });
+
+    const capitalizeWords = (str) =>
+        str
+            .split(/\s+/)
+            .map(word =>
+                word
+                    .split('-')
+                    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+                    .join('-')
+            )
+            .join(' ');
 
     const fetchRoomDetails = useCallback(async () => {
         if (room === '') {
@@ -49,6 +67,44 @@ const RoomView = ({ roomID }) => {
 
             <div className="general-room-info">
                 <h2>{room.name}</h2>
+
+                {
+                    room &&
+                    <div className="room-info-items">
+
+                        <Link
+                            to={`/user/${room.hostUsername}`}
+                            className="room-info-host">
+                            <img
+                                src={imageData}
+                                className='room-info-profile-pic'
+                            />
+                            <u>{room.hostUsername}</u>
+                        </Link>
+
+                        <div className="room-info-reviews">
+                            <StarIcon fontSize="small" style={{color: "yellow"}}/> {room.rating?.toFixed(1)} · <ScrollLink
+                            to="reviews"
+                            smooth={true}
+                            duration={500}
+                        >
+                            <u className="review-link">{room.reviewCount} reviews</u>
+                        </ScrollLink>
+                        </div>
+
+                        <div className="room-info-location">
+                            <ScrollLink
+                                to="location"
+                                smooth={true}
+                                duration={500}
+                            >
+                                <u className="review-link">{capitalizeWords(room?.neighborhood ?? '')}, {room.city}, {room.state}, {room.country}</u>
+                            </ScrollLink>
+                        </div>
+
+                    </div>
+                }
+
             </div>
 
             <div className="centered-container" >
@@ -98,7 +154,7 @@ const RoomView = ({ roomID }) => {
                             </ul>
                         </section>
 
-                        <section className="room-section">
+                        <section className="room-section" id={"location"}>
                             <h3 className="room-section-title">Location</h3>
                             <div className="room-view-map-container">
                                 {latitude && longitude && (
@@ -207,7 +263,7 @@ const RoomView = ({ roomID }) => {
 
                 </div>
 
-                <div className="review-parent">
+                <div className="review-parent" id="reviews">
                     <ReviewPanel roomID={roomID} />
                 </div>
             </div>
