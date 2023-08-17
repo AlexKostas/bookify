@@ -2,10 +2,10 @@ import { Grid, Typography } from '@mui/material';
 import { useState, useEffect } from 'react';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import './userdetails.css';
+import axios from "../../api/axios";
 
 const UserDetails = ({ username }) => {
     const [user, setUser] = useState(null)
-    const axiosPrivate = useAxiosPrivate();
 
     const fetchUserDetails = async () => {
       if (username === '') {
@@ -14,7 +14,7 @@ const UserDetails = ({ username }) => {
       }
 
       try {
-        const response = await axiosPrivate.get(`/user/getUser/${username}`);
+        const response = await axios.get(`/user/getUser/${username}`);
 
         setUser(response?.data ?? null);
 

@@ -27,7 +27,7 @@ const UserView = ({ username }) => {
 
     const { auth } = useAuth();
     const axiosPrivate = useAxiosPrivate();
-    const valid = (auth.user === username);
+    const valid = (auth?.user === username);
 
     const inputRef = useRef(null)
 

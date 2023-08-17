@@ -7,7 +7,9 @@ import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
 import ReviewPanel from "../ReviewPanel/ReviewPanel";
+import RoomUserView from "../RoomUserView/RoomUserView";
 import Tooltip from "@mui/material/Tooltip";
+import BookingPanel from "../BookingPanel/BookingPanel";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -82,13 +84,13 @@ const RoomView = ({ roomID }) => {
                         </section>
 
                         <section className="room-section">
-                            <h3 className="room-section-title">Room characteristics</h3>
+                            <h3 className="room-section-title">Space</h3>
                             <ul>
                                 <ul>
                                     <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
                                     <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
                                     <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
-                                    <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} ㎡` : "—"}</li>
+                                    <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} sq. feet` : "—"}</li>
                                     <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
                                     <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
                                     <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
@@ -192,15 +194,15 @@ const RoomView = ({ roomID }) => {
                             {room?.notes ? (
                                 <p>{room.notes}</p>
                             ) : (
-                                <p>No notes notes</p>
+                                <p>No notes</p>
                             )}
                         </section>
 
                     </div>
 
                     <div className="room-view-side-panel">
-                        <FiltersPanel />
-                        <FiltersPanel />
+                        <BookingPanel />
+                        <RoomUserView host={room.hostUsername} />
                     </div>
 
                 </div>

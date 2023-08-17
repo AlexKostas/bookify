@@ -69,7 +69,7 @@ function App() {
             <Route path ="profile" element={<ProfilePage />} />
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
             <Route path ="updateAboutInfo" element={<UpdateUserAboutPage />} />
-            <Route path="messages" element={<MessageDashboard />} />
+            <Route path="messages/:username" element={<MessageDashboard />} />
             <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>
         </Route>

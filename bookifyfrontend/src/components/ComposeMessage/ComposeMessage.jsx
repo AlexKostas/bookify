@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
@@ -7,7 +7,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import './composeMessage.css'
 
-const ComposeMessage = ({open, onClose}) => {
+const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const [recipient, setRecipient] = useState('');
     const [topic, setTopic] = useState('');
     const [messageBody, setMessageBody] = useState('');
@@ -50,6 +50,10 @@ const ComposeMessage = ({open, onClose}) => {
             }
         }
     };
+
+    useEffect(() => {
+        if(preloadedRecipient) setRecipient(preloadedRecipient);
+    }, [preloadedRecipient]);
 
     return (
         <div>

@@ -20,25 +20,25 @@
     display: flex;
     justify-content: center;
 
-    width: 93%;
+    width: 94%;
 }
 
 .main-content-parent {
     background-color: red;
 
-    width: 93%;
+    width: 94%;
 
     height: auto;
 
     display: grid;
-    grid-template-columns: 74% 22%;
-    gap: 3%;
+    grid-template-columns: 71% 25%;
+    gap: 2%;
     /*position: relative;*/
 }
 
 .review-parent {
     background-color: pink;
-    width: 93%;
+    width: 94%;
 }
 
 .main-room-content {
@@ -47,10 +47,7 @@
 }
 
 .room-view-side-panel {
-    background-color: yellow;
-
-    /*position: absolute;*/
-    right: 0.8%;
+    /*right: 4%;*/
 
     display: flex;
     flex-direction: column;
