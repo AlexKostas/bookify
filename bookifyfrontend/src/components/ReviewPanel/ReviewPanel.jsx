@@ -43,7 +43,7 @@ const ReviewPanel = ({ roomID }) => {
     return (
         <div className="review-panel-container" ref={containerRef}>
             <h1>Reviews</h1>
-            <br/>
+
 
             {
                 reviews.map( review => (
@@ -51,14 +51,24 @@ const ReviewPanel = ({ roomID }) => {
                 ))
             }
 
-            <Button
-                onClick={() => {
-                    setReviewCount(reviewCount + step);
-                    setFlag(true);
-                }}
-            >
-                View More...
-            </Button>
+            {
+                reviews.length > 0 ?
+               (
+                   <>
+                   <br/>
+
+                   <Button
+                        onClick={() => {
+                            setReviewCount(reviewCount + step);
+                            setFlag(true);
+                        }}
+                    >
+                       View More...
+                   </Button>
+                   </>
+                   )
+                     : <h3>No reviews</h3>
+            }
 
             {loading && <CircularProgress style={{width: '10%', height: '10%'}}/>}
         </div>

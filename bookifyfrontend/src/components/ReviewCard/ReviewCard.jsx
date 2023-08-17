@@ -62,7 +62,7 @@ const ReviewCard = ( {review} ) => {
 
                         <h4>{review.username}</h4>
 
-                        { !review.reviewerVisitedRoom &&
+                        { review.reviewerVisitedRoom &&
                             <Tooltip
                             title={`${review.username} has previously stayed in this room`}
                             placement="top"
