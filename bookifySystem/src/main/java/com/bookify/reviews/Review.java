@@ -36,5 +36,7 @@ public class Review {
     @JoinColumn(name = "room_ID")
     private Room room;
 
+    private boolean reviewerVisitedRoom;
+
     public Review() {}
 }

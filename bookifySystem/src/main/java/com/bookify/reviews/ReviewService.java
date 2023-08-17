@@ -25,7 +25,6 @@ public class ReviewService {
     private final BookingRepository bookingRepository;
 
     public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException {
-        //TODO: when booking system is ready, make sure we update 'reviewerVisitedRoom' property correctly
         User currentUser = userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()).get();
 
@@ -38,7 +37,8 @@ public class ReviewService {
                 reviewDTO.comment(),
                 LocalDate.now(),
                 currentUser,
-                room
+                room,
+                hasReviewerVisitedRoom(currentUser, room)
         ));
 
         return review.getReviewID();
@@ -50,7 +50,7 @@ public class ReviewService {
         return new ReviewResponseDTO(
                 review.getStars(),
                 review.getComment(),
-                isReviewerVisitedRoom(review.getReviewer(), review.getRoom()),
+                review.isReviewerVisitedRoom(),
                 review.getReviewer().getUsername());
     }
 
@@ -65,7 +65,7 @@ public class ReviewService {
             result.add(new ReviewResponseDTO(
                     review.getStars(),
                     review.getComment(),
-                    isReviewerVisitedRoom(review.getReviewer(), review.getRoom()),
+                    review.isReviewerVisitedRoom(),
                     review.getReviewer().getUsername()
             ));
 
@@ -78,6 +78,10 @@ public class ReviewService {
 
         review.setStars(reviewDTO.stars());
         review.setComment(reviewDTO.comment());
+
+        User reviewer = review.getReviewer();
+        Room roomReviewed = review.getRoom();
+        review.setReviewerVisitedRoom(hasReviewerVisitedRoom(reviewer, roomReviewed));
 
         reviewRepository.save(review);
     }
@@ -105,7 +109,7 @@ public class ReviewService {
                     review.getReviewID());
     }
 
-    private Boolean isReviewerVisitedRoom(User reviewer, Room roomReviewed) {
+    private Boolean hasReviewerVisitedRoom(User reviewer, Room roomReviewed) {
         return bookingRepository.countByUserAndRoom(reviewer, roomReviewed) > 0;
     }
 }
