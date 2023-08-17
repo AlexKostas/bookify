@@ -9,6 +9,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
 import ReviewCard from "../ReviewCard/ReviewCard";
 import ReviewPanel from "../ReviewPanel/ReviewPanel";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import Tooltip from "@mui/material/Tooltip";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -155,30 +158,28 @@ const RoomView = ({ roomID }) => {
                             <h3 className="room-section-title">Amenities</h3>
                             <div>
                                 {room?.amenityNames && room.amenityNames.length > 0 ? (
-                                    <ul>
-                                        {room.amenityNames.map((amenity, index) => (
-                                            <li key={index}>{amenity}</li>
-                                        ))}
-                                    </ul>
+                                <ul>
+                                    {room.amenityNames.map((amenity, index) => (
+                                        <li key={index}>
+                                            {room.amenityDescriptions[index] ? (
+                                                <Tooltip
+                                                    title={room.amenityDescriptions[index]}
+                                                    placement="right"
+                                                    classes={{ tooltip: 'centered-tooltip' }}
+                                                    arrow
+                                                >
+                                                    {amenity}
+                                                </Tooltip>
+                                            ) : (
+                                                amenity
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
                                 ) : (
                                     <p>No amenities' information provided</p>
                                 )}
                             </div>
-                        </section>
-
-                        <section className="room-section">
-                            <h3 className="room-section-title">Amenities' Descriptions</h3>
-                                <div>
-                                    {room?.amenityDescriptions && room.amenityDescriptions.length > 0 ? (
-                                        <ul>
-                                            {room.amenityDescriptions.map((amenityDescr, index) => (
-                                                <li key={index}>{amenityDescr}</li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <p>No amenities' descriptions provided</p>
-                                    )}
-                                </div>
                         </section>
 
                     </div>
