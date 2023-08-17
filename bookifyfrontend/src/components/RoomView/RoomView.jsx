@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
+import ReviewCard from "../ReviewCard/ReviewCard";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -113,14 +114,7 @@ const RoomView = ({ roomID }) => {
                 </div>
 
                 <div className="review-parent">
-                    fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
-                    kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
-                    vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
-                    faskdgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjvjlsjjmjjjmjmjmjmjmjmjjmgkvfvgkmfmvb
-                    sakfdggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-                    sdgvkljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljlj
-                    gkljvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvd
-                    gfksl;vbm
+                    <ReviewCard />
                 </div>
             </div>
 
