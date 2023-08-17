@@ -98,14 +98,15 @@ public class UserService implements UserDetailsService {
     public UserStatsDTO loadUserStats(String username) throws UsernameNotFoundException {
         User user = loadUserDataByUsername(username.trim());
 
-        Object[] avgRatingAndCount = reviewRepository.calculateAverageStarsAndCountByHost(user);
-
+        Double avgRating = reviewRepository.calculateAverageStarsByHost(user);
+        if(avgRating == null)
+            avgRating = 0.0;
         return new UserStatsDTO(
                 user.getAboutInfo(),
                 user.getMemberSince(),
                 reviewRepository.countByReviewerUsername(user.getUsername()),
-                (double) avgRatingAndCount[0],
-                (int) avgRatingAndCount[1]
+                avgRating.floatValue(),
+                reviewRepository.countByHost(user)
         );
     }
 

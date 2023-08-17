@@ -13,9 +13,15 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findAllByReviewerUserID(Long userID);
     int countByReviewerUsername(String username);
 
-    @Query("SELECT AVG(r.stars), COUNT(r) FROM Review r " +
+    @Query("SELECT AVG(r.stars) FROM Review r " +
             "INNER JOIN r.room rm " +
             "INNER JOIN rm.roomHost h " +
             "WHERE h =:host")
-    Object[] calculateAverageStarsAndCountByHost(User host);
+    Double calculateAverageStarsByHost(User host);
+
+    @Query("SELECT COUNT(r) FROM Review r " +
+            "INNER JOIN r.room rm " +
+            "INNER JOIN rm.roomHost h " +
+            "WHERE h =:host")
+    int countByHost(User host);
 }
