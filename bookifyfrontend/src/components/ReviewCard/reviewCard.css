@@ -1,7 +1,7 @@
 .review-card-container {
     border: 2px solid gray;
-    width: 40vw;
-    height: 15vw;
+    width: 50vw;
+    height: 17vw;
 
     word-break: break-word;
     /*white-space: nowrap;*/

@@ -8,6 +8,7 @@ import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
 import ReviewCard from "../ReviewCard/ReviewCard";
+import ReviewPanel from "../ReviewPanel/ReviewPanel";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -114,7 +115,7 @@ const RoomView = ({ roomID }) => {
                 </div>
 
                 <div className="review-parent">
-                    <ReviewCard />
+                    <ReviewPanel roomID={roomID} />
                 </div>
             </div>
 

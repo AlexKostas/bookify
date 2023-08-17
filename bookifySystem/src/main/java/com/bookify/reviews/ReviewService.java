@@ -54,20 +54,26 @@ public class ReviewService {
                 review.getReviewer().getUsername());
     }
 
-    public List<ReviewResponseDTO> getAllReviews(Integer roomID) throws EntityNotFoundException {
+    public List<ReviewResponseDTO> getNReviews(Integer roomID, int reviewCount) throws EntityNotFoundException {
         if(!roomRepository.findById(roomID).isPresent())
             throw new EntityNotFoundException("Room with id " + roomID + " not found");
 
         List<Review> reviews = reviewRepository.findAllByRoomRoomID(roomID);
         List<ReviewResponseDTO> result = new ArrayList<>(reviews.size());
+        int count = 0;
 
-        for(Review review : reviews)
+        for(Review review : reviews) {
+            if(count >= reviewCount) break;
+
             result.add(new ReviewResponseDTO(
                     review.getStars(),
                     review.getComment(),
                     review.isReviewerVisitedRoom(),
                     review.getReviewer().getUsername()
             ));
+
+            count++;
+        }
 
         return result;
     }

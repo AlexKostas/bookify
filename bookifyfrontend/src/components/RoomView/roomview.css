@@ -75,3 +75,9 @@
 
     margin-top: 15px;
 }
+
+.review-parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
