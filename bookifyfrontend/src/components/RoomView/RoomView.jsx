@@ -1,4 +1,3 @@
-import { Grid, Typography } from '@mui/material';
 import { useCallback } from 'react'
 import React, {useEffect, useState} from "react";
 import axios from "../../api/axios";
@@ -7,10 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import FiltersPanel from "../FiltersPanel/FiltersPanel";
-import ReviewCard from "../ReviewCard/ReviewCard";
 import ReviewPanel from "../ReviewPanel/ReviewPanel";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import Tooltip from "@mui/material/Tooltip";
 
 const RoomView = ({ roomID }) => {
