@@ -1,5 +1,6 @@
 package com.bookify.reviews;
 
+import com.bookify.booking.BookingRepository;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
@@ -21,6 +22,8 @@ public class ReviewService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
+    private final BookingRepository bookingRepository;
+
     public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException {
         //TODO: when booking system is ready, make sure we update 'reviewerVisitedRoom' property correctly
         User currentUser = userRepository.findByUsername(
@@ -34,7 +37,6 @@ public class ReviewService {
                 reviewDTO.stars(),
                 reviewDTO.comment(),
                 LocalDate.now(),
-                false,
                 currentUser,
                 room
         ));
@@ -48,7 +50,7 @@ public class ReviewService {
         return new ReviewResponseDTO(
                 review.getStars(),
                 review.getComment(),
-                review.isReviewerVisitedRoom(),
+                isReviewerVisitedRoom(review.getReviewer().getUserID(), review.getRoom().getRoomID()),
                 review.getReviewer().getUsername());
     }
 
@@ -63,7 +65,7 @@ public class ReviewService {
             result.add(new ReviewResponseDTO(
                     review.getStars(),
                     review.getComment(),
-                    review.isReviewerVisitedRoom(),
+                    isReviewerVisitedRoom(review.getReviewer().getUserID(), review.getRoom().getRoomID()),
                     review.getReviewer().getUsername()
             ));
 
@@ -101,5 +103,9 @@ public class ReviewService {
         if(reviewerID != currentUser.getUserID() && !currentUser.isAdmin())
             throw new IllegalAccessException("Insufficient privileges to edit/delete review " +
                     review.getReviewID());
+    }
+
+    private Boolean isReviewerVisitedRoom(Long reviewerId, int roomReviewedId) {
+        return bookingRepository.countByUserIdAndRoomId(reviewerId, roomReviewedId) > 0;
     }
 }
