@@ -20,6 +20,7 @@ import SearchPage from "./pages/SearchPage";
 import UpdateUserAboutPage from "./pages/UpdateUserAboutPage";
 import {useEffect} from "react";
 import useAutoFetchMessages from "./hooks/useAutoFetchMessages";
+import useAuth from "./hooks/useAuth";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -33,6 +34,7 @@ function App() {
   useEffect(() => {
     // Update the document title with unread message count
     document.title = `${unreadMessages > 0 ? `(${unreadMessages}) ` : ''}Bookify`;
+    console.log(unreadMessages);
   }, [unreadMessages]);
 
 

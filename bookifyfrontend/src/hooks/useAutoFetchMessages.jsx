@@ -35,7 +35,7 @@ function useAutoFetchMessages() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [auth]);
 
     return messages;
 }
