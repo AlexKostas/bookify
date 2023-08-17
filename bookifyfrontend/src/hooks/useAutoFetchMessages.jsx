@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import useAxiosPrivate from "./useAxiosPrivate";
+import useAuth from "./useAuth";
 
 function useAutoFetchMessages() {
     const [messages, setMessages] = useState([]);
+    const { auth } = useAuth();
     const axiosPrivate = useAxiosPrivate();
     const fetchInterval = 6000;
 
     useEffect(() => {
+        if(!auth) return;
+
         let isMounted = true;
 
         const fetchMessages = async () => {
