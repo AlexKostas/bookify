@@ -100,7 +100,8 @@ public class UserService implements UserDetailsService {
         return new UserStatsDTO(
                 user.getAboutInfo(),
                 user.getMemberSince(),
-                reviewRepository.countByReviewerUsername(user.getUsername())
+                reviewRepository.countByReviewerUsername(user.getUsername()),
+                getHostAvgRating(user)
         );
     }
 
@@ -231,5 +232,12 @@ public class UserService implements UserDetailsService {
         Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(updatedAuth);
         return tokenService.generateJWTToken(updatedAuth);
+    }
+
+    private float getHostAvgRating(User host) {
+        if(!host.isHost())
+            return 0;
+        Double avgStars = reviewRepository.calculateAverageStarsByHost(host);
+        return avgStars.floatValue();
     }
 }
