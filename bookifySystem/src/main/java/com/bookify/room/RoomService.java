@@ -127,7 +127,9 @@ public class RoomService{
                 room.getAmenitiesNames(),
                 room.getAmenitiesDescriptions(),
                 room.getThumbnail().getImageGuid(),
-                room.getPhotosGUIDs()
+                room.getPhotosGUIDs(),
+                room.getRating(),
+                room.getReviewCount()
         );
     }
 
