@@ -65,44 +65,90 @@ const RoomView = ({ roomID }) => {
                     <div className="main-room-content" >
 
                         <section className="room-section">
-                            fgjsakl;kkklklklklk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;lk;l;l;kjg'fflkl;vfdlkbfd
-                            kagdjfffffffffffffffffffffffffffffvfffffmvvvgvvl;vgj;;;;;;;j;j;j;j;j;j;j;j;j;j;j;gkgkj;fgkjerkjg
-                            vflksdajbmvaaaaaabamvbmvabmvabmvabmvabamvbamvbamvbamvbamvbmvabmvabmvbkfv mgfjkavvvvmkvmfd,vf,m
-                            faskdgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjgjvjlsjjmjjjmjmjmjmjmjmjjmgkvfvgkmfmvb
-                            sakfdggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
-                            sdgvkljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljljlj
-                            gkljvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvd
-                            gfksl;vbm
+                            <h3 className="room-section-title">Room characteristics</h3>
+                            <ul>
+                                <ul>
+                                    <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
+                                    <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
+                                    <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
+                                    <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} ㎡` : "—"}</li>
+                                    <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
+                                    <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
+                                    <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
+                                </ul>
+                            </ul>
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Summary</h3>
+                            {room?.summary ? (
+                                <p>{room.summary}</p>
+                            ) : (
+                                <p>No summary provided</p>
+                            )}
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Description</h3>
+                            {room?.description ? (
+                                <p>{room.description}</p>
+                            ) : (
+                                <p>No description provided</p>
+                            )}
                         </section>
 
 
                         <section className="room-section">
-                            <h3>Location</h3>
-
+                            <h3 className="room-section-title">Location</h3>
                             <div className="room-view-map-container">
-                            {latitude && longitude && (
-                                <MapContainer
-                                    center={[latitude, longitude]}
-                                    zoom={16}
-                                    className="room-view-map"
-                                >
-                                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                                    <Marker position={[latitude, longitude]} icon={customIcon}>
-                                        <Popup>
-                                            {label && (
-                                                <div style={{  maxWidth: '200px' }}>
-                                                    <div style={{ fontWeight: 'bold' }}>{label}</div>
-                                                    <div>
-                                                        Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
+                                {latitude && longitude && (
+                                    <MapContainer
+                                        center={[latitude, longitude]}
+                                        zoom={16}
+                                        className="room-view-map"
+                                    >
+                                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                        <Marker position={[latitude, longitude]} icon={customIcon}>
+                                            <Popup>
+                                                {label && (
+                                                    <div style={{  maxWidth: '200px' }}>
+                                                        <div style={{ fontWeight: 'bold' }}>{label}</div>
+                                                        <div>
+                                                            Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
-                                        </Popup>
-                                    </Marker>
-                                </MapContainer>
-                            )}
-
+                                                )}
+                                            </Popup>
+                                        </Marker>
+                                    </MapContainer>
+                                )}
                             </div>
+                            <ul>
+                                <li>Address: {room?.address ? room.address : "No address provided"}</li>
+                                <li>Zipcode: {room?.zipcode ? room.zipcode : "No zipcode provided"}</li>
+                                <li>City: {room?.city ? room.city : "No city provided"}</li>
+                                <li>State: {room?.state ? room.state : "No state provided"}</li>
+                                <li>Country: {room?.country ? room.country : "No country provided"}</li>
+                            </ul>
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Neighborhood</h3>
+                                <h4>{room?.neighborhood ? room.neighborhood : "No neighborhood provided"}</h4>
+                                {room?.neighborhoodOverview ? (
+                                    <p>{room.neighborhoodOverview}</p>
+                                ) : (
+                                    <p>No neighborhood overview provided</p>
+                                )}
+                        </section>
+
+                        <section className="room-section">
+                            <h3 className="room-section-title">Transit Info</h3>
+                            {room?.transitInfo ? (
+                                <p>{room.transitInfo}</p>
+                            ) : (
+                                <p>No transit information provided</p>
+                            )}
                         </section>
 
                     </div>

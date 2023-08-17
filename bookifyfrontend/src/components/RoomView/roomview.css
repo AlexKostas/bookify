@@ -61,6 +61,15 @@
     margin-left: 2%;
 }
 
+ul, ol {
+    padding: 0px 25px;
+}
+
+.room-section-title {
+    margin-bottom: 1vh;
+    font-size: 1.7rem;
+}
+
 .room-view-map-container {
     width: 100%;
 
