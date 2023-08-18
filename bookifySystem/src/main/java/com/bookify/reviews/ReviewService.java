@@ -37,9 +37,9 @@ public class ReviewService {
             throw new OperationNotSupportedException("Reviewer with id " + currentUser.getUserID() + " cannot review the same room with id " +
                     room.getRoomID() + ". They should edit their already existing review.");
 
-        // Don't allow room's host make a review on their room
+        // Don't allow room's host to make a review on their room
         User roomHost = room.getRoomHost();
-        if (Objects.equals(currentUser.getUserID(), roomHost.getUserID()))
+        if (roomHost.getUserID().equals(currentUser.getUserID()))
             throw new OperationNotSupportedException("Host user with id " + currentUser.getUserID() + " cannot review the room with id " +
                     room.getRoomID() + " because it belongs to their set of rooms.");
 
