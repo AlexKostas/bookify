@@ -9,8 +9,10 @@ import {CircularProgress} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const ReviewCard = ( {review} ) => {
+const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
     const textRef = useRef();
     const [isOverflowed, setIsOverflowed] = useState(false);
     const [imageData, setImageData] = useState(null);
@@ -49,6 +51,23 @@ const ReviewCard = ( {review} ) => {
     return (
         <div className={`review-card-container ${expanded ? 'expanded' : 'not-expanded'}`}>
             <div className="review-content">
+
+                {
+                    usersReview &&
+                    <div className="review-actions-panel">
+                        <Tooltip title="Edit Review" placement="top" arrow>
+                            <IconButton onClick={() => onEdit(review.reviewID)}>
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
+
+                        <Tooltip title="Delete Review" placement="top" arrow>
+                            <IconButton onClick={() => onDelete(review.reviewID)} style={{ color: 'red' }}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                }
 
                 <div className="review-user-info">
                     <div className= "review-user-info-items">

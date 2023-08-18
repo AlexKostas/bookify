@@ -28,7 +28,7 @@ public class Review {
 
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User reviewer;
 
     @JsonBackReference

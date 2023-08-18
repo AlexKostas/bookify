@@ -7,7 +7,7 @@ import ComposeReview from "../ComposeReview/ComposeReview";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const ReviewPanel = ({ roomID, maxReviews }) => {
+const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
     const [reviewCount, setReviewCount] = useState(4);
     const [flag, setFlag] = useState(false);
     const [composeActive, setComposeActive] = useState(false);
@@ -33,10 +33,24 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
         try{
             const response = await axiosPrivate.get(`/reviews/getReviewOfUser/${roomID}`);
             setUsersReview(response.data);
-            console.log(roomID);
+            console.log(response.data);
         }
         catch(error){
-            console.log(error);
+            if(error.response?.status === 404) setUsersReview(null);
+        }
+    }
+
+    const deleteReview = async (reviewID) => {
+        if(!auth) return;
+
+        try {
+            await axiosPrivate.delete(`reviews/deleteReview/${reviewID}`);
+            refetch(`/reviews/getNReviews/${roomID}?N=${reviewCount}`);
+            fetchUsersReview();
+            if(onReviewsChanged) onReviewsChanged();
+        }
+        catch (error){
+            console.log(error)
         }
     }
 
@@ -56,6 +70,17 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
         }
     };
 
+    const scrollToDiv = (elementID) => {
+        const targetElement = document.getElementById(elementID);
+
+        if (targetElement) {
+            targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start', // Scroll to the top of the element
+            });
+        }
+    }
+
     useEffect(() => {
         const container = containerRef.current;
         container.addEventListener("scroll", handleScroll);
@@ -67,14 +92,7 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
     useEffect(() => {
         if(!flag) return;
 
-        const targetElement = document.getElementById(`${nextReview}`);
-
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start', // Scroll to the top of the element
-            });
-        }
+        scrollToDiv(`${nextReview}`);
     }, [reviews]);
 
     return (
@@ -86,15 +104,24 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
                     <ComposeReview
                         onSubmit={() => {
                             setComposeActive(false);
+                            if(onReviewsChanged) onReviewsChanged();
                             fetchUsersReview();
                         }}
                         onClose={() => setComposeActive(false)}
                         roomID={roomID}
+                        review={usersReview}
                     />
                     : usersReview ?
                         <div className="your-review-container">
                             <h2>Your Review</h2>
-                            <ReviewCard review={usersReview} />
+                            <ReviewCard
+                                review={usersReview}
+                                usersReview={true}
+                                onEdit={() => {
+                                    setComposeActive(true);
+                                }}
+                                onDelete={deleteReview}
+                            />
 
                         </div>
 
@@ -107,11 +134,13 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
                         </button>
             }
 
-            {
-                reviews.map( (review, index) => (
-                    (!auth || auth.user !== review.username) && <div id={`${index}`}><ReviewCard review={review} /></div>
-                ))
-            }
+            <div id="reviewStart" >
+                {
+                    reviews.map( (review, index) => (
+                        (!auth || auth.user !== review.username) && <div id={`${index}`}><ReviewCard review={review} /></div>
+                    ))
+                }
+            </div>
 
             {
                 reviews.length > 0 ?
@@ -121,17 +150,21 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
 
                    {
                       reviewCount < maxReviews && (
-                           <Button
-                               onClick={() => {
-                                   setNextReview(reviewCount);
-                                   setReviewCount(reviewCount + step);
-                                   setFlag(true);
-                               }}
-                           >
-                               View More...
-                           </Button>
+                           <div>
+                               <Button
+                                   onClick={() => {
+                                       setNextReview(reviewCount);
+                                       setReviewCount(reviewCount + step);
+                                       setFlag(true);
+                                   }}
+                               >
+                                   View More...
+                               </Button>
+                           </div>
                        )
                    }
+
+                   <Button onClick={() => scrollToDiv('reviewStart')}>Go to first review</Button>
 
                    </>
                    )

@@ -52,6 +52,7 @@ public class ReviewService {
         Review review = findReview(reviewID);
 
         return new ReviewResponseDTO(
+                review.getReviewID(),
                 review.getStars(),
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
@@ -72,6 +73,7 @@ public class ReviewService {
         Review review = reviewOptional.get();
 
         return new ReviewResponseDTO(
+                review.getReviewID(),
                 review.getStars(),
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
@@ -91,6 +93,7 @@ public class ReviewService {
             if(count >= reviewCount) break;
 
             result.add(new ReviewResponseDTO(
+                    review.getReviewID(),
                     review.getStars(),
                     review.getComment(),
                     review.isReviewerVisitedRoom(),

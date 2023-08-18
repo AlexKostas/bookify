@@ -1,5 +1,5 @@
 import './composeReview.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Rating from "@mui/material/Rating";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,7 @@ const CreateReviewError = ({ content }) => {
     )
 }
 
-const ComposeReview = ({onSubmit, onClose, roomID}) => {
+const ComposeReview = ({onSubmit, onClose, roomID, review}) => {
     const maxCommentLength = 1500;
 
     const [rating, setRating] = useState(0);
@@ -34,12 +34,14 @@ const ComposeReview = ({onSubmit, onClose, roomID}) => {
             return;
         }
 
+        const body = JSON.stringify({
+            stars: rating,
+            comment: reviewComment
+        });
+
         try {
-            const endpoint = `/reviews/createReview/${roomID}`
-            await axiosPrivate.post(endpoint, JSON.stringify({
-                stars: rating,
-                comment: reviewComment
-            }));
+            review ? await axiosPrivate.put(`/reviews/editReview/${review.reviewID}`, body) :
+                await axiosPrivate.post(`/reviews/createReview/${roomID}`, body);
 
             if(onSubmit) onSubmit();
         }
@@ -56,6 +58,13 @@ const ComposeReview = ({onSubmit, onClose, roomID}) => {
                 setError('An error occurred, check the console for more details');
         }
     }
+
+    useEffect(() => {
+        if(!review) return;
+
+        setRating(review.stars);
+        setReviewComment(review.comment);
+    }, [review]);
 
     return (
         <div className="review-card-container">  {/*from reviewCard.css*/}

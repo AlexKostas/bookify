@@ -1,5 +1,5 @@
-import { useCallback } from 'react'
-import React, {useEffect, useState} from "react";
+import {useCallback, useEffect} from 'react'
+import {useState} from "react";
 import axios from "../../api/axios";
 import './roomview.css';
 import 'leaflet/dist/leaflet.css';
@@ -18,6 +18,7 @@ const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
 
     const [room, setRoom] = useState({});
+    const [shouldRedraw, setShouldRedraw] = useState(true); // MUST BE INITIALIZED TO TRUE
 
     const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
     const { imageData } = useImageFetcher(profilePicURL);
@@ -59,8 +60,11 @@ const RoomView = ({ roomID }) => {
     }, [ROOM_URL, room]);
 
     useEffect(() => {
+        if(!shouldRedraw) return;
+
         fetchRoomDetails();
-    }, []);
+        setShouldRedraw(false);
+    }, [shouldRedraw]);
 
     return (
         <div className="room-view-container">
@@ -264,7 +268,13 @@ const RoomView = ({ roomID }) => {
                 </div>
 
                 <div className="review-parent" id="reviews">
-                    <ReviewPanel roomID={roomID} maxReviews={room.reviewCount} />
+
+                    <ReviewPanel
+                        roomID={roomID}
+                        maxReviews={room.reviewCount}
+                        onReviewsChanged={() => setShouldRedraw(true)}
+                    />
+
                 </div>
             </div>
 
