@@ -5,14 +5,17 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.UtilityComponent;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -21,12 +24,13 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
-
     private final BookingRepository bookingRepository;
 
+    private final UtilityComponent utility;
+
+
     public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException {
-        User currentUser = userRepository.findByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(roomID).
                 orElseThrow(() -> new EntityNotFoundException("Room with id " + roomID + " does not exist!"));
@@ -52,6 +56,27 @@ public class ReviewService {
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
                 review.getReviewer().getUsername());
+    }
+
+    public ReviewResponseDTO getReviewOfUser(Integer roomID) throws EntityNotFoundException {
+        Room room = roomRepository.findById(roomID).orElseThrow(() ->
+                new EntityNotFoundException("Room with id " + roomID + " not found"));
+
+        User user = utility.getCurrentAuthenticatedUser();
+
+        Optional<Review> reviewOptional = reviewRepository.findByReviewerAndRoom(user, room);
+
+        if(reviewOptional.isEmpty())
+            throw new EntityNotFoundException("User " + user.getUsername() + " has no reviews for room with id " + roomID);
+
+        Review review = reviewOptional.get();
+
+        return new ReviewResponseDTO(
+                review.getStars(),
+                review.getComment(),
+                review.isReviewerVisitedRoom(),
+                review.getReviewer().getUsername()
+        );
     }
 
     public List<ReviewResponseDTO> getNReviews(Integer roomID, int reviewCount) throws EntityNotFoundException {

@@ -41,6 +41,19 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("/getReviewOfUser/{roomID}")
+    public ResponseEntity<?> getReviewOfUser(@PathVariable Integer roomID){
+        try {
+            return ResponseEntity.ok(reviewService.getReviewOfUser(roomID));
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/getNReviews/{roomID}")
     public ResponseEntity<?> getNReviews(
             @PathVariable Integer roomID,
