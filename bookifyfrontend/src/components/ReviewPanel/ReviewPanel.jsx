@@ -25,15 +25,14 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
     const containerRef = useRef();
 
     const { auth } = useAuth();
-    const signedIn = auth !== null && auth !== undefined;
+    const canReview = auth && auth.roles.includes('tenant');
 
     const fetchUsersReview = async () => {
-        if(!auth) return;
+        if(!canReview) return;
 
         try{
             const response = await axiosPrivate.get(`/reviews/getReviewOfUser/${roomID}`);
             setUsersReview(response.data);
-            console.log(response.data);
         }
         catch(error){
             if(error.response?.status === 404) setUsersReview(null);
@@ -41,7 +40,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
     }
 
     const deleteReview = async (reviewID) => {
-        if(!auth) return;
+        if(!canReview) return;
 
         try {
             await axiosPrivate.delete(`reviews/deleteReview/${reviewID}`);
@@ -128,9 +127,9 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
                         : <button
                             onClick={() => setComposeActive(true)}
                             className="add-review-button"
-                            disabled={!signedIn}
+                            disabled={!canReview}
                         >
-                            {signedIn ? 'Add your review' : 'Login to submit a review'}
+                            {!auth ? 'Login to submit a review' : (canReview ? 'Add your review' : 'You need to be a tenant to add a review')}
                         </button>
             }
 

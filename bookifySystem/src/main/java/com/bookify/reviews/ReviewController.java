@@ -15,7 +15,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/createReview/{roomID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> createReview(@PathVariable Integer roomID, @RequestBody ReviewDTO reviewDTO){
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewDTO, roomID));
@@ -70,7 +70,7 @@ public class ReviewController {
     }
 
     @PutMapping("/editReview/{reviewID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> editReview(@PathVariable Integer reviewID, @RequestBody ReviewDTO reviewDTO){
         try {
             reviewService.editReview(reviewID, reviewDTO);
@@ -88,7 +88,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/deleteReview/{reviewID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> deleteReview(@PathVariable Integer reviewID){
         try {
             reviewService.deleteReview(reviewID);
