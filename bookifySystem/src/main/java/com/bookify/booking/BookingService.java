@@ -60,7 +60,11 @@ public class BookingService {
                 bookRequest.checkInDate(),
                 bookRequest.checkOutDate(),
                 now,
-                bookRequest.numberOfTenants());
+                bookRequest.numberOfTenants(),
+                room.calculateCost(
+                        bookRequest.numberOfTenants(),
+                        (int) Utils.getDaysBetween(bookRequest.checkInDate(), bookRequest.checkOutDate()))
+        );
 
         bookingRepository.save(booking);
 
@@ -69,7 +73,9 @@ public class BookingService {
                 booking.getCheckInDate(),
                 booking.getCheckOutDate(),
                 booking.getBookingDate(),
-                booking.getRoom().getName()
+                booking.getRoom().getName(),
+                booking.getPrice(),
+                booking.getNumberOfTenants()
         );
     }
 }
