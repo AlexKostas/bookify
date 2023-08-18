@@ -13,6 +13,24 @@ const BookingPanel = () => {
                 <div className="booking-dates-container">
                     <h3>Dates</h3>
                     <hr style={{width: "90%",  margin: 'auto'}} />
+
+                    <button className="booking-info-parent">
+                        <table>
+                            <thead>
+                                <td><strong>Check-in Date</strong><br />13-05-2023</td>
+                                <td><strong>Check-out Date</strong><br />13-05-2023</td>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td colSpan="2">
+                                    <strong>Visitors</strong>
+                                    <br />
+                                    2 visitors
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </button>
                 </div>
 
                 <div className='booking-info'>

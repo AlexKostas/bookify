@@ -55,3 +55,28 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.booking-info-parent {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    font-size: 0.85rem;
+    width: 97%;
+    color: white;
+}
+
+.booking-info-parent > table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.booking-info-parent > th, td {
+    border: 1px solid black;
+    padding: 8px;
+    text-align: center;
+}
+
+.booking-info-parent > th {
+    font-weight: bold;
+}
