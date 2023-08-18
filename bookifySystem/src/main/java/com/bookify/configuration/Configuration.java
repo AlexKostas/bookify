@@ -11,7 +11,7 @@ public class Configuration {
     public static final String DEFAULT_PROFILE_PIC_EXTENSION = "png";
 
     public static final String DEFAULT_ROOM_THUMBNAIL_NAME = "default-room";
-    public static final String DEFAULT_ROOM_THUMBNAIL_EXTENSION = "png";
+    public static final String DEFAULT_ROOM_THUMBNAIL_EXTENSION = "jpeg";
 
     public static final Long ACCESS_TOKEN_DURATION_SECONDS = 180L;
     public static final Long REFRESH_TOKEN_DURATION_MINUTES = 60L;

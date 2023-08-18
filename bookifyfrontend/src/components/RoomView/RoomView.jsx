@@ -91,7 +91,7 @@ const RoomView = ({ roomID }) => {
                             smooth={true}
                             duration={500}
                         >
-                            <u className="review-link">{room.reviewCount} review{room.reviewCount > 1 && 's'}</u>
+                            <u className="review-link">{room.reviewCount} review{(room.reviewCount > 1 || room.reviewCount <= 0) && 's'}</u>
                         </ScrollLink>
                         </div>
 

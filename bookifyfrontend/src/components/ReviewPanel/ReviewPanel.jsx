@@ -168,7 +168,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
 
                    </>
                    )
-                     : <h3>No reviews</h3>
+                     :  <h3>No reviews</h3>
             }
 
             {loading && <CircularProgress style={{width: '10%', height: '10%'}}/>}

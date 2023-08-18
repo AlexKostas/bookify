@@ -17,10 +17,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookingNumber;
 
-    @OneToOne
+    @ManyToOne
     private Room room;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
     private LocalDate checkInDate;
