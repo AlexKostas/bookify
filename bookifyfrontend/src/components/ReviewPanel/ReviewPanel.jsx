@@ -4,7 +4,7 @@ import {Button, CircularProgress} from "@mui/material";
 import useFetchItems from "../../hooks/useFetchItems";
 import {useEffect, useRef, useState} from "react";
 
-const ReviewPanel = ({ roomID }) => {
+const ReviewPanel = ({ roomID, maxReviews }) => {
     const { availableItems: reviews, loading, refetch } = useFetchItems(
         `/reviews/getNReviews/${roomID}?N=2`,
         );
@@ -42,7 +42,7 @@ const ReviewPanel = ({ roomID }) => {
 
     return (
         <div className="review-panel-container" ref={containerRef}>
-            <h1>Reviews</h1>
+            <h1>Reviews ({maxReviews})</h1>
 
 
             {
@@ -57,14 +57,19 @@ const ReviewPanel = ({ roomID }) => {
                    <>
                    <br/>
 
-                   <Button
-                        onClick={() => {
-                            setReviewCount(reviewCount + step);
-                            setFlag(true);
-                        }}
-                    >
-                       View More...
-                   </Button>
+                   {
+                      reviewCount < maxReviews && (
+                           <Button
+                               onClick={() => {
+                                   setReviewCount(reviewCount + step);
+                                   setFlag(true);
+                               }}
+                           >
+                               View More...
+                           </Button>
+                       )
+                   }
+
                    </>
                    )
                      : <h3>No reviews</h3>
