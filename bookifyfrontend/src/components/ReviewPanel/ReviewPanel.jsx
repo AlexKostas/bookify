@@ -3,6 +3,7 @@ import './reviewPanel.css';
 import {Button, CircularProgress} from "@mui/material";
 import useFetchItems from "../../hooks/useFetchItems";
 import {useEffect, useRef, useState} from "react";
+import ComposeReview from "../ComposeReview/ComposeReview";
 
 const ReviewPanel = ({ roomID, maxReviews }) => {
     const { availableItems: reviews, loading, refetch } = useFetchItems(
@@ -44,6 +45,7 @@ const ReviewPanel = ({ roomID, maxReviews }) => {
         <div className="review-panel-container" ref={containerRef}>
             <h1>Reviews ({maxReviews})</h1>
 
+            <ComposeReview />
 
             {
                 reviews.map( review => (
