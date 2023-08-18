@@ -26,7 +26,6 @@ const RoomView = ({ roomID }) => {
     const latitude = parseFloat(room?.latitude);
     const longitude = parseFloat(room?.longitude);
 
-    const label = "House"
     const customIcon = L.icon({
         iconUrl: 'https://icon-library.com/images/marker-icon-png/marker-icon-png-6.jpg',
         iconSize: [34, 39],
@@ -170,9 +169,9 @@ const RoomView = ({ roomID }) => {
                                         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                         <Marker position={[latitude, longitude]} icon={customIcon}>
                                             <Popup>
-                                                {label && (
+                                                {room?.name && (
                                                     <div style={{  maxWidth: '200px' }}>
-                                                        <div style={{ fontWeight: 'bold' }}>{label}</div>
+                                                        <div style={{ fontWeight: 'bold' }}>{room.name}</div>
                                                         <div>
                                                             Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
                                                         </div>

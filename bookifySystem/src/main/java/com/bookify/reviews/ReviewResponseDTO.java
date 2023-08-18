@@ -1,3 +1,3 @@
 package com.bookify.reviews;
 
-public record ReviewResponseDTO(int stars, String comment, boolean reviewerVisitedRoom, String username) {}
+public record ReviewResponseDTO(int reviewID, int stars, String comment, boolean reviewerVisitedRoom, String username) {}
