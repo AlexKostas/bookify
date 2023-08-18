@@ -34,7 +34,6 @@ function App() {
   useEffect(() => {
     // Update the document title with unread message count
     document.title = `${unreadMessages > 0 ? `(${unreadMessages}) ` : ''}Bookify`;
-    console.log(unreadMessages);
   }, [unreadMessages]);
 
 
@@ -70,6 +69,7 @@ function App() {
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
             <Route path ="updateAboutInfo" element={<UpdateUserAboutPage />} />
             <Route path="messages/:username" element={<MessageDashboard />} />
+            <Route path="messages" element={<MessageDashboard />} />
             <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>
         </Route>

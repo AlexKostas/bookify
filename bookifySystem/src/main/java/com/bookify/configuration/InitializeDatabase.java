@@ -50,7 +50,7 @@ public class InitializeDatabase {
     private void preloadDefaultImages(ImageRepository imageRepository){
         log.info("Preloading default room picture to database");
         imageRepository.save(new Image(com.bookify.configuration.Configuration.DEFAULT_ROOM_THUMBNAIL_NAME,
-                com.bookify.configuration.Configuration.DEFAULT_PROFILE_PIC_EXTENSION));
+                com.bookify.configuration.Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION));
     }
 
     private void preloadAdminUser(RoleRepository roleRepository, UserRepository userRepository,

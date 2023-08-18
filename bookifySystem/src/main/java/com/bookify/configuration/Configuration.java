@@ -8,7 +8,7 @@ public class Configuration {
 
     public static final String IMAGES_SUBFOLDER = "/images";
     public static final String DEFAULT_PROFILE_PIC_NAME = "default";
-    public static final String DEFAULT_PROFILE_PIC_EXTENSION = "jpeg";
+    public static final String DEFAULT_PROFILE_PIC_EXTENSION = "png";
 
     public static final String DEFAULT_ROOM_THUMBNAIL_NAME = "default-room";
     public static final String DEFAULT_ROOM_THUMBNAIL_EXTENSION = "png";
