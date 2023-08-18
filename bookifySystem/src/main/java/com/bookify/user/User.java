@@ -6,6 +6,7 @@ import com.bookify.role.Role;
 import com.bookify.room.Room;
 import com.bookify.utils.Constants;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class User implements UserDetails {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
+    @JsonManagedReference
     private RefreshToken refreshToken;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
