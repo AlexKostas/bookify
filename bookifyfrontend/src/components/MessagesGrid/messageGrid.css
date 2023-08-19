@@ -24,7 +24,7 @@
 }
 
 .grid{
-    width: 70%;
+    width: 100%;
     height: 30%;
     margin: 0 auto;
     background-color: gray;
@@ -34,4 +34,37 @@
   margin-top: 16px;
   display: flex;
   justify-content: center;
+}
+
+.message-username-label {
+    width: 20%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.message-topic-label {
+    width: 45%;
+    font-size: 1.2rem;
+    overflow: hidden;
+}
+
+.message-timestamp-label {
+    text-align: right;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    width: 28%;
+}
+
+.message-status-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 7%;
+
+}
+
+.card-section > span {
+    margin-left: 5%;
 }
