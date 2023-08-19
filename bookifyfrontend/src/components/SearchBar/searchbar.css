@@ -65,18 +65,20 @@
     position: absolute;
     top: 70%;
     z-index: 2;
+    border: 2px solid gray;
 }
 
 .options {
     z-index: 2;
     position: absolute;
-    bottom: 0;
-    background-color: white;
+    top: 70%;
+    background-color: #ffffff;
     color: gray;
     border-radius: 5px;
     -webkit-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
     box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
     padding: 2%;
+    border: 2px solid gray;
 }
 
 .optionItem {
