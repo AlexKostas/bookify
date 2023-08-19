@@ -2,9 +2,13 @@ import './bookingPanel.css'
 import {useState} from "react";
 import {Icon} from "@mui/material";
 import WarningIcon from '@material-ui/icons/Warning';
+import Tooltip from "@mui/material/Tooltip";
 
-const BookingPanel = () => {
+import BookingDetails from "../BookingDetails/BookingDetails";
+
+const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
+    const [detailsActive, setDetailsActive] = useState(false);
 
     return (
         <div className='bookingContainer'>
@@ -14,23 +18,30 @@ const BookingPanel = () => {
                     <h3>Dates</h3>
                     <hr style={{width: "90%",  margin: 'auto'}} />
 
-                    <button className="booking-info-parent">
-                        <table>
-                            <thead>
+                    <button
+                        onClick={() => setDetailsActive(true)}
+                        className="booking-info-parent"
+                    >
+                        <Tooltip title="Click to edit" placement="top" arrow>
+                            <table>
+                                <thead>
                                 <td><strong>Check-in Date</strong><br />13-05-2023</td>
                                 <td><strong>Check-out Date</strong><br />13-05-2023</td>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td colSpan="2">
-                                    <strong>Visitors</strong>
-                                    <br />
-                                    2 visitors
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td colSpan="2">
+                                        <strong>Visitors</strong>
+                                        <br />
+                                        2 visitors
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </Tooltip>
+
                     </button>
+
                 </div>
 
                 <div className='booking-info'>
@@ -75,6 +86,16 @@ const BookingPanel = () => {
                     Book Now
                 </button>
             </div>
+
+            {
+                detailsActive &&
+                    <BookingDetails
+                        open={detailsActive}
+                        onClose={() => setDetailsActive(false)}
+                        roomID={roomID}
+                        minStay={room.minimumStay}
+                    />
+            }
         </div>
     )
 }

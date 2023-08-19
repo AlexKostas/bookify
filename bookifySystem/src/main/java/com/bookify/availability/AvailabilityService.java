@@ -17,7 +17,7 @@ public class AvailabilityService {
     private final RoomRepository roomRepository;
 
     public boolean isRoomAvailable(int roomID, LocalDate startDate, LocalDate endDate){
-        if(!roomRepository.findById(roomID).isPresent())
+        if(roomRepository.findById(roomID).isEmpty())
             throw new EntityNotFoundException("Room with id " + roomID + " not found");
 
         long daysBetween = Utils.getDaysBetween(startDate, endDate);

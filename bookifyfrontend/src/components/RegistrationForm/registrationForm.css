@@ -41,7 +41,7 @@ a:visited {
     color: #fff;
 }
 
-input[type="text"],
+form > input[type="text"],
 input[type="password"],
 select,
 button,
@@ -50,11 +50,6 @@ textarea {
     font-size: 22px;
     padding: 0.25rem;
     border-radius: 0.5rem;
-}
-
-label,
-button {
-    margin-top: 1rem;
 }
 
 button {

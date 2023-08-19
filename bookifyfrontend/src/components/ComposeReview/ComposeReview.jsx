@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const CreateReviewError = ({ content }) => {
+export const CreateReviewError = ({ content }) => {
     return (
         <div className="create-review-error">
             {

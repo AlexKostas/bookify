@@ -260,7 +260,7 @@ const RoomView = ({ roomID }) => {
                     </div>
 
                     <div className="room-view-side-panel">
-                        <BookingPanel />
+                        <BookingPanel roomID={roomID} room={room} />
                         <RoomUserView host={room.hostUsername} />
                     </div>
 

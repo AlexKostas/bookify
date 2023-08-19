@@ -41,11 +41,13 @@ public class BookingController {
         }
     }
 
-    @GetMapping("/isAvailable")
+    @PostMapping("/isAvailable")
     public ResponseEntity<?> isAvailable(@RequestBody BookingRequestDTO bookRequest){
         try{
-            return ResponseEntity.ok(availabilityService.isRoomAvailable(bookRequest.roomID(),
-                    bookRequest.checkInDate(), bookRequest.checkOutDate()));
+            boolean available = availabilityService.isRoomAvailable(bookRequest.roomID(),
+                    bookRequest.checkInDate(), bookRequest.checkOutDate());
+
+            return ResponseEntity.ok(new BookingCheckDTO(available));
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
