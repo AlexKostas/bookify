@@ -18,7 +18,7 @@ export const CreateReviewError = ({ content }) => {
 }
 
 const ComposeReview = ({onSubmit, onClose, roomID, review}) => {
-    const maxCommentLength = 1500;
+    const maxCommentLength = 1000;
 
     const [rating, setRating] = useState(0);
     const [reviewComment, setReviewComment] = useState('');
@@ -69,10 +69,11 @@ const ComposeReview = ({onSubmit, onClose, roomID, review}) => {
     return (
         <div className="review-card-container">  {/*from reviewCard.css*/}
             <div className="compose-review-content">
-                <h2>New Review</h2>
+                <h2 className="compose-review-title">New Review</h2>
 
                 <Rating
                     name="simple-controlled"
+                    className="rating-input"
                     value={rating}
                     onChange={(event, newValue) => {
                         setError('')

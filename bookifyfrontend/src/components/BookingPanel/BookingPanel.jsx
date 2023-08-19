@@ -55,6 +55,10 @@ const BookingPanel = ({ room, roomID }) => {
                 checkOutDate: selectedCheckOutDate,
                 numberOfTenants: visitors,
             }));
+
+            setSelectedCheckInDate(null);
+            setSelectedCheckOutDate(null);
+            setVisitors(1);
         }
         catch (err) {
             console.log(err);
@@ -62,7 +66,7 @@ const BookingPanel = ({ room, roomID }) => {
             if (!err?.response)
                 setError('No server response');
             else if (err.response?.status === 400)
-                setError('This room is not available in the given date-range');
+                setError('This room is not available in the given date range');
             else if (err.response?.status === 403)
                 setError('You can not book your own room');
             else if (err.response?.status === 404)

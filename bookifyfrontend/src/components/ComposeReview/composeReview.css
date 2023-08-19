@@ -11,9 +11,13 @@
     height: 90%;
 }
 
+.compose-review-title {
+    margin-bottom: 3%;
+}
+
 .review-comment-input {
     resize: none;
-    width: 90%;
+    width: 93%;
     height: 100%;
 }
 
@@ -41,6 +45,8 @@
 
     cursor: pointer;
     color: white;
+
+    padding: 1.2%;
 }
 
 .submit-review-button{

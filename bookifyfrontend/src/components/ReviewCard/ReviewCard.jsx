@@ -1,8 +1,7 @@
 import './reviewCard.css'
 import React, {useEffect, useRef, useState} from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
-import Tooltip from '@mui/material/Tooltip';
+import VerifiedIcon from '@mui/icons-material/Verified';import Tooltip from '@mui/material/Tooltip';
 import Rating from '@mui/material/Rating';
 import axios from "../../api/axios";
 import {CircularProgress} from "@mui/material";
@@ -72,6 +71,17 @@ const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
                 <div className="review-user-info">
                     <div className= "review-user-info-items">
 
+                        { review.reviewerVisitedRoom &&
+                            <Tooltip
+                                title={`${review.username} has previously stayed in this room`}
+                                placement="top"
+                                classes={{tooltip: 'centered-tooltip'}}
+                                arrow
+                            >
+                                <VerifiedIcon className="verified-icon" />
+                            </Tooltip>
+                        }
+
                         { loading ? <CircularProgress /> :
                             <img
                             src={imageData}
@@ -80,20 +90,6 @@ const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
                         }
 
                         <h4>{review.username}</h4>
-
-                        { review.reviewerVisitedRoom &&
-                            <Tooltip
-                            title={`${review.username} has previously stayed in this room`}
-                            placement="top"
-                            classes={{tooltip: 'centered-tooltip'}}
-                            arrow
-                            >
-                                <FontAwesomeIcon
-                                    icon={faCheckCircle}
-                                    className="verified-icon"
-                                />
-                            </Tooltip>
-                        }
 
                         <Tooltip
                             title={expanded ? "View less" : "View more"}
