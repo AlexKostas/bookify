@@ -80,3 +80,14 @@
 .booking-info-parent > th {
     font-weight: bold;
 }
+
+.reservation-success-icon {
+    height: 16vh;
+
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.reservation-success-icon.fade-out {
+    opacity: 0;
+}

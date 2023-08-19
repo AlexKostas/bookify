@@ -2,13 +2,15 @@ import './bookingPanel.css'
 import {useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import BookingDetails from "../BookingDetails/BookingDetails";
-import {CircularProgress} from "@mui/material";
+import {Backdrop, CircularProgress} from "@mui/material";
 import useAuth from "../../hooks/useAuth";
 import {useSearchContext} from "../../context/SearchContext";
 import dayjs from "dayjs";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
+import Lottie from 'react-lottie';
+import check from "../../images/tick.json";
 
 const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
@@ -19,6 +21,7 @@ const BookingPanel = ({ room, roomID }) => {
     const [nights, setNights] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [backdropOpen, setBackdropOpen] = useState(false);
 
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
@@ -28,6 +31,15 @@ const BookingPanel = ({ room, roomID }) => {
     const allInfoProvided = selectedCheckInDate && selectedCheckOutDate;
     const sameHost = auth?.user === room.hostUsername;
     const bookButtonActive = auth && isTenant && allInfoProvided && !sameHost;
+
+    const defaultOptions = {
+        loop: false,
+        autoplay: true,
+        animationData: check,
+        rendererSettings: {
+            preserveAspectRatio: 'xMidYMid slice',
+        },
+    };
 
     const formatDate = (date) => {
         if (date) return date.format('MM-DD-YYYY')
@@ -59,6 +71,8 @@ const BookingPanel = ({ room, roomID }) => {
             setSelectedCheckInDate(null);
             setSelectedCheckOutDate(null);
             setVisitors(1);
+
+            setBackdropOpen(true);
         }
         catch (err) {
             console.log(err);
@@ -90,6 +104,9 @@ const BookingPanel = ({ room, roomID }) => {
         setSelectedCheckInDate(dayjs(searchInfo.checkInDate));
         setSelectedCheckOutDate(dayjs(searchInfo.checkOutDate));
         setVisitors(searchInfo.tenants);
+
+        const numberOfNights = (!selectedCheckInDate ||selectedCheckOutDate.isSame(selectedCheckInDate)) ? 0 : selectedCheckOutDate.diff(selectedCheckInDate, 'day') + 1;
+        setNights(numberOfNights);
     }, [searchInfo]);
 
     return (
@@ -213,6 +230,19 @@ const BookingPanel = ({ room, roomID }) => {
                         }}
                     />
             }
+
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, display:'flex', flexDirection:'column',
+                gap: '0', backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+                open={backdropOpen}
+                onClick={() => setBackdropOpen(false)}
+            >
+                <h1>Successful Reservation</h1>
+
+                {
+                    backdropOpen && <Lottie options={defaultOptions} height={200} width={200}/>
+                }
+            </Backdrop>
         </div>
     )
 }

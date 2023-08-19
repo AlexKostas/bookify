@@ -17,7 +17,7 @@ import axios from "../../api/axios";
 
 const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) => {
     const [checkInDate, setCheckInDate] = useState(dayjs());
-    const [checkOutDate, setCheckOutDate] = useState(dayjs());
+    const [checkOutDate, setCheckOutDate] = useState(checkInDate.add(minStay, 'day'));
     const [people, setPeople] = useState(1);
     const [loading, setLoading] = useState(false);
     const [available, setAvailable] = useState(false);

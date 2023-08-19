@@ -67,7 +67,7 @@
 .unread-dot {
     position: absolute;
     bottom: 10%;
-    right: 80%;
+    right: 15%;
     width: 1vw;
     height: 1vw;
     background-color: red;
