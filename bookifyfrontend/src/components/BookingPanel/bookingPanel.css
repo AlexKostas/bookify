@@ -30,6 +30,11 @@
     margin-top: 5%;
 }
 
+.book-button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
 .booking-info {
     text-align: center;
     margin-top: 4%;

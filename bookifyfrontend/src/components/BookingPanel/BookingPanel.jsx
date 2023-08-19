@@ -1,7 +1,11 @@
 import './bookingPanel.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Tooltip from "@mui/material/Tooltip";
 import BookingDetails from "../BookingDetails/BookingDetails";
+import {CircularProgress} from "@mui/material";
+import useAuth from "../../hooks/useAuth";
+import {useSearchContext} from "../../context/SearchContext";
+import dayjs from "dayjs";
 
 const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
@@ -10,6 +14,15 @@ const BookingPanel = ({ room, roomID }) => {
     const [selectedCheckOutDate, setSelectedCheckOutDate] = useState();
     const [visitors, setVisitors] = useState(1);
     const [nights, setNights] = useState(0);
+    const [loading, setLoading] = useState(false);
+
+    const { auth } = useAuth();
+
+    const { searchInfo } = useSearchContext();
+
+    const isTenant = auth?.roles.includes('tenant');
+    const allInfoProvided = selectedCheckInDate && selectedCheckOutDate
+    const bookButtonActive = auth && isTenant && allInfoProvided;
 
     const formatDate = (date) => {
         if (date) return date.format('MM-DD-YYYY')
@@ -27,6 +40,16 @@ const BookingPanel = ({ room, roomID }) => {
         (visitors - room?.maxTenants > 0 ? (visitors - room?.maxTenants)* room?.extraCostPerTenant : 0);
 
     const totalPrice = pricePerNight * nights;
+
+    useEffect(() => {
+        if(!searchInfo) return;
+
+        console.log(searchInfo.checkInDate);
+
+        setSelectedCheckInDate(dayjs(searchInfo.checkInDate));
+        setSelectedCheckOutDate(dayjs(searchInfo.checkOutDate));
+        setVisitors(searchInfo.tenants);
+    }, [searchInfo]);
 
     return (
         <div className='bookingContainer'>
@@ -103,11 +126,24 @@ const BookingPanel = ({ room, roomID }) => {
                 </div>
                 }
 
-                <button
-                    className='book-button'
+                <Tooltip
+                    title={!allInfoProvided ? 'No date range set' :
+                        !auth ? 'Login to book'
+                            : (!isTenant && 'You need to be a tenant to book') }
+                    placement="top"
+                    arrow
                 >
-                    Book Now
-                </button>
+
+                    <button
+                        disabled={!bookButtonActive}
+                        className='book-button'
+                    >
+                        {loading ? <CircularProgress /> : 'Book Now'}
+                    </button>
+
+                </Tooltip>
+
+
             </div>
 
             {
