@@ -1,14 +1,32 @@
 import './bookingPanel.css'
 import {useState} from "react";
-import {Icon} from "@mui/material";
-import WarningIcon from '@material-ui/icons/Warning';
 import Tooltip from "@mui/material/Tooltip";
-
 import BookingDetails from "../BookingDetails/BookingDetails";
 
 const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
     const [detailsActive, setDetailsActive] = useState(false);
+    const [selectedCheckInDate, setSelectedCheckInDate] = useState();
+    const [selectedCheckOutDate, setSelectedCheckOutDate] = useState();
+    const [visitors, setVisitors] = useState(1);
+    const [nights, setNights] = useState(0);
+
+    const formatDate = (date) => {
+        if (date) return date.format('MM-DD-YYYY')
+        else return '---'
+    };
+
+    const onSubmit = (checkIn, checkOut, tenants, nights) => {
+        setSelectedCheckInDate(checkIn);
+        setSelectedCheckOutDate(checkOut);
+        setVisitors(tenants);
+        setNights(nights);
+    }
+
+    const pricePerNight = room?.pricePerNight +
+        (visitors - room?.maxTenants > 0 ? (visitors - room?.maxTenants)* room?.extraCostPerTenant : 0);
+
+    const totalPrice = pricePerNight * nights;
 
     return (
         <div className='bookingContainer'>
@@ -25,15 +43,15 @@ const BookingPanel = ({ room, roomID }) => {
                         <Tooltip title="Click to edit" placement="top" arrow>
                             <table>
                                 <thead>
-                                <td><strong>Check-in Date</strong><br />13-05-2023</td>
-                                <td><strong>Check-out Date</strong><br />13-05-2023</td>
+                                <td><strong>Check-in Date</strong><br />{formatDate(selectedCheckInDate)}</td>
+                                <td><strong>Check-out Date</strong><br />{formatDate(selectedCheckOutDate)}</td>
                                 </thead>
                                 <tbody>
                                 <tr>
                                     <td colSpan="2">
                                         <strong>Visitors</strong>
                                         <br />
-                                        2 visitors
+                                        {`${visitors} visitor${visitors > 1 ? 's' : ''}`}
                                     </td>
                                 </tr>
                                 </tbody>
@@ -44,19 +62,15 @@ const BookingPanel = ({ room, roomID }) => {
 
                 </div>
 
-                <div className='booking-info'>
-
-                    <div className="minimum-stay-warning-container">
-                        <Icon component={WarningIcon} className="warning-icon" />
-                       Min Stay: 14 nights
-                    </div>
-
+                {
+                    nights > 0 &&
+                    <div className='booking-info'>
 
                     <p>
-                        300$ / night x 4 nights
+                        {room?.pricePerNight?.toFixed(2)}$ / night x {`${nights} night${nights > 1 ? 's': ''}`}
                     </p>
                     <p>
-                        Total: 13000$
+                        Total: {totalPrice.toFixed(2)}$
                     </p>
 
                     <button
@@ -67,18 +81,27 @@ const BookingPanel = ({ room, roomID }) => {
                     </button>
 
                     {
-                        breakdownActive &&(
+                        breakdownActive && (
                             <div>
                                 <p>
-                                    100$ / night for 4 people + 20$ per extra person for a total of 2 extra people
+                                    {room?.pricePerNight?.toFixed(2)}$ / night for up to {room?.maxTenants} people
+                                    {
+                                        visitors - room?.maxTenants > 0 &&
+                                        <span>
+                                          + {room?.extraCostPerTenant?.toFixed(2)}$ per extra person for a total
+                                    of {visitors - room?.maxTenants} extra {visitors - room?.maxTenants > 1 ? 'people' : 'person'}
+                                     </span>
+                                    }
                                 </p>
+                                <br />
                                 <p>
-                                    Total: 300$ / night
+                                    Total: {pricePerNight.toFixed(2)}$ / night
                                 </p>
                             </div>
                         )
                     }
                 </div>
+                }
 
                 <button
                     className='book-button'
@@ -91,9 +114,15 @@ const BookingPanel = ({ room, roomID }) => {
                 detailsActive &&
                     <BookingDetails
                         open={detailsActive}
+                        onSubmit={onSubmit}
                         onClose={() => setDetailsActive(false)}
                         roomID={roomID}
                         minStay={room.minimumStay}
+                        initData={{
+                            selectedCheckInDate,
+                            selectedCheckOutDate,
+                            visitors
+                        }}
                     />
             }
         </div>

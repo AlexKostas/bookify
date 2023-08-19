@@ -15,12 +15,13 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import axios from "../../api/axios";
 
-const BookingDetails = ( {open, onClose, roomID, minStay} ) => {
+const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) => {
     const [checkInDate, setCheckInDate] = useState(dayjs());
     const [checkOutDate, setCheckOutDate] = useState(dayjs());
     const [people, setPeople] = useState(1);
     const [loading, setLoading] = useState(false);
-    const [available, setAvailable] = useState(false)
+    const [available, setAvailable] = useState(false);
+    const [numberOfNights, setNumberOfNights] = useState(0);
     const [error, setError] = useState('');
 
     const currentDate = dayjs();
@@ -61,17 +62,26 @@ const BookingDetails = ( {open, onClose, roomID, minStay} ) => {
     useEffect(() => {
         setError('');
 
-        const numberOfDays =  checkOutDate.isSame(checkInDate) ? 0 : checkOutDate.diff(checkInDate, 'day') + 1;
+        const numberOfDays = checkOutDate.isSame(checkInDate) ? 0 : checkOutDate.diff(checkInDate, 'day') + 1;
+        setNumberOfNights(numberOfDays);
         console.log(numberOfDays);
         if(numberOfDays < minStay){
             setAvailable(false);
-            setError(`Minimum stay is ${minStay} day${minStay > 1 && 's'}`)
+            setError(`Minimum stay is ${minStay} night${minStay > 1 && 's'}`)
             return;
         }
 
         fetchAvailability();
 
     }, [checkInDate, checkOutDate]);
+
+    useEffect(() => {
+        if(!initData) return;
+
+        setPeople(initData.visitors);
+        if(initData.selectedCheckInDate) setCheckInDate(initData.selectedCheckInDate);
+        if(initData.selectedCheckOutDate) setCheckOutDate(initData.selectedCheckOutDate);
+    }, [initData])
 
     return (
         <div>
@@ -140,6 +150,10 @@ const BookingDetails = ( {open, onClose, roomID, minStay} ) => {
                         </div>
 
                         <button
+                            onClick={() => {
+                                if(onSubmit) onSubmit(checkInDate, checkOutDate, people, numberOfNights);
+                                onClose();
+                            }}
                             disabled={!available}
                             className='book-options-confirm-button'
                         >
