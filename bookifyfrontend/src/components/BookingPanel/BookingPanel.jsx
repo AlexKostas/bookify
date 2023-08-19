@@ -6,6 +6,9 @@ import {CircularProgress} from "@mui/material";
 import useAuth from "../../hooks/useAuth";
 import {useSearchContext} from "../../context/SearchContext";
 import dayjs from "dayjs";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 
 const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
@@ -15,14 +18,16 @@ const BookingPanel = ({ room, roomID }) => {
     const [visitors, setVisitors] = useState(1);
     const [nights, setNights] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
+    const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
-
     const { searchInfo } = useSearchContext();
 
     const isTenant = auth?.roles.includes('tenant');
-    const allInfoProvided = selectedCheckInDate && selectedCheckOutDate
-    const bookButtonActive = auth && isTenant && allInfoProvided;
+    const allInfoProvided = selectedCheckInDate && selectedCheckOutDate;
+    const sameHost = auth?.user === room.hostUsername;
+    const bookButtonActive = auth && isTenant && allInfoProvided && !sameHost;
 
     const formatDate = (date) => {
         if (date) return date.format('MM-DD-YYYY')
@@ -34,6 +39,40 @@ const BookingPanel = ({ room, roomID }) => {
         setSelectedCheckOutDate(checkOut);
         setVisitors(tenants);
         setNights(nights);
+
+        setError('')
+    }
+
+    const onBook = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            const endpointURL = '/booking/book';
+            const response = await axiosPrivate.post(endpointURL, JSON.stringify({
+                roomID,
+                checkInDate: selectedCheckInDate,
+                checkOutDate: selectedCheckOutDate,
+                numberOfTenants: visitors,
+            }));
+        }
+        catch (err) {
+            console.log(err);
+
+            if (!err?.response)
+                setError('No server response');
+            else if (err.response?.status === 400)
+                setError('This room is not available in the given date-range');
+            else if (err.response?.status === 403)
+                setError('You can not book your own room');
+            else if (err.response?.status === 404)
+                setError('Room not found');
+            else
+                setError('An error occurred. Check the console for more details');
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
     const pricePerNight = room?.pricePerNight +
@@ -43,8 +82,6 @@ const BookingPanel = ({ room, roomID }) => {
 
     useEffect(() => {
         if(!searchInfo) return;
-
-        console.log(searchInfo.checkInDate);
 
         setSelectedCheckInDate(dayjs(searchInfo.checkInDate));
         setSelectedCheckOutDate(dayjs(searchInfo.checkOutDate));
@@ -90,7 +127,7 @@ const BookingPanel = ({ room, roomID }) => {
                     <div className='booking-info'>
 
                     <p>
-                        {room?.pricePerNight?.toFixed(2)}$ / night x {`${nights} night${nights > 1 ? 's': ''}`}
+                        {pricePerNight.toFixed(2)}$ / night x {`${nights} night${nights > 1 ? 's': ''}`}
                     </p>
                     <p>
                         Total: {totalPrice.toFixed(2)}$
@@ -127,15 +164,19 @@ const BookingPanel = ({ room, roomID }) => {
                 }
 
                 <Tooltip
-                    title={!allInfoProvided ? 'No date range set' :
-                        !auth ? 'Login to book'
-                            : (!isTenant && 'You need to be a tenant to book') }
+                    title={
+                        !allInfoProvided ? 'No date range set' :
+                            !auth ? 'Login to book'
+                                : (sameHost ? 'You can not book your own room' :
+                                    !isTenant && 'You need to be a tenant to book')
+                    }
                     placement="top"
                     arrow
                 >
 
                     <button
                         disabled={!bookButtonActive}
+                        onClick={onBook}
                         className='book-button'
                     >
                         {loading ? <CircularProgress /> : 'Book Now'}
@@ -143,6 +184,13 @@ const BookingPanel = ({ room, roomID }) => {
 
                 </Tooltip>
 
+                {
+                    error !== '' &&
+                    <div className="booking-options-error">
+                        <FontAwesomeIcon icon={faCircleExclamation} style={{color: "#ff0000", marginRight: '3%'}}/>
+                        {error}
+                    </div>
+                }
 
             </div>
 

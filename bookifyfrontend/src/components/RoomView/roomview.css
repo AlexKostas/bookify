@@ -24,7 +24,7 @@
 }
 
 .main-content-parent {
-    background-color: red;
+    /*background-color: red;*/
 
     width: 94%;
 
@@ -33,16 +33,22 @@
     display: grid;
     grid-template-columns: 71% 25%;
     gap: 2%;
+
+    border: 5px solid gray;
+    border-radius: 2%;
     /*position: relative;*/
 }
 
 .review-parent {
-    background-color: pink;
+    /*background-color: pink;*/
+    margin-top: 3%;
+    border: 5px solid gray;
+    border-radius: 30px;
     width: 94%;
 }
 
 .main-room-content {
-    background-color: blue;
+    /*background-color: blue;*/
     word-wrap: break-word;
 }
 

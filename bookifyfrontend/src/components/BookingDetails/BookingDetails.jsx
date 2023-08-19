@@ -64,7 +64,7 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
 
         const numberOfDays = checkOutDate.isSame(checkInDate) ? 0 : checkOutDate.diff(checkInDate, 'day') + 1;
         setNumberOfNights(numberOfDays);
-        console.log(numberOfDays);
+
         if(numberOfDays < minStay){
             setAvailable(false);
             setError(`Minimum stay is ${minStay} night${minStay > 1 && 's'}`)

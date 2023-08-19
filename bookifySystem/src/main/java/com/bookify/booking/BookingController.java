@@ -18,7 +18,7 @@ public class BookingController {
     private final BookingService bookingService;
     private final AvailabilityService availabilityService;
 
-    @GetMapping("/book")
+    @PostMapping("/book")
     @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> book(@RequestBody BookingRequestDTO bookRequest){
         try{
