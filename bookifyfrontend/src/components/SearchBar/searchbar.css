@@ -1,42 +1,16 @@
+.search-header-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .header {
     color: white;
     display: flex;
     justify-content: center;
     position: relative;
-    height: 1vh;
-    margin-top: 8vh;
-}
-
-.headerContainer {
-    width: 100%;
-    max-width: 1024px;
-    margin: 20px 0px 100px 0px;
-}
-
-.headerContainer.listMode {
-    margin: 20px 0px 0px 0px;
-}
-
-.headerList {
-    display: flex;
-    gap: 40px;
-    margin-bottom: 50px;
-}
-
-.headerListItem {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.headerListItem.active {
-    border: 1px solid white;
-    padding: 10px;
-    border-radius: 20px;
-}
-
-.headerDesc {
-    margin: 20px 0px;
+    height: 5%;
+    width: 80%;
 }
 
 .headerBtn {
@@ -45,25 +19,22 @@
     font-weight: 500;
     border: none;
     cursor: pointer;
-    margin-bottom: 20px;
-    height: 6vh;
+    height: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 0;
 }
 
 .headerSearch {
-    height: 8vh;
     background-color: white;
     border: 3px solid #febb02;
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    padding: 10px 0px;
     border-radius: 5px;
-    position: absolute;
-    bottom: -25px;
-    width: 70%;
+    width: 100%;
+    margin: 2%;
+    padding: 0.5%;
 }
 
 .headerSearchError {
@@ -77,7 +48,7 @@
 .headerSearchItem {
     display: flex;
     align-items: center;
-    gap: 10px;
+    height: 100%;
 }
 
 .headerSearchInput {
@@ -92,34 +63,34 @@
 
 .date {
     position: absolute;
-    top: 50px;
+    top: 70%;
     z-index: 2;
 }
 
 .options {
     z-index: 2;
     position: absolute;
-    top: 50px;
+    bottom: 0;
     background-color: white;
     color: gray;
     border-radius: 5px;
     -webkit-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
     box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
+    padding: 2%;
 }
 
 .optionItem {
-    width: 200px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
-    margin: 10px;
 }
 
 .optionCounter {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 12px;
+    justify-content: center;
     color: black;
+    gap: 10%;
 }
 
 .optionCounterButton {
@@ -132,8 +103,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 0;
 }
 
 .optionCounterButton:disabled {
     cursor: not-allowed;
+}
+
+.location-bar {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.calendar-selection {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.people-options, .search-button-container {
+    width: 15%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

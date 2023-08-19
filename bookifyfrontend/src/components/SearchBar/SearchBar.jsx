@@ -17,7 +17,7 @@ import {useLocalStorage} from "../../hooks/useLocalStorage";
 
 const SearchBar = ({ type }) => {
     const [destination, setDestination] = useState("");
-    const { setItem } = useLocalStorage();
+    const {setItem} = useLocalStorage();
     const [openDate, setOpenDate] = useState(false);
     const [dates, setDates] = useState([
         {
@@ -33,7 +33,7 @@ const SearchBar = ({ type }) => {
     const [error, setError] = useState(false);
 
     const navigate = useNavigate();
-    const { searchInfo, setSearchInfo } = useSearchContext();
+    const {searchInfo, setSearchInfo} = useSearchContext();
 
     const dateRef = useRef();
     const optionsRef = useRef();
@@ -48,7 +48,7 @@ const SearchBar = ({ type }) => {
     };
 
     const handleSearch = () => {
-        if (destination === "" || dates[0].startDate === undefined || dates[0].endDate === undefined){
+        if (destination === "" || dates[0].startDate === undefined || dates[0].endDate === undefined) {
             setError(true);
             return;
         }
@@ -94,88 +94,81 @@ const SearchBar = ({ type }) => {
 
     let headerSearchError = 'headerSearchError';
     return (
-        <div className="header">
-            <div
-                className={
-                    type === "list" ? "headerContainer listMode" : "headerContainer"
-                }
-            >
-                {type !== "list" && (
-                    <>
-                        <div className={`headerSearch ${error && headerSearchError}`}>
-                            <div className="headerSearchItem">
-                                <FontAwesomeIcon icon={faBed} className="headerIcon" />
-                                <SearchField
-                                    onSelection={onLocationSelection}
-                                    className="headerSearchInput"
-                                />
-                            </div>
+        <div className="search-header-container">
+            <div className="header">
+                <div className={`headerSearch ${error && headerSearchError}`}>
 
-                            <div className="headerSearchItem" ref={dateRef}>
-                                <FontAwesomeIcon icon={faCalendarDays} className="headerIcon" />
-                                <span
-                                    onClick={() => setOpenDate(!openDate)}
-                                    className="headerSearchText"
-                                >{`${format(dates[0].startDate, "MM/dd/yyyy")} to ${format(
-                                    dates[0].endDate,
-                                    "MM/dd/yyyy"
-                                )}`}</span>
-                                {openDate && (
-                                    <DateRange
-                                        editableDateInputs={true}
-                                        onChange={(item) => setDates([item.selection])}
-                                        moveRangeOnFirstSelection={false}
-                                        ranges={dates}
-                                        className="date"
-                                        minDate={new Date()}
-                                    />
-                                )}
-                            </div>
+                    <div className="headerSearchItem location-bar">
+                        <SearchField
+                            onSelection={onLocationSelection}
+                            className="headerSearchInput"
+                        />
+                    </div>
 
+                    <div className="headerSearchItem calendar-selection" ref={dateRef}>
+                        <FontAwesomeIcon icon={faCalendarDays} className="headerIcon"/>
+                        <span
+                            onClick={() => setOpenDate(!openDate)}
+                            className="headerSearchText"
+                        >{`${format(dates[0].startDate, "MM/dd/yyyy")} to ${format(
+                            dates[0].endDate,
+                            "MM/dd/yyyy"
+                        )}`}</span>
+                        {openDate && (
+                            <DateRange
+                                editableDateInputs={true}
+                                onChange={(item) => setDates([item.selection])}
+                                moveRangeOnFirstSelection={false}
+                                ranges={dates}
+                                className="date"
+                                minDate={new Date()}
+                            />
+                        )}
+                    </div>
 
-                            <div className="headerSearchItem" ref={optionsRef}>
-                                <FontAwesomeIcon icon={faPerson} className="headerIcon" />
-                                <span
-                                    onClick={() => setOpenOptions(!openOptions)}
-                                    className="headerSearchText"
-                                >{`${options.people} ${options.people > 1 ? 'people' : 'person'}`}</span>
-                                {openOptions && (
-                                    <div className="options">
-                                        <div className="optionItem">
-                                            <span className="optionText">People:</span>
-                                            <div className="optionCounter">
-                                                <button
-                                                    disabled={options.people <= 1}
-                                                    className="optionCounterButton"
-                                                    onClick={() => handleOption("people", "d")}
-                                                >
-                                                    -
-                                                </button>
-                                                <span className="optionCounterNumber">
-                          {options.people}
-                        </span>
-                                                <button
-                                                    className="optionCounterButton"
-                                                    onClick={() => handleOption("people", "i")}
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
-                                        </div>
+                    <div className="headerSearchItem people-options" ref={optionsRef}>
+                        <FontAwesomeIcon icon={faPerson} className="headerIcon"/>
+                        <span
+                            onClick={() => setOpenOptions(!openOptions)}
+                            className="headerSearchText"
+                        >{`${options.people} ${options.people > 1 ? 'people' : 'person'}`}</span>
+                        {openOptions && (
+                            <div className="options">
+                                <div className="optionItem">
+                                    <span className="optionText">People:</span>
+                                    <div className="optionCounter">
+                                        <button
+                                            disabled={options.people <= 1}
+                                            className="optionCounterButton"
+                                            onClick={() => handleOption("people", "d")}
+                                        >
+                                            -
+                                        </button>
+                                        <span className="optionCounterNumber">
+                                            {options.people}
+                                        </span>
+                                        <button
+                                            className="optionCounterButton"
+                                            onClick={() => handleOption("people", "i")}
+                                        >
+                                            +
+                                        </button>
                                     </div>
-                                )}
+                                </div>
                             </div>
-                            <div className="headerSearchItem">
-                                <button className="headerBtn" onClick={handleSearch}>
-                                    Search
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                )}
+                        )}
+                    </div>
+
+                    <div className="headerSearchItem search-button-container">
+                        <button className="headerBtn" onClick={handleSearch}>
+                            Search
+                        </button>
+                    </div>
+
+                </div>
             </div>
         </div>
     );
-};
+}
 
 export default SearchBar;

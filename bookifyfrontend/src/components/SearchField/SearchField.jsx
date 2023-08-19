@@ -42,6 +42,7 @@ const SearchField = ( {onSelection} ) => {
             getOptionLabel={(option) => option}
             onChange={handleSelect}
             onInputChange={handleInputChange}
+            className="autocomplete-bar"
             renderInput={(params) => (
                 <TextField
                 {...params}
@@ -51,7 +52,7 @@ const SearchField = ( {onSelection} ) => {
                     ...params.InputProps,
                     startAdornment: (
                     <>
-                        <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
+                        {/*<LocationOnIcon sx={{ color: 'gray', mr: 1 }} />*/}
                         {params.InputProps.startAdornment}
                     </>
                     ),
