@@ -128,9 +128,7 @@ const UserGrid = () => {
         URL.revokeObjectURL(url);
     }
 
-    const handleExport = async () => {
-        const endpointURL = `admin/getData${selectedFileType}`;
-
+    const handleExport = async (endpointURL) => {
         try{
             setFileLoading(true);
 
@@ -240,10 +238,18 @@ const UserGrid = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleExport}
+                    onClick={() => handleExport(`admin/getData${selectedFileType}`)}
                     startIcon={<CloudDownloadIcon />}
                 >
-                    Export
+                    Export Room Data
+                </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleExport(`admin/getHostRev${selectedFileType}`)}
+                    startIcon={<CloudDownloadIcon />}
+                >
+                    Export Host Reviews
                 </Button>
 
                 <Select

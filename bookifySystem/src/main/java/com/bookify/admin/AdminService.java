@@ -7,6 +7,7 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -117,15 +119,31 @@ public class AdminService {
     public String getAppDataJSON() throws JsonProcessingException {
         List<Room> rooms = roomRepository.findAll();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        String json = objectMapper.writeValueAsString(rooms);
-        return json;
+        return getJsonStr(rooms);
     }
 
     public String getAppDataXML() throws JsonProcessingException {
         String json = getAppDataJSON();
         return U.jsonToXml(json);
+    }
+
+    public String getHostReviewsJSON() throws JsonProcessingException {
+        List<User> hosts = userRepository.findAllByRolesAuthority(Constants.HOST_ROLE);
+        List<HostDTO> hostDTOs = hosts.stream()
+                .map(HostDTO::new)
+                .collect(Collectors.toList());
+        return getJsonStr(hostDTOs);
+    }
+
+    public String getHostReviewsXML() throws JsonProcessingException {
+        String json = getHostReviewsJSON();
+        return U.jsonToXml(json);
+    }
+
+    private String getJsonStr(List<?> entityList) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        return objectMapper.writeValueAsString(entityList);
     }
 }

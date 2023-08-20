@@ -46,6 +46,7 @@ public class User implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "refresh_token_id", referencedColumnName = "token")
     @JsonManagedReference
+    @JsonIgnore
     private RefreshToken refreshToken;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
