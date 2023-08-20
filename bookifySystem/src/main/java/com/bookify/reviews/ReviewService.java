@@ -6,6 +6,7 @@ import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
+import com.bookify.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +29,6 @@ public class ReviewService {
     private final BookingRepository bookingRepository;
 
     private final UtilityComponent utility;
-
 
     public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException, OperationNotSupportedException {
         User currentUser = utility.getCurrentAuthenticatedUser();
