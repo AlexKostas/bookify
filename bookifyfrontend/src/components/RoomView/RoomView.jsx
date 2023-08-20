@@ -1,32 +1,28 @@
-import { Carousel } from "react-responsive-carousel";
+import {Carousel} from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import {useCallback, useEffect} from 'react'
-import {useState} from "react";
+import {useCallback, useEffect, useState} from 'react'
 import axios from "../../api/axios";
 import './roomview.css';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import ReviewPanel from "../ReviewPanel/ReviewPanel";
 import RoomUserView from "../RoomUserView/RoomUserView";
 import Tooltip from "@mui/material/Tooltip";
 import BookingPanel from "../BookingPanel/BookingPanel";
 import StarIcon from "@mui/icons-material/Star";
-import { Link as ScrollLink } from 'react-scroll';
-import { Link } from 'react-router-dom';
+import {Link as ScrollLink} from 'react-scroll';
+import {Link} from 'react-router-dom';
 import useImageFetcher from "../../hooks/useImageFetcher";
-
-const images = [
-    "https://res.cloudinary.com/ifeomaimoh/image/upload/v1652345767/demo_image2.jpg",
-    "https://res.cloudinary.com/ifeomaimoh/image/upload/v1652366604/demo_image5.jpg",
-    "https://res.cloudinary.com/ifeomaimoh/image/upload/v1652345874/demo_image1.jpg",
-];
+import {CircularProgress} from "@mui/material";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
 
     const [room, setRoom] = useState({});
     const [shouldRedraw, setShouldRedraw] = useState(true); // MUST BE INITIALIZED TO TRUE
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
     const { imageData } = useImageFetcher(profilePicURL);
@@ -65,6 +61,31 @@ const RoomView = ({ roomID }) => {
             setRoom(null);
         }
     }, [ROOM_URL, room]);
+
+    const fetchImages = async (urls) => {
+        const promises = urls.map(url =>
+            axios.get(url, { responseType: 'blob' })
+                .then(response => URL.createObjectURL(response.data))
+                .catch(error => {
+                    console.error(`Failed to fetch image from ${url}:`, error);
+                    return null;
+                })
+        );
+
+        const imageUrls = await Promise.all(promises);
+        setImages(imageUrls.filter(url => url !== null));
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if(!room || !room.photosGUIDs) return;
+
+        console.log(room.photosGUIDs);
+
+        let urls = [`/roomPhotos/get/${room.thumbnailGuid}`]
+        urls = [...urls, ...room.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
+        fetchImages(urls);
+    }, [room]);
 
     useEffect(() => {
         if(!shouldRedraw) return;
@@ -124,15 +145,18 @@ const RoomView = ({ roomID }) => {
 
                     <div className="room-view-images">
 
-                        <div className="box">
-                            <Carousel useKeyboardArrows={true}>
-                                {images.map((URL, index) => (
-                                    <div className="slide">
-                                        <img alt="sample_file" src={URL} key={index} />
-                                    </div>
-                                ))}
-                            </Carousel>
-                        </div>
+                        {
+                            loading ? <CircularProgress size={100} /> :
+                                <div className="box">
+                                    <Carousel useKeyboardArrows={true}>
+                                        {images.map((URL, index) => (
+                                            <div className="slide">
+                                                <img alt="sample_file" src={URL} key={index} />
+                                            </div>
+                                        ))}
+                                    </Carousel>
+                                </div>
+                        }
 
                     </div>
 
