@@ -2,6 +2,7 @@ package com.bookify.booking;
 
 import com.bookify.room.Room;
 import com.bookify.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookingNumber;
 
+    @JsonBackReference
     @ManyToOne
     private Room room;
 
