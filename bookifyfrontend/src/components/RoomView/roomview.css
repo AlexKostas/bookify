@@ -15,18 +15,45 @@
     align-items: center;
 }
 
-.room-view-images {
-    background-color: green;
+.view-main {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+
+    border: 5px solid gray;
+    border-radius: 20px;
 
     width: 94%;
+    padding: 1%;
+}
+
+.room-view-images {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /*width: 94%;*/
+}
+
+.box {
+    width: 50%;
+    margin: auto;
+}
+
+.carousel .carousel-status {
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: transparent;
+    font-size: 1.4rem;
+    text-shadow: none;
+    margin-top: 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
 }
 
 .main-content-parent {
     /*background-color: red;*/
 
-    width: 94%;
+    /*width: 94%;*/
 
     height: auto;
 
@@ -34,7 +61,6 @@
     grid-template-columns: 71% 25%;
     gap: 2%;
 
-    border: 5px solid gray;
     border-radius: 2%;
     /*position: relative;*/
 }
