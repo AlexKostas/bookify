@@ -15,10 +15,21 @@ export const FilterOptionsProvider = ({ children }) => {
         selectedRoomTypes: [],
         maxPrice: 600,
         orderDirection: 'ASC',
+        page: 0
     });
 
+    const resetSearch = () => {
+        setFilterOptions(null);
+        //removeItem("searchInfo");
+    }
+
+    const setOptions = (options) => {
+        setFilterOptions(options)
+        //setItem("paginationState");
+    }
+
     return (
-        <FilterOptionsContext.Provider value={{ filterOptions, setFilterOptions }}>
+        <FilterOptionsContext.Provider value={{ filterOptions, setOptions, resetSearch }}>
             {children}
         </FilterOptionsContext.Provider>
     );
