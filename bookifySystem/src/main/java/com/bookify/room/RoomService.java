@@ -26,7 +26,12 @@ import org.springframework.stereotype.Service;
 import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.util.*;
+import lombok.extern.slf4j.Slf4j;
 
+import static com.bookify.utils.Constants.MAX_AVAILABILITY_DAYS_PER_ROOM;
+
+
+@Slf4j
 @Service
 @AllArgsConstructor
 public class RoomService{
@@ -259,13 +264,28 @@ public class RoomService{
     }
 
     private void setAvailability(List<DatePairDTO> availability, Room room){
+        List<Availability> availabilityList = new ArrayList<>(1500);
+        int counter = 0;
+        Boolean reachedMax = false;
+
         for(DatePairDTO datePair : availability){
             LocalDate date = datePair.startDate();
 
             while(!date.isAfter(datePair.endDate())){
-                availabilityRepository.save(new Availability(room, date));
+                if(counter == MAX_AVAILABILITY_DAYS_PER_ROOM) {
+                    log.warn("Maximum number of available booking dates is set to: "+ MAX_AVAILABILITY_DAYS_PER_ROOM);
+                    reachedMax = true;
+                    break;
+                }
+
+                availabilityList.add(new Availability(room, date));
                 date = date.plusDays(1);
+
+                counter += 1;
             }
+            if(reachedMax)
+                break;
         }
+        availabilityRepository.saveAll(availabilityList);
     }
 }

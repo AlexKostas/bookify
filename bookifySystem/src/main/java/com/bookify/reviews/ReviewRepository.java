@@ -16,6 +16,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Optional<Review> findByReviewerAndRoom(User reviewer, Room room);
 
     int countByReviewerUsername(String username);
+    int countByReviewerAndRoom(User reviewer, Room room);
 
     @Query("SELECT AVG(r.stars) FROM Review r " +
             "INNER JOIN r.room rm " +

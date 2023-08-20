@@ -1,6 +1,7 @@
 package com.bookify.authentication;
 
 import com.bookify.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -21,6 +22,7 @@ public class RefreshToken {
     private Instant expirationDate;
 
     @OneToOne(mappedBy = "refreshToken")
+    @JsonBackReference
     private User user;
 
     public RefreshToken(String token, Instant expirationDate) {
