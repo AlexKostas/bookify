@@ -1,5 +1,6 @@
 package com.bookify.room;
 
+import com.bookify.booking.Booking;
 import com.bookify.images.Image;
 import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
@@ -90,6 +91,10 @@ public class Room {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_host_id", nullable = false)
     private User roomHost;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "room")
+    private List<Booking> bookings;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
