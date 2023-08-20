@@ -10,7 +10,6 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 
 const SearchPage = () => {
     const { searchInfo, setSearchInfo } = useSearchContext();
-    const { getItem } = useLocalStorage();
     const itemsPerPage = 9;
     const [rooms, setRooms] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -68,16 +67,6 @@ const SearchPage = () => {
     useEffect(() => {
         fetchRooms(currentPage);
     }, [currentPage, options, searchInfo]);
-
-    useEffect(() => {
-        if(searchInfo) return;
-        const rawInfo = getItem('searchInfo')
-        if(!rawInfo) return;
-
-        const info = JSON.parse(rawInfo);
-
-        if(info) setSearchInfo(info);
-    }, []);
 
     return (
         <>

@@ -82,7 +82,7 @@ const Dropdown = ({username}) => {
                             }}
                             onClick={() => navigate('/messages')}
                         >
-                            Messages ({unreadMessages})
+                            Messages {unreadMessages > 0 ? `(${unreadMessages})` : ''}
                         </button>
                     )
                 }

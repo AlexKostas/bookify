@@ -28,15 +28,15 @@ public class Review {
 
     private LocalDate date;
 
-    private boolean reviewerVisitedRoom;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User reviewer;
 
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "room_ID")
     private Room room;
+
+    private boolean reviewerVisitedRoom;
 
     public Review() {}
 }

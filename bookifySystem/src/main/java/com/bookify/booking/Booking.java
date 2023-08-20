@@ -17,10 +17,10 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookingNumber;
 
-    @OneToOne
+    @ManyToOne
     private Room room;
 
-    @OneToOne
+    @ManyToOne
     private User user;
 
     private LocalDate checkInDate;
@@ -28,14 +28,16 @@ public class Booking {
 
     private LocalDate bookingDate;
     private int numberOfTenants;
+    private float price;
 
     public Booking(Room room, User user, LocalDate checkInDate, LocalDate checkOutDate,
-                   LocalDate bookingDate, int numberOfTenants) {
+                   LocalDate bookingDate, int numberOfTenants, float price) {
         this.room = room;
         this.user = user;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.bookingDate = bookingDate;
         this.numberOfTenants = numberOfTenants;
+        this.price = price;
     }
 }

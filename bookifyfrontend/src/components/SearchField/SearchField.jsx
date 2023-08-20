@@ -42,6 +42,7 @@ const SearchField = ( {onSelection} ) => {
             getOptionLabel={(option) => option}
             onChange={handleSelect}
             onInputChange={handleInputChange}
+            className="autocomplete-bar"
             renderInput={(params) => (
                 <TextField
                 {...params}

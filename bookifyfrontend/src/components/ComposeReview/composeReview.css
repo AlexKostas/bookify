@@ -1,0 +1,70 @@
+.compose-review-content {
+    margin:  0.1% 2% 0.1% 2%;
+    position: relative;
+
+    word-break: break-word;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: 90%;
+}
+
+.compose-review-title {
+    margin-bottom: 3%;
+}
+
+.review-comment-input {
+    resize: none;
+    width: 93%;
+    height: 100%;
+}
+
+.text-area-maxed-out {
+    border: 2px solid red;
+    outline: none;
+}
+
+.review-footer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin-top: 1%;
+    gap: 2%;
+    margin-bottom: -2%;
+}
+
+.create-review-button {
+    margin-top: 0;
+    height: fit-content;
+
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+    color: white;
+
+    padding: 1.2%;
+}
+
+.submit-review-button{
+    background-color: blue;
+}
+
+.cancel-review-button{
+    background-color: orangered;
+}
+
+.create-review-error {
+    position: absolute;
+    justify-content: flex-end;
+    right: 0;
+    width: 60%;
+    align-items: center;
+
+    display: flex;
+    flex-direction: row;
+
+}

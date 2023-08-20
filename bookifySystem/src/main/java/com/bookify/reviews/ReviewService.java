@@ -1,9 +1,11 @@
 package com.bookify.reviews;
 
+import com.bookify.booking.BookingRepository;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.UtilityComponent;
 import com.bookify.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Objects;
 
 @Service
@@ -23,11 +26,12 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+
+    private final UtilityComponent utility;
 
     public Integer createReview(ReviewDTO reviewDTO, Integer roomID) throws EntityNotFoundException, OperationNotSupportedException {
-        //TODO: when booking system is ready, make sure we update 'reviewerVisitedRoom' property correctly
-        User currentUser = userRepository.findByUsername(
-                SecurityContextHolder.getContext().getAuthentication().getName()).get();
+        User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(roomID).
                 orElseThrow(() -> new EntityNotFoundException("Room with id " + roomID + " does not exist!"));
@@ -48,9 +52,9 @@ public class ReviewService {
                 reviewDTO.stars(),
                 reviewDTO.comment(),
                 LocalDate.now(),
-                false,
                 currentUser,
-                room
+                room,
+                hasReviewerVisitedRoom(currentUser, room)
         ));
 
         return review.getReviewID();
@@ -60,26 +64,56 @@ public class ReviewService {
         Review review = findReview(reviewID);
 
         return new ReviewResponseDTO(
+                review.getReviewID(),
                 review.getStars(),
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
                 review.getReviewer().getUsername());
     }
 
-    public List<ReviewResponseDTO> getAllReviews(Integer roomID) throws EntityNotFoundException {
+    public ReviewResponseDTO getReviewOfUser(Integer roomID) throws EntityNotFoundException {
+        Room room = roomRepository.findById(roomID).orElseThrow(() ->
+                new EntityNotFoundException("Room with id " + roomID + " not found"));
+
+        User user = utility.getCurrentAuthenticatedUser();
+
+        Optional<Review> reviewOptional = reviewRepository.findByReviewerAndRoom(user, room);
+
+        if(reviewOptional.isEmpty())
+            throw new EntityNotFoundException("User " + user.getUsername() + " has no reviews for room with id " + roomID);
+
+        Review review = reviewOptional.get();
+
+        return new ReviewResponseDTO(
+                review.getReviewID(),
+                review.getStars(),
+                review.getComment(),
+                review.isReviewerVisitedRoom(),
+                review.getReviewer().getUsername()
+        );
+    }
+
+    public List<ReviewResponseDTO> getNReviews(Integer roomID, int reviewCount) throws EntityNotFoundException {
         if(!roomRepository.findById(roomID).isPresent())
             throw new EntityNotFoundException("Room with id " + roomID + " not found");
 
         List<Review> reviews = reviewRepository.findAllByRoomRoomID(roomID);
         List<ReviewResponseDTO> result = new ArrayList<>(reviews.size());
+        int count = 0;
 
-        for(Review review : reviews)
+        for(Review review : reviews) {
+            if(count >= reviewCount) break;
+
             result.add(new ReviewResponseDTO(
+                    review.getReviewID(),
                     review.getStars(),
                     review.getComment(),
                     review.isReviewerVisitedRoom(),
                     review.getReviewer().getUsername()
             ));
+
+            count++;
+        }
 
         return result;
     }
@@ -90,6 +124,10 @@ public class ReviewService {
 
         review.setStars(reviewDTO.stars());
         review.setComment(reviewDTO.comment());
+
+        User reviewer = review.getReviewer();
+        Room roomReviewed = review.getRoom();
+        review.setReviewerVisitedRoom(hasReviewerVisitedRoom(reviewer, roomReviewed));
 
         reviewRepository.save(review);
     }
@@ -115,5 +153,9 @@ public class ReviewService {
         if(reviewerID != currentUser.getUserID() && !currentUser.isAdmin())
             throw new IllegalAccessException("Insufficient privileges to edit/delete review " +
                     review.getReviewID());
+    }
+
+    private Boolean hasReviewerVisitedRoom(User reviewer, Room roomReviewed) {
+        return bookingRepository.countByUserAndRoom(reviewer, roomReviewed) > 0;
     }
 }

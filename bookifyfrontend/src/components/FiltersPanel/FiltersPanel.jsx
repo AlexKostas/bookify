@@ -1,5 +1,5 @@
 import './filtersPanel.css'
-import CheckboxSelection from "../FilterPanel/CheckboxSelection";
+import CheckboxSelection from "../CheckboxSelection/CheckboxSelection";
 import {useEffect, useState} from "react";
 import {Slider, Stack} from "@mui/material";
 import MuiInput from '@mui/material/Input';

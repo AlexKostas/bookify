@@ -3,14 +3,20 @@ import Navbar from "../components/Navbar/Navbar";
 import ComposeMessage from "../components/ComposeMessage/ComposeMessage";
 import MessageGrid from "../components/MessagesGrid/MessageGrid";
 import {useSearchContext} from "../context/SearchContext";
+import {useParams} from "react-router-dom";
 
 const MessageDashboard = () => {
     const [composePanelActive, setComposePanelActive] = useState(false);
     const { resetSearch } = useSearchContext();
+    const { username: recipient } = useParams();
 
     useEffect(() => {
         resetSearch();
     }, []);
+
+    useEffect(() => {
+        if(recipient) setComposePanelActive(true);
+    }, [recipient])
 
     return (
         <div>
@@ -22,7 +28,9 @@ const MessageDashboard = () => {
                 composePanelActive ?
                     (<ComposeMessage
                         open = {composePanelActive}
-                        onClose={() => setComposePanelActive(false)} />)
+                        onClose={() => setComposePanelActive(false)}
+                        preloadedRecipient={recipient}
+                    />)
                     : <MessageGrid />
             }
         </div>

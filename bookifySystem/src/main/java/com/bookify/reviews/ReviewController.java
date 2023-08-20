@@ -17,7 +17,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/createReview/{roomID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> createReview(@PathVariable Integer roomID, @RequestBody ReviewDTO reviewDTO){
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewDTO, roomID));
@@ -46,10 +46,25 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/getAllReviews/{roomID}")
-    public ResponseEntity<?> getAllReviews(@PathVariable Integer roomID){
+    @GetMapping("/getReviewOfUser/{roomID}")
+    public ResponseEntity<?> getReviewOfUser(@PathVariable Integer roomID){
         try {
-            return ResponseEntity.ok(reviewService.getAllReviews(roomID));
+            return ResponseEntity.ok(reviewService.getReviewOfUser(roomID));
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getNReviews/{roomID}")
+    public ResponseEntity<?> getNReviews(
+            @PathVariable Integer roomID,
+            @RequestParam(defaultValue = "5") int N){
+        try {
+            return ResponseEntity.ok(reviewService.getNReviews(roomID, N));
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -60,7 +75,7 @@ public class ReviewController {
     }
 
     @PutMapping("/editReview/{reviewID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> editReview(@PathVariable Integer reviewID, @RequestBody ReviewDTO reviewDTO){
         try {
             reviewService.editReview(reviewID, reviewDTO);
@@ -78,7 +93,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/deleteReview/{reviewID}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> deleteReview(@PathVariable Integer reviewID){
         try {
             reviewService.deleteReview(reviewID);

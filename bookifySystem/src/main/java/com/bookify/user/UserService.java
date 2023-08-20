@@ -97,10 +97,16 @@ public class UserService implements UserDetailsService {
 
     public UserStatsDTO loadUserStats(String username) throws UsernameNotFoundException {
         User user = loadUserDataByUsername(username.trim());
+
+        Double avgRating = reviewRepository.calculateAverageStarsByHost(user);
+        if(avgRating == null)
+            avgRating = 0.0;
         return new UserStatsDTO(
                 user.getAboutInfo(),
                 user.getMemberSince(),
-                reviewRepository.countByReviewerUsername(user.getUsername())
+                reviewRepository.countByReviewerUsername(user.getUsername()),
+                avgRating.floatValue(),
+                reviewRepository.countByHost(user)
         );
     }
 
@@ -232,4 +238,5 @@ public class UserService implements UserDetailsService {
         SecurityContextHolder.getContext().setAuthentication(updatedAuth);
         return tokenService.generateJWTToken(updatedAuth);
     }
+
 }

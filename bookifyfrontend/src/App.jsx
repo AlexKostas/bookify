@@ -20,6 +20,7 @@ import SearchPage from "./pages/SearchPage";
 import UpdateUserAboutPage from "./pages/UpdateUserAboutPage";
 import {useEffect} from "react";
 import useAutoFetchMessages from "./hooks/useAutoFetchMessages";
+import useAuth from "./hooks/useAuth";
 
 export const Admin = "admin";
 export const Host = "host";
@@ -67,6 +68,7 @@ function App() {
             <Route path ="profile" element={<ProfilePage />} />
             <Route path ="updateProfile" element={<UpdateProfilePage />} />
             <Route path ="updateAboutInfo" element={<UpdateUserAboutPage />} />
+            <Route path="messages/:username" element={<MessageDashboard />} />
             <Route path="messages" element={<MessageDashboard />} />
             <Route path="changePassword" element={<ChangePasswordPage/>} />
           </Route>

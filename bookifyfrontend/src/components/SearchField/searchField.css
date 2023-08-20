@@ -1,11 +1,15 @@
 .search-bar-root {
     margin-top: 15px;
-    background-color: white;
+    background-color: #d9d9d9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 30vw;
-    height: 1vh;
     justify-content: center;
+    height: 6vh;
+}
+
+.autocomplete-bar {
+    width: 90%;
+
 }
 
 .search-bar-root .MuiOutlinedInput-notchedOutline {
@@ -17,5 +21,5 @@
 }
 
 .search-bar-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: #007AFF;
+    border-color: transparent;
 }

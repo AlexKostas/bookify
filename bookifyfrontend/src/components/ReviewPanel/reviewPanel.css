@@ -1,0 +1,31 @@
+.review-panel-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.add-review-button {
+    color: white;
+    margin-top: 0;
+}
+
+.add-review-button:enabled{
+    background-color: blue;
+    cursor: pointer;
+}
+
+.add-review-button:disabled {
+    background-color: gray;
+    cursor: default;
+}
+
+.your-review-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 5%;
+}

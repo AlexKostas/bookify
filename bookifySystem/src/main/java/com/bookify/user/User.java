@@ -123,6 +123,8 @@ public class User implements UserDetails {
         return hasRole(Constants.ADMIN_ROLE);
     }
 
+    public boolean isHost() { return hasRole(Constants.HOST_ROLE); }
+
     public boolean isInactiveHost(){
         return hasRole(Constants.INACTIVE_HOST_ROLE);
     }

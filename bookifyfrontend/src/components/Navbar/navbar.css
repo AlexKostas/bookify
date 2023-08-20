@@ -1,25 +1,25 @@
 .navbar {
-    height: 8vh;
     background-color: #003580;
     display: flex;
     justify-content: center;
 }
 
 .navContainer {
+    margin-left: 2%;
     width: 100%;
     color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-left: 10px;
+    padding: 0 0;
 }
 
 .logo {
     font-weight: 500;
+    font-size: 1.4rem;
 }
 
 .navButton {
-    margin-left: 20px;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
@@ -29,11 +29,16 @@
 .navItems {
     flex-direction: row;
     justify-content: center;
+    height: 100%;
+    margin-right: 2%;
 }
 
 .buttons {
     display: flex;
+    flex-direction: row;
+    gap: 10%;
     align-items: center;
     margin-bottom: 10%;
-    margin-right: 10px;
+    height: 100%;
+    margin-right: 10%;
 }

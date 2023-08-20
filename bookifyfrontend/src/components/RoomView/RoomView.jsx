@@ -1,25 +1,51 @@
-import { Grid, Typography } from '@mui/material';
-import { useCallback } from 'react'
-import React, {useEffect, useState} from "react";
+import {Carousel} from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import {useCallback, useEffect, useState} from 'react'
 import axios from "../../api/axios";
 import './roomview.css';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import {MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
+import ReviewPanel from "../ReviewPanel/ReviewPanel";
+import RoomUserView from "../RoomUserView/RoomUserView";
+import Tooltip from "@mui/material/Tooltip";
+import BookingPanel from "../BookingPanel/BookingPanel";
+import StarIcon from "@mui/icons-material/Star";
+import {Link as ScrollLink} from 'react-scroll';
+import {Link} from 'react-router-dom';
+import useImageFetcher from "../../hooks/useImageFetcher";
+import {CircularProgress} from "@mui/material";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
 
-    const [room, setRoom] = useState(null)
+    const [room, setRoom] = useState({});
+    const [shouldRedraw, setShouldRedraw] = useState(true); // MUST BE INITIALIZED TO TRUE
+    const [images, setImages] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
+    const { imageData } = useImageFetcher(profilePicURL);
+
     const latitude = parseFloat(room?.latitude);
     const longitude = parseFloat(room?.longitude);
 
-    const label = "House"
     const customIcon = L.icon({
         iconUrl: 'https://icon-library.com/images/marker-icon-png/marker-icon-png-6.jpg',
         iconSize: [34, 39],
         iconAnchor: [16, 32],
     });
+
+    const capitalizeWords = (str) =>
+        str
+            .split(/\s+/)
+            .map(word =>
+                word
+                    .split('-')
+                    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+                    .join('-')
+            )
+            .join(' ');
 
     const fetchRoomDetails = useCallback(async () => {
         if (room === '') {
@@ -36,137 +62,267 @@ const RoomView = ({ roomID }) => {
         }
     }, [ROOM_URL, room]);
 
+    const fetchImages = async (urls) => {
+        const promises = urls.map(url =>
+            axios.get(url, { responseType: 'blob' })
+                .then(response => URL.createObjectURL(response.data))
+                .catch(error => {
+                    console.error(`Failed to fetch image from ${url}:`, error);
+                    return null;
+                })
+        );
+
+        const imageUrls = await Promise.all(promises);
+        setImages(imageUrls.filter(url => url !== null));
+        setLoading(false);
+    }
+
     useEffect(() => {
+        if(!room || !room.photosGUIDs) return;
+
+        console.log(room.photosGUIDs);
+
+        let urls = [`/roomPhotos/get/${room.thumbnailGuid}`]
+        urls = [...urls, ...room.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
+        fetchImages(urls);
+    }, [room]);
+
+    useEffect(() => {
+        if(!shouldRedraw) return;
+
         fetchRoomDetails();
-    }, [fetchRoomDetails]);
+        setShouldRedraw(false);
+    }, [shouldRedraw]);
 
     return (
-        <>
-            <div className="user-info">
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Host: {room?.hostUsername}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Summary: {room?.summary}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Description: {room?.description}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Number of Beds: {room?.nBeds}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Number of Baths: {room?.nBaths}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Number of Bedrooms: {room?.nBedrooms}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Total surface area: {room?.surfaceArea}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Amenities: {room?.amenityNames}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Amenity Description: {room?.amenityDescriptions}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Thumbnail Photo: {room?.thumbnailGuid}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Country: {room?.country}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">City: {room?.city}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Address: {room?.address}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Neighborhood: {room?.state}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Transit Info: {room?.zipcode}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Room Type: {room?.roomType}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Price per night (eur): {room?.pricePerNight}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Maximum number of tenants: {room?.maxTenants}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Extra cost per tenant: {room?.extraCostPerTenant}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">
-                            Amenities:
-                            <div>
-                                {room?.amenityNames.map(amenity => {
-                                    return(
-                                        <div key={amenity.id}>
-                                            {amenity}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">
-                            Amenities' Descriptions:
-                            <div>
-                                {room?.amenityDescriptions.map(amenityDescr => {
-                                    return(
-                                        <div key={amenityDescr.id}>
-                                            {amenityDescr}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">Thumbnail: {room?.thumbnailGuid}</Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Typography variant="body2">
-                            Photo Guids:
-                            <div>
-                                {room?.photosGUIDs.map(photoGUID => {
-                                    return(
-                                        <div key={photoGUID.id}>
-                                            {photoGUID}
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </Typography>
-                    </Grid>
-                </Grid>
+        <div className="room-view-container">
+
+            <div className="general-room-info">
+                <h2>{room.name}</h2>
+
+                {
+                    room &&
+                    <div className="room-info-items">
+
+                        <Link
+                            to={`/user/${room.hostUsername}`}
+                            className="room-info-host">
+                            <img
+                                src={imageData}
+                                className='room-info-profile-pic'
+                            />
+                            <u>{room.hostUsername}</u>
+                        </Link>
+
+                        <div className="room-info-reviews">
+                            <StarIcon fontSize="small" style={{color: "yellow"}}/> {room.rating?.toFixed(1)} · <ScrollLink
+                            to="reviews"
+                            smooth={true}
+                            duration={500}
+                        >
+                            <u className="review-link">{room.reviewCount} review{(room.reviewCount > 1 || room.reviewCount <= 0) && 's'}</u>
+                        </ScrollLink>
+                        </div>
+
+                        <div className="room-info-location">
+                            <ScrollLink
+                                to="location"
+                                smooth={true}
+                                duration={500}
+                            >
+                                <u className="review-link">{capitalizeWords(room?.neighborhood ?? '')}, {room.city}, {room.state}, {room.country}</u>
+                            </ScrollLink>
+                        </div>
+
+                    </div>
+                }
+
             </div>
 
-            {latitude && longitude && (
-                <MapContainer center={[latitude, longitude]} zoom={16} style={{ height: '400px', width: '100%' }}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <Marker position={[latitude, longitude]} icon={customIcon}>
-                        <Popup>
-                            {label && (
-                                <div style={{  maxWidth: '200px' }}>
-                                    <div style={{ fontWeight: 'bold' }}>{label}</div>
-                                    <div>
-                                        Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
-                                    </div>
+            <div className="centered-container" >
+
+                <div className="view-main">
+
+                    <div className="room-view-images">
+
+                        {
+                            loading ? <CircularProgress size={100} /> :
+                                <div className="box">
+                                    <Carousel useKeyboardArrows={true}>
+                                        {images.map((URL, index) => (
+                                            <div className="slide">
+                                                <img alt="sample_file" src={URL} key={index} />
+                                            </div>
+                                        ))}
+                                    </Carousel>
                                 </div>
-                            )}
-                        </Popup>
-                    </Marker>
-                </MapContainer>
-            )}
-        </>
+                        }
+
+                    </div>
+
+                    <div className="main-content-parent">
+
+                        <div className="main-room-content" >
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Summary</h3>
+                                {room?.summary ? (
+                                    <p>{room.summary}</p>
+                                ) : (
+                                    <p>No summary provided</p>
+                                )}
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Description</h3>
+                                {room?.description ? (
+                                    <p>{room.description}</p>
+                                ) : (
+                                    <p>No description provided</p>
+                                )}
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Space</h3>
+                                <ul>
+                                    <ul>
+                                        <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
+                                        <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
+                                        <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
+                                        <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} sq. feet` : "—"}</li>
+                                        <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
+                                        <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
+                                        <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
+                                    </ul>
+                                </ul>
+                            </section>
+
+                            <section className="room-section" id={"location"}>
+                                <h3 className="room-section-title">Location</h3>
+                                <div className="room-view-map-container">
+                                    {latitude && longitude && (
+                                        <MapContainer
+                                            center={[latitude, longitude]}
+                                            zoom={16}
+                                            className="room-view-map"
+                                        >
+                                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                            <Marker position={[latitude, longitude]} icon={customIcon}>
+                                                <Popup>
+                                                    {room?.name && (
+                                                        <div style={{  maxWidth: '200px' }}>
+                                                            <div style={{ fontWeight: 'bold' }}>{room.name}</div>
+                                                            <div>
+                                                                Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </Popup>
+                                            </Marker>
+                                        </MapContainer>
+                                    )}
+                                </div>
+                                <ul>
+                                    <li>Address: {room?.address ? room.address : "No address provided"}</li>
+                                    <li>City: {room?.city ? room.city : "No city provided"}</li>
+                                    <li>State: {room?.state ? room.state : "No state provided"}</li>
+                                    <li>Country: {room?.country ? room.country : "No country provided"}</li>
+                                    <li>Zipcode: {room?.zipcode ? room.zipcode : "No zipcode provided"}</li>
+                                </ul>
+                            </section>
+
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Neighborhood</h3>
+                                <h4>{room?.neighborhood ? room.neighborhood : "No neighborhood provided"}</h4>
+                                {room?.neighborhoodOverview ? (
+                                    <p>{room.neighborhoodOverview}</p>
+                                ) : (
+                                    <p>No neighborhood overview provided</p>
+                                )}
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Transit Info</h3>
+                                {room?.transitInfo ? (
+                                    <p>{room.transitInfo}</p>
+                                ) : (
+                                    <p>No transit information provided</p>
+                                )}
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Amenities</h3>
+                                <div>
+                                    {room?.amenityNames && room.amenityNames.length > 0 ? (
+                                        <ul>
+                                            {room.amenityNames.map((amenity, index) => (
+                                                <li key={index}>
+                                                    {room.amenityDescriptions[index] ? (
+                                                        <Tooltip
+                                                            title={room.amenityDescriptions[index]}
+                                                            placement="right"
+                                                            classes={{ tooltip: 'centered-tooltip' }}
+                                                            arrow
+                                                        >
+                                                            {amenity}
+                                                        </Tooltip>
+                                                    ) : (
+                                                        amenity
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>No amenities' information provided</p>
+                                    )}
+                                </div>
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Rules</h3>
+                                {room?.rules ? (
+                                    <p>{room.rules}</p>
+                                ) : (
+                                    <p>No rules provided</p>
+                                )}
+                            </section>
+
+                            <section className="room-section">
+                                <h3 className="room-section-title">Notes</h3>
+                                {room?.notes ? (
+                                    <p>{room.notes}</p>
+                                ) : (
+                                    <p>No notes</p>
+                                )}
+                            </section>
+
+                        </div>
+
+                        <div className="room-view-side-panel">
+                            <BookingPanel roomID={roomID} room={room} />
+                            <RoomUserView host={room.hostUsername} />
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div className="review-parent" id="reviews">
+
+                    <ReviewPanel
+                        roomID={roomID}
+                        maxReviews={room.reviewCount}
+                        onReviewsChanged={() => setShouldRedraw(true)}
+                    />
+
+                </div>
+            </div>
+
+
+        </div>
+
     );
 }
 

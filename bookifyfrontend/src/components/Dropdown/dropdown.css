@@ -9,28 +9,44 @@
     border: none;
     display: flex;
     align-items: center;
+    height: 100%;
+    margin-top: 0;
+}
+
+.dropdown-profile-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .dropdown-content {
     position: absolute;
-    top: 40px;
-    right: 0;
+    top: 82%;
+    right: -15%;
     margin-right: 25%;
     background-color: #f9f9f9;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 8;
     border: 2px solid rgb(17, 17, 155);
-    width: 750%
+    width: 300%;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 7% 10%;
 }
 
 .dropdown-content button {
     display: block;
-    width: 100%;
-    padding: 8px 8px;
+    width: 99%;
+    padding: 8% 5%;
     text-align: center;
     background-color: transparent;
     border: none;
     cursor: pointer;
+    margin-top: 5%;
+    font-size: 1.1rem;
 }
 
 .dropdown-content button:hover {
@@ -42,19 +58,16 @@
     height: 2.95vw;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 8px;
-    position: absolute;
-    top: 5px;
+    margin-right: 2%;
     right: 12px;
     cursor: pointer;
     z-index: 1;
-    margin-bottom: 100px;
 }
 
 .unread-dot {
     position: absolute;
     bottom: 10%;
-    right: 80%;
+    right: 15%;
     width: 1vw;
     height: 1vw;
     background-color: red;

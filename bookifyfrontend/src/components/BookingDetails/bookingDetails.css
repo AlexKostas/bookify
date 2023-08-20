@@ -1,0 +1,84 @@
+.people-selection-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 3%;
+}
+
+.people-selection-holder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 13%;
+}
+
+.people-selection-button {
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: transparent;
+
+    width: 1vw;
+    height: 1vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #0071c2;
+    color: #0071c2;
+}
+
+.book-options-confirm-button {
+    background-color: #1d4cb9;
+    color: white;
+    width: 60%;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2%;
+    cursor: pointer;
+}
+
+.book-options-confirm-button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+}
+
+.people-selection-last-row {
+    margin-top: 4%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.people-selection-container {
+    width: 40%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    gap: 7%;
+}
+
+.book-options-confirm-button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4%;
+    width: 100%
+}
+
+.booking-options-error {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2%;
+    text-align: center;
+}
