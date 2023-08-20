@@ -1,0 +1,44 @@
+.create-room-parent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.create-room-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    margin: 2% 10% 2% 10%;
+}
+
+.accordion-parent {
+    padding: 5%;
+}
+
+.amenity-popup-button-holder{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 3%;
+}
+
+.confirm-amenities-button {
+    background-color: #1d4cb9;
+    color: white;
+    width: 90%;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.amenities-popup {
+    /*padding: 2% 15%;*/
+    width: 30vw;
+}
