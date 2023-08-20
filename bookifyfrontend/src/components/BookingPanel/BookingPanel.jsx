@@ -55,6 +55,93 @@ const BookingPanel = ({ room, roomID }) => {
         setError('')
     }
 
+    const downloadFile = (content) => {
+
+        const blob = new Blob(['%PDF-1.4\n' +
+        '%����\n' +
+        '1 0 obj\n' +
+        '<<\n' +
+        '/Type /Catalog\n' +
+        '/Version /1.4\n' +
+        '/Pages 2 0 R\n' +
+        '>>\n' +
+        'endobj\n' +
+        '2 0 obj\n' +
+        '<<\n' +
+        '/Type /Pages\n' +
+        '/Kids [3 0 R]\n' +
+        '/Count 1\n' +
+        '>>\n' +
+        'endobj\n' +
+        '3 0 obj\n' +
+        '<<\n' +
+        '/Type /Page\n' +
+        '/MediaBox [0.0 0.0 612.0 792.0]\n' +
+        '/Parent 2 0 R\n' +
+        '/Contents 4 0 R\n' +
+        '/Resources 5 0 R\n' +
+        '>>\n' +
+        'endobj\n' +
+        '4 0 obj\n' +
+        '<<\n' +
+        '/Length 187\n' +
+        '/Filter /FlateDecode\n' +
+        '>>\n' +
+        'stream\n' +
+        'x�]б�0\f�O�Q���(\b���.�y]+��@�I|{{\n' +
+        '�!��?IZeh\bL�Y�u]�����3�0D\t��-V@�!�ۛx��oF;������"ɵ,mI�;�D�E��\n' +
+        'v�X���$�ԟ�So�$rdL���{ԁ���#���6��JA~M:������\n' +
+        '�G������t1�����O�\n' +
+        'endstream\n' +
+        'endobj\n' +
+        '5 0 obj\n' +
+        '<<\n' +
+        '/Font 6 0 R\n' +
+        '>>\n' +
+        'endobj\n' +
+        '6 0 obj\n' +
+        '<<\n' +
+        '/F1 7 0 R\n' +
+        '>>\n' +
+        'endobj\n' +
+        '7 0 obj\n' +
+        '<<\n' +
+        '/Type /Font\n' +
+        '/Subtype /Type1\n' +
+        '/BaseFont /Helvetica-Bold\n' +
+        '/Encoding /WinAnsiEncoding\n' +
+        '>>\n' +
+        'endobj\n' +
+        'xref\n' +
+        '0 8\n' +
+        '0000000000 65535 f\n' +
+        '0000000015 00000 n\n' +
+        '0000000078 00000 n\n' +
+        '0000000135 00000 n\n' +
+        '0000000247 00000 n\n' +
+        '0000000508 00000 n\n' +
+        '0000000541 00000 n\n' +
+        '0000000572 00000 n\n' +
+        'trailer\n' +
+        '<<\n' +
+        '/Root 1 0 R\n' +
+        '/ID [<32792F7381098FFEBA1596D258436267> <32792F7381098FFEBA1596D258436267>]\n' +
+        '/Size 8\n' +
+        '>>\n' +
+        'startxref\n' +
+        '674\n' +
+        '%%EOF\n'], {type: "application/pdf"})
+        console.log(blob);
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "data.pdf";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
     const onBook = async () => {
         setLoading(true);
         setError('');
@@ -65,14 +152,16 @@ const BookingPanel = ({ room, roomID }) => {
                 roomID,
                 checkInDate: selectedCheckInDate,
                 checkOutDate: selectedCheckOutDate,
-                numberOfTenants: visitors,
+                numberOfTenants: visitors
             }));
+            console.log(response.data); // Log the response data
+                downloadFile(response.data);
 
-            setSelectedCheckInDate(null);
-            setSelectedCheckOutDate(null);
-            setVisitors(1);
+                setSelectedCheckInDate(null);
+                setSelectedCheckOutDate(null);
+                setVisitors(1);
 
-            setBackdropOpen(true);
+                setBackdropOpen(true);
         }
         catch (err) {
             console.log(err);
