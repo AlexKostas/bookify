@@ -4,7 +4,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Button, CircularProgress} from "@mui/material";
+import {Button, CircularProgress, Grid} from "@mui/material";
 import {useEffect, useState} from "react";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
@@ -16,6 +16,8 @@ import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 import AvailabilitySelection from "../AvailabilitySelection/AvailabilitySelection";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import MapInteraction from "../MapInteraction/MapInteraction";
+import TextField from "@mui/material/TextField";
 
 const CreateRoom = ({ roomID }) => {
     const [oldRoom, setOldRoom] = useState(null);
@@ -28,6 +30,8 @@ const CreateRoom = ({ roomID }) => {
 
     const { auth } = useAuth();
 
+    const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
+        && newRoom?.zipcode && newRoom.latitude && newRoom.longitude
     const availabilitySet = newRoom?.availability?.length > 0;
 
     const preloadRoomInfo = () => {
@@ -72,23 +76,151 @@ const CreateRoom = ({ roomID }) => {
 
                     <div className="accordion-parent">
 
+                        {/*LOCATION*/}
                         <Accordion defaultExpanded={true}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography>General Info</Typography>
-                                <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />
+                                <Typography>Location</Typography>
+                                {locationSet && <CheckCircleIcon style={{color: 'green', marginLeft: '1%'}}/>}
                             </AccordionSummary>
                             <AccordionDetails>
-                                <div>
+                                <div className="map-holder">
+                                    {
+
+                                        <span>Please click anywhere on the map to set the location</span>
+                                    }
+                                    <MapInteraction
+                                        onClick={ (latitude, longitude, address, neighborhood, city, state, country, postcode) => {
+                                            setNewRoom({
+                                                ...newRoom,
+                                                latitude,
+                                                longitude,
+                                                address,
+                                                neighborhood,
+                                                city,
+                                                state,
+                                                country,
+                                                zipcode: postcode,
+                                            })
+                                        } }
+                                    />
+
+                                    {
+                                        (newRoom?.latitude && newRoom?.longitude) &&
+
+                                        <div className="location-form">
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12} className="form-grid">
+                                                    <TextField
+                                                        error={!newRoom?.address}
+                                                        value={newRoom?.address}
+                                                        onChange={(event) => setNewRoom({...newRoom, address: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="Address"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.address && "Address is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.address !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        error={!newRoom?.neighborhood}
+                                                        value={newRoom?.neighborhood}
+                                                        onChange={(event) => setNewRoom({...newRoom, neighborhood: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="Neiborhood"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.neighborhood && "Neighborhood is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.neighborhood !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        error={!newRoom?.city}
+                                                        value={newRoom?.city}
+                                                        onChange={(event) => setNewRoom({...newRoom, city: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="City"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.city && "City is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.city !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={5}>
+                                                    <TextField
+                                                        error={!newRoom?.state}
+                                                        value={newRoom?.state}
+                                                        onChange={(event) => setNewRoom({...newRoom, state: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="State"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.state && "State is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.state !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={5}>
+                                                    <TextField
+                                                        error={!newRoom?.country}
+                                                        value={newRoom?.country}
+                                                        onChange={(event) => setNewRoom({...newRoom, country: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="Country"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.country && "Country is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.country !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={2}>
+                                                    <TextField
+                                                        error={!newRoom?.zipcode}
+                                                        value={newRoom?.zipcode}
+                                                        onChange={(event) => setNewRoom({...newRoom, zipcode: event.target.value})}
+                                                        id="outlined-error-helper-text"
+                                                        label="Zipcode"
+                                                        defaultValue=""
+                                                        helperText={!newRoom?.country && "Zipcode is empty"}
+                                                        fullWidth
+                                                        InputLabelProps={{
+                                                            shrink: newRoom?.zipcode !== '', // Control whether the label should shrink
+                                                        }}
+                                                    />
+                                                </Grid>
+
+
+                                                {/*<Grid item xs={4}>*/}
+                                                {/*    <Item>xs=4</Item>*/}
+                                                {/*</Grid>*/}
+                                                {/*<Grid item xs={8}>*/}
+                                                {/*    <Item>xs=8</Item>*/}
+                                                {/*</Grid>*/}
+                                            </Grid>
+
+                                        </div>
+                                    }
 
                                 </div>
-                                <Typography>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </Typography>
                             </AccordionDetails>
                         </Accordion>
 
@@ -138,21 +270,6 @@ const CreateRoom = ({ roomID }) => {
                             </AccordionDetails>
                         </Accordion>
 
-                        <Accordion>
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon />}
-                                aria-controls="panel1a-content"
-                                id="panel1a-header"
-                            >
-                                <Typography>Accordion 1</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <Typography>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion>
 
                         <Accordion>
                             <AccordionSummary

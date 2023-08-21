@@ -147,7 +147,6 @@ public class Room {
     }
 
     public float getRating(){
-        //TODO: maybe use a more sophisticated algorithm that gives greater weight to more recent or verified reviews
         if(reviews.isEmpty()) return 0.0f;
 
         int count = 0;

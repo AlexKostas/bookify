@@ -1,10 +1,10 @@
-import './availabilitySelection.css';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import {useEffect, useState} from "react";
 import {DateRange} from "react-date-range";
 import { format } from "date-fns";
+import './availabilitySelection.css';
 
 const AvailabilitySelection = ({ onAvailabilityChanged }) => {
     const [availabilities, setAvailabilities] = useState([]);
