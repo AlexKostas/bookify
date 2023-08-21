@@ -38,45 +38,15 @@ public class AdminService {
     public Page<UserResponseDTOForAdmin> getAllUsers(int pageNumber, int pageSize){
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<User> searchResult = userRepository.findAll(pageable);
-
-        //TODO: refactor this
-        List<UserResponseDTOForAdmin> result = new ArrayList<>();
-
-        for(User user : searchResult){
-            if(user.isAdmin()) continue;
-
-            result.add(new UserResponseDTOForAdmin(
-                    user.getUserID(),
-                    user.getUsername(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getRoleAuthorityList()
-            ));
-        }
-
-        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
+        return getUsersByPage(pageable, searchResult);
     }
 
     public Page<UserResponseDTOForAdmin> getAllInactiveHosts(int pageNumber, int pageSize){
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<User> searchResult = userRepository.findAllInactiveHosts(pageable);
-
-        List<UserResponseDTOForAdmin> result = new ArrayList<>();
-
-        for(User user : searchResult){
-            if(user.isAdmin()) continue;
-
-            result.add(new UserResponseDTOForAdmin(
-                    user.getUserID(),
-                    user.getUsername(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getRoleAuthorityList()
-            ));
-        }
-
-        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
+        return getUsersByPage(pageable, searchResult);
     }
+
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -145,5 +115,23 @@ public class AdminService {
         objectMapper.registerModule(new JavaTimeModule());
 
         return objectMapper.writeValueAsString(entityList);
+    }
+
+    private Page<UserResponseDTOForAdmin> getUsersByPage(Pageable pageable, Page<User> searchResult) {
+        List<UserResponseDTOForAdmin> result = new ArrayList<>();
+
+        for (User user : searchResult) {
+            if (user.isAdmin()) continue;
+
+            result.add(new UserResponseDTOForAdmin(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getRoleAuthorityList()
+            ));
+        }
+
+        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
     }
 }

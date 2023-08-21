@@ -58,6 +58,8 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
+    private String rolePreference;
+
     @JsonBackReference
     @XStreamOmitField
     @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -68,7 +70,7 @@ public class User implements UserDetails {
         this.roles = new HashSet<>();
     }
 
-    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles) {
+    public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles, String preferredRoles) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -77,37 +79,11 @@ public class User implements UserDetails {
         this.password = password;
         this.profilePicture = profilePicture;
         this.roles = roles;
+        this.rolePreference = preferredRoles;
         this.memberSince = LocalDate.now();
         this.aboutInfo = "";
 
         this.refreshToken = null;
-    }
-
-    public String getRolePreference(){
-        //TODO: Maybe store the preference in the database on signup to get rid of this boilerplate code
-
-        boolean hasHostRole = false;
-        boolean hasTenantRole = false;
-        boolean hasInactiveHostRole = false;
-        boolean hasAdminRole = false;
-
-        for (Role role : roles) {
-            if (Constants.HOST_ROLE.equals(role.getAuthority()))
-                hasHostRole = true;
-            else if (Constants.TENANT_ROLE.equals(role.getAuthority()))
-                hasTenantRole = true;
-            else if (Constants.INACTIVE_HOST_ROLE.equals(role.getAuthority()))
-                hasInactiveHostRole = true;
-            else if (Constants.ADMIN_ROLE.equals(role.getAuthority()))
-                hasAdminRole = true;
-        }
-
-        if((hasHostRole || hasInactiveHostRole) && hasTenantRole) return Constants.HOST_TENANT_PREF_ROLE;
-        if(hasHostRole || hasInactiveHostRole) return Constants.HOST_ROLE;
-        if(hasTenantRole) return Constants.TENANT_ROLE;
-        if(hasAdminRole) return Constants.ADMIN_ROLE;
-
-        return "";
     }
 
     public List<String> getRoleAuthorityList(){

@@ -58,7 +58,8 @@ public class UserService implements UserDetailsService {
                 registrationDTO.phoneNumber(),
                 encodedPassword,
                 defaultImage,
-                roles));
+                roles,
+                registrationDTO.preferredRoles()));
     }
 
     @Override
@@ -123,6 +124,7 @@ public class UserService implements UserDetailsService {
         user.setLastName(newProfile.lastName());
         user.setEmail(newProfile.email());
         user.setPhoneNumber(newProfile.phoneNumber());
+        user.setRolePreference(newProfile.preferredRoles());
         if(!user.isAdmin())
             user.setRoles(createRoleSet(newProfile.preferredRoles(), user.getRoles()));
 
