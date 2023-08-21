@@ -15,9 +15,10 @@ import CheckboxSelection from "../CheckboxSelection/CheckboxSelection";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 import AvailabilitySelection from "../AvailabilitySelection/AvailabilitySelection";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const CreateRoom = ({ roomID }) => {
-    const [room, setRoom] = useState(null);
+    const [oldRoom, setOldRoom] = useState(null);
     const [newRoom, setNewRoom] = useState({});
     const [amenitiesActive, setAmenitiesActive] = useState(false);
     const [roomTypeActive, setRoomTypeActive] = useState(false);
@@ -27,21 +28,27 @@ const CreateRoom = ({ roomID }) => {
 
     const { auth } = useAuth();
 
+    const availabilitySet = newRoom?.availability?.length > 0;
+
     const preloadRoomInfo = () => {
-        if(room.hostUsername !== auth?.user) setUnauthenticated(true);
+        if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
+
+        //TODO: preload the required info the newRoom state
     }
 
     const onSubmit = () => {
         if(unauthenticated) return;
+
+        //TODO: send edit or create request to the backend
     }
 
     const fetchRoom = async () => {
         try {
             const response = await axios.get(`/room/getRoom/${roomID}`);
-            setRoom(response?.data ?? null);
+            setOldRoom(response?.data ?? null);
         } catch (error) {
             console.log(error);
-            setRoom(null);
+            setOldRoom(null);
         }
     }
 
@@ -50,8 +57,8 @@ const CreateRoom = ({ roomID }) => {
     }, [roomID]);
 
     useEffect(() => {
-        if(room) preloadRoomInfo();
-    }, [room]);
+        if(oldRoom) preloadRoomInfo();
+    }, [oldRoom]);
 
     //TO BE DELETED:
     useEffect(() => {
@@ -72,6 +79,7 @@ const CreateRoom = ({ roomID }) => {
                                 id="panel1a-header"
                             >
                                 <Typography>General Info</Typography>
+                                <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />
                             </AccordionSummary>
                             <AccordionDetails>
                                 <div>
@@ -116,10 +124,16 @@ const CreateRoom = ({ roomID }) => {
                                 id="panel1a-header"
                             >
                                 <Typography>Availability</Typography>
+                                {availabilitySet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
                             </AccordionSummary>
                             <AccordionDetails>
                                 <div>
-                                    <AvailabilitySelection />
+                                    <AvailabilitySelection
+                                        onAvailabilityChanged={(newAvailability) => {
+                                            setNewRoom({...newRoom, availability: newAvailability});
+                                            console.log(newAvailability);
+                                        }}
+                                    />
                                 </div>
                             </AccordionDetails>
                         </Accordion>

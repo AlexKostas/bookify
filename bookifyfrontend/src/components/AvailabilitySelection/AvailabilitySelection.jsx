@@ -2,11 +2,11 @@ import './availabilitySelection.css';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {DateRange} from "react-date-range";
 import { format } from "date-fns";
 
-const AvailabilitySelection = () => {
+const AvailabilitySelection = ({ onAvailabilityChanged }) => {
     const [availabilities, setAvailabilities] = useState([]);
     const [showDate, setShowDate] = useState(false);
     const [dates, setDates] = useState([
@@ -32,8 +32,11 @@ const AvailabilitySelection = () => {
                                     onClick={() => {
                                         setShowDate(false);
 
-                                        if(availabilities.length === 1) setAvailabilities([])
-                                        else setAvailabilities(availabilities.splice(index, 1));
+                                        const newAvailabilities = availabilities.length > 1 ?
+                                            availabilities.splice(index, 1) : [];
+
+                                        setAvailabilities(newAvailabilities);
+                                        if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
                                     }}
                                     style={{ color: 'red' }}
                                 >
@@ -87,16 +90,15 @@ const AvailabilitySelection = () => {
                         <button
                             onClick={() => {
                                 console.log(dates);
-                                setAvailabilities([...availabilities,
+
+                                const newAvailabilities = [...availabilities,
                                     {
                                         startDate: format(dates[0].startDate, "MM/dd/yyyy"),
                                         endDate: format(dates[0].endDate, "MM/dd/yyyy")
                                     }
-                                ]);
-                                // ${format(dates[0].startDate, "MM/dd/yyyy")} to ${format(
-                                // dates[0].endDate,
-                                // "MM/dd/yyyy"
-                                // )}`
+                                ];
+                                setAvailabilities(newAvailabilities);
+                                if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
                                 setShowDate(false);
                             }}
                             className="selection-confirm-button"
