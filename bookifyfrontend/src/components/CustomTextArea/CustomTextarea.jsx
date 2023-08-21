@@ -4,6 +4,7 @@ import { styled } from '@mui/system';
 import {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
+import TextField from "@mui/material/TextField";
 
 // Component provided by Material UI. Customized to fit the project's needs
 // Code reference: https://mui.com/base-ui/react-textarea-autosize/
@@ -66,8 +67,10 @@ export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10,
     const [inputValue, setInputValue] = useState('')
 
     return <div>
-        <MemoizedStyledTextarea
-            aria-label="empty textarea"
+        <TextField
+            id="outlined-multiline-flexible"
+            label={placeholder}
+            multiline
             placeholder={placeholder || ''}
             minRows={minRows}
             maxRows={maxRows}
@@ -76,7 +79,7 @@ export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10,
                 setInputValue(event.target.value)
                 if(onValueChanged) onValueChanged(event.target.value);
             }}
-            style={{ resize: 'none' }}
+            style={{ resize: 'none', width: '100%' }}
         />
 
         {
