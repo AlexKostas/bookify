@@ -18,6 +18,7 @@ import AvailabilitySelection from "../AvailabilitySelection/AvailabilitySelectio
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MapInteraction from "../MapInteraction/MapInteraction";
 import TextField from "@mui/material/TextField";
+import CustomTextarea from "../CustomTextArea/CustomTextarea";
 
 const CreateRoom = ({ roomID }) => {
     const [oldRoom, setOldRoom] = useState(null);
@@ -31,7 +32,7 @@ const CreateRoom = ({ roomID }) => {
     const { auth } = useAuth();
 
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
-        && newRoom?.zipcode && newRoom.latitude && newRoom.longitude
+        && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
 
     const preloadRoomInfo = () => {
@@ -209,12 +210,26 @@ const CreateRoom = ({ roomID }) => {
                                                 </Grid>
 
 
-                                                {/*<Grid item xs={4}>*/}
-                                                {/*    <Item>xs=4</Item>*/}
-                                                {/*</Grid>*/}
-                                                {/*<Grid item xs={8}>*/}
-                                                {/*    <Item>xs=8</Item>*/}
-                                                {/*</Grid>*/}
+                                                <Grid item xs={12}>
+                                                    <CustomTextarea
+                                                        placeholder='Neighborhood Overview'
+                                                        minRows={2}
+                                                        maxRows={4}
+                                                        onValueChanged={(value) => setNewRoom({...newRoom, neighborhoodOverview: value})}
+                                                        emptyError={'Neighborhood Overview is empty'}
+                                                    />
+                                                </Grid>
+
+                                                <Grid item xs={12}>
+                                                    <CustomTextarea
+                                                        placeholder='Transit Info'
+                                                        minRows={2}
+                                                        maxRows={4}
+                                                        onValueChanged={(value) => setNewRoom({...newRoom, transitInfo: value})}
+                                                        emptyError={'Transit Info is empty'}
+                                                    />
+                                                </Grid>
+
                                             </Grid>
 
                                         </div>
