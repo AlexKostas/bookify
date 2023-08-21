@@ -9,6 +9,6 @@ public record RoomResponseDTO (
         String latitude,            String longitude,    int minimumStay,               String rules,
         int nBeds,                  int nBaths,          int nBedrooms,                 int surfaceArea,                int accommodates,
         String roomType,            float pricePerNight, int maxTenants,                float extraCostPerTenant,       int roomTypeID,
-        List<String> amenityNames,  List<String> amenityDescriptions,
+        List<String> amenityNames,  List<String> amenityDescriptions,                   List<Integer> amenityIDs,
         String thumbnailGuid,       List<String> photosGUIDs,                           float rating,                   int reviewCount
 ) {}

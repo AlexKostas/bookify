@@ -131,6 +131,7 @@ public class RoomService{
                 room.getExtraCostPerTenant(),
                 room.getAmenitiesNames(),
                 room.getAmenitiesDescriptions(),
+                room.getAmenityIDs(),
                 room.getThumbnail().getImageGuid(),
                 room.getPhotosGUIDs(),
                 room.getRating(),
@@ -267,6 +268,7 @@ public class RoomService{
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;
         Boolean reachedMax = false;
+        Set<LocalDate> usedDates = new HashSet<>();
 
         for(DatePairDTO datePair : availability){
             LocalDate date = datePair.startDate();
@@ -278,10 +280,13 @@ public class RoomService{
                     break;
                 }
 
-                availabilityList.add(new Availability(room, date));
-                date = date.plusDays(1);
+                if (!usedDates.contains(date)) {
+                    availabilityList.add(new Availability(room, date));
+                    usedDates.add(date);
+                    counter++;
+                }
 
-                counter += 1;
+                date = date.plusDays(1);
             }
             if(reachedMax)
                 break;

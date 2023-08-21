@@ -113,4 +113,24 @@ public class AdminController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/getHostRevJSON")
+    public ResponseEntity<?> getHostRevJSON() {
+        try {
+            return ResponseEntity.ok(adminService.getHostReviewsJSON());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getHostRevXML")
+    public ResponseEntity<?> getHostRevXML()  {
+        try {
+            return ResponseEntity.ok(adminService.getHostReviewsXML());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
