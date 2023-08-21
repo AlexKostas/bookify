@@ -13,6 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserStats from "../UserStats/UserStats";
+import MapInteraction from "../MapInteraction";
 
 const UserView = ({ username }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
@@ -30,7 +31,6 @@ const UserView = ({ username }) => {
     const valid = (auth?.user === username);
 
     const inputRef = useRef(null)
-
     const handleClick = () => {
         inputRef.current.click();
     };
@@ -156,6 +156,11 @@ const UserView = ({ username }) => {
           </Tabs>
           {tabValue === 0 && <UserDetails username={username} />}
           {tabValue === 1 && <UserStats username={username}/>}
+
+        <div>
+            <h2>Map Interaction Test</h2>
+            <MapInteraction />
+        </div>
     </>
     );
 }
