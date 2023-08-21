@@ -47,26 +47,6 @@ public class AdminService {
         return getUsersByPage(pageable, searchResult);
     }
 
-    private Page<UserResponseDTOForAdmin> getUsersByPage(Pageable pageable, Page<User> searchResult) {
-        List<UserResponseDTOForAdmin> result = new ArrayList<>();
-
-        for (User user : searchResult) {
-            if (user.isAdmin()) {
-                continue;
-            }
-
-            result.add(new UserResponseDTOForAdmin(
-                    user.getUserID(),
-                    user.getUsername(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getRoleAuthorityList()
-            ));
-        }
-
-        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
-    }
-
     public void approveHost(String username) throws UsernameNotFoundException, UnsupportedOperationException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
@@ -135,5 +115,23 @@ public class AdminService {
         objectMapper.registerModule(new JavaTimeModule());
 
         return objectMapper.writeValueAsString(entityList);
+    }
+
+    private Page<UserResponseDTOForAdmin> getUsersByPage(Pageable pageable, Page<User> searchResult) {
+        List<UserResponseDTOForAdmin> result = new ArrayList<>();
+
+        for (User user : searchResult) {
+            if (user.isAdmin()) continue;
+
+            result.add(new UserResponseDTOForAdmin(
+                    user.getUserID(),
+                    user.getUsername(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getRoleAuthorityList()
+            ));
+        }
+
+        return new PageImpl<>(result, pageable, searchResult.getTotalElements());
     }
 }

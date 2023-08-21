@@ -283,7 +283,7 @@ public class RoomService{
                 if (!usedDates.contains(date)) {
                     availabilityList.add(new Availability(room, date));
                     usedDates.add(date);
-                    counter += 1;
+                    counter++;
                 }
 
                 date = date.plusDays(1);
