@@ -14,6 +14,7 @@ import Dialog from "@mui/material/Dialog";
 import CheckboxSelection from "../CheckboxSelection/CheckboxSelection";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
+import AvailabilitySelection from "../AvailabilitySelection/AvailabilitySelection";
 
 const CreateRoom = ({ roomID }) => {
     const [room, setRoom] = useState(null);
@@ -114,13 +115,12 @@ const CreateRoom = ({ roomID }) => {
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography>Accordion 1</Typography>
+                                <Typography>Availability</Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </Typography>
+                                <div>
+                                    <AvailabilitySelection />
+                                </div>
                             </AccordionDetails>
                         </Accordion>
 

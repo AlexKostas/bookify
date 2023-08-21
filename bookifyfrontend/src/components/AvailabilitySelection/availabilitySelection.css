@@ -1,0 +1,74 @@
+.selection-holder{
+    display: flex;
+    flex-direction: row;
+    /*align-items: center;*/
+    /*justify-content: space-around;*/
+    gap: 5%;
+}
+
+.main-content {
+    background-color: gray;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+
+    padding: 1% 0.5%;
+
+    align-items: center;
+    width: 35%;
+    height: fit-content;
+
+}
+
+.selection-card {
+    background-color: lightgray;
+    width: 100%;
+    padding: 0.1% 2%;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.selection-add-button {
+    background-color: #1f4ffc;
+    color: white;
+    border-radius: 50%;
+}
+
+.availability-range {
+    border: 1px solid gray;
+    height: 100%;
+}
+
+.date-selection-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+    height: fit-content;
+}
+
+.date-selection-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 30%;
+    justify-content: space-around;
+}
+
+.selection-confirm-button {
+    background-color: #1f4ffc;
+    color: white;
+    cursor: pointer;
+}
+
+.selection-cancel-button {
+    background-color: red;
+    color: white;
+    cursor: pointer;
+}
