@@ -34,6 +34,7 @@ const CreateRoom = ({ roomID }) => {
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
         && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
+    const submitButtonEnabled = locationSet && availabilitySet;
 
     const preloadRoomInfo = () => {
         if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
@@ -303,6 +304,13 @@ const CreateRoom = ({ roomID }) => {
                         </Accordion>
 
                     </div>
+
+                    <button
+                        disabled={!submitButtonEnabled}
+                        className="register-room-button"
+                    >
+                        Register Room
+                    </button>
                 </div>
 
             <Dialog

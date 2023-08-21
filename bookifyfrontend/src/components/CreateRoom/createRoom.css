@@ -58,3 +58,15 @@
     justify-content: center;
     align-items: center;
 }
+
+.register-room-button {
+    background-color: blue;
+    color: white;
+    width: 30%;
+
+    cursor: pointer;
+}
+
+.register-room-button:disabled{
+    background-color: gray;
+}
