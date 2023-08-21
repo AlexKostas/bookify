@@ -42,7 +42,8 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
 
             const isAvailable = response?.data.available;
             setAvailable(isAvailable);
-            if(!isAvailable) setError('Room is unavailable in the given date range');
+            console.log(isAvailable);
+            !isAvailable ? setError('Room is unavailable in the given date range') : setError('');
         }
         catch (err){
             console.log(err);
@@ -79,9 +80,14 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
         if(!initData) return;
 
         setPeople(initData.visitors);
+        setError('');
         if(initData.selectedCheckInDate) setCheckInDate(initData.selectedCheckInDate);
         if(initData.selectedCheckOutDate) setCheckOutDate(initData.selectedCheckOutDate);
     }, [initData])
+
+    useEffect(() => {
+        setError('');
+    }, [open])
 
     return (
         <div>

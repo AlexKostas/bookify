@@ -69,4 +69,5 @@
 
 .register-room-button:disabled{
     background-color: gray;
+    cursor: default;
 }

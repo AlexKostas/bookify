@@ -19,23 +19,35 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MapInteraction from "../MapInteraction/MapInteraction";
 import TextField from "@mui/material/TextField";
 import CustomTextarea from "../CustomTextArea/CustomTextarea";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
+import Tooltip from "@mui/material/Tooltip";
+import {useNavigate} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
+import * as React from "react";
 
 const CreateRoom = ({ roomID }) => {
     const [oldRoom, setOldRoom] = useState(null);
-    const [newRoom, setNewRoom] = useState({});
+    const [newRoom, setNewRoom] = useState({amenityIDs: []});
     const [amenitiesActive, setAmenitiesActive] = useState(false);
     const [roomTypeActive, setRoomTypeActive] = useState(false);
     const [unauthenticated, setUnauthenticated] = useState(false);
     const [tempAmenities, setTempAmenities] = useState([]);
     const [tempRoomTypeID, setTempRoomTypeID] = useState(-1);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const { auth } = useAuth();
+    const axiosPrivate = useAxiosPrivate();
+    const navigate = useNavigate();
+
+    const isEditingRoom = oldRoom !== null && oldRoom !== undefined;
 
     const generalSet = newRoom?.name && newRoom?.summary && newRoom?.description;
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
         && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
-    const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1;
+    const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1 && newRoom?.roomTypeID >= 0;
     const pricingSet = newRoom?.pricePerNight > 0 && newRoom?.maxTenants > 0 && newRoom?.extraCostPerTenant;
     const rulesSet = newRoom?.minimumStay > 0;
     const submitButtonEnabled = generalSet && locationSet && spaceSet && pricingSet && availabilitySet && rulesSet;
@@ -46,10 +58,31 @@ const CreateRoom = ({ roomID }) => {
         //TODO: preload the required info the newRoom state
     }
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         if(unauthenticated) return;
 
-        //TODO: send edit or create request to the backend
+        const endpointURL = isEditingRoom ? `/room/editRoom/${roomID}` :
+            `/room/registerRoom`;
+
+        try {
+            setLoading(true);
+
+            await axiosPrivate.post(endpointURL, newRoom);
+
+            navigate('/host');
+        } catch (err) {
+            if (!err?.response)
+                setError('No server response');
+            else if (err.response?.status === 400)
+                setError('The room creation form has some bad or missing data');
+            else if (err.response?.status === 403)
+                setError('You do not have the required access for this operation');
+            else
+                setError('Room creation failed')
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
     const fetchRoom = async () => {
@@ -81,7 +114,8 @@ const CreateRoom = ({ roomID }) => {
                     <h1>New Room</h1>
 
                     <div className="accordion-parent">
-                        <Accordion>
+
+                        <Accordion defaultExpanded={true}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
@@ -93,11 +127,18 @@ const CreateRoom = ({ roomID }) => {
                             <AccordionDetails>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
-                                        <CustomTextarea
-                                            placeholder='Name'
-                                            minRows={2}
-                                            maxRows={4}
-                                            onValueChanged={(value) => setNewRoom({...newRoom, name: value})}
+                                        <TextField
+                                            error={!newRoom?.name}
+                                            value={newRoom?.name}
+                                            onChange={(event) => setNewRoom({...newRoom, name: event.target.value})}
+                                            id="outlined-error-helper-text"
+                                            label="Name"
+                                            defaultValue=""
+                                            helperText={!newRoom?.name && "Name is empty"}
+                                            fullWidth
+                                            InputLabelProps={{
+                                                shrink: newRoom?.name !== '', // Control whether the label should shrink
+                                            }}
                                         />
                                     </Grid>
                                     <Grid item xs={7}>
@@ -119,8 +160,8 @@ const CreateRoom = ({ roomID }) => {
                                     <Grid item xs={12}>
                                         <CustomTextarea
                                             placeholder='Description'
-                                            minRows={2}
-                                            maxRows={4}
+                                            minRows={4}
+                                            maxRows={6}
                                             onValueChanged={(value) => setNewRoom({...newRoom, description: value})}
                                         />
                                     </Grid>
@@ -129,7 +170,7 @@ const CreateRoom = ({ roomID }) => {
                         </Accordion>
 
                         {/*LOCATION*/}
-                        <Accordion defaultExpanded={true}>
+                        <Accordion>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
@@ -534,12 +575,29 @@ const CreateRoom = ({ roomID }) => {
 
                     </div>
 
-                    <button
-                        disabled={!submitButtonEnabled}
-                        className="register-room-button"
+                    <Tooltip
+                        title={submitButtonEnabled ? 'Create Room' : 'Please fill in all the required fields'}
+                        placement="top"
+                        arrow
                     >
-                        Register Room
-                    </button>
+                        <button
+                            disabled={!submitButtonEnabled}
+                            onClick={() => onSubmit()}
+                            className="register-room-button"
+                        >
+                            {loading ? <CircularProgress /> : 'Create Room'}
+                        </button>
+                    </Tooltip>
+
+
+                {
+                    error &&
+                    <div
+                        style={{display: 'flex', flexDirection: 'row', gap: '1%', alignItems: 'center', justifyContent: 'center', marginTop: '1%'}}>
+                        <FontAwesomeIcon icon={faCircleExclamation} style={{color: "#ff0000", marginRight: '0'}}/>
+                        {error}
+                    </div>
+                }
                 </div>
 
             <Dialog
