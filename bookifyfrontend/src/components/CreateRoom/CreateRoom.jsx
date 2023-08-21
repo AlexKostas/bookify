@@ -34,7 +34,8 @@ const CreateRoom = ({ roomID }) => {
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
         && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
-    const submitButtonEnabled = locationSet && availabilitySet;
+    const rulesSet = newRoom?.minimumStay > 0;
+    const submitButtonEnabled = locationSet && availabilitySet && rulesSet;
 
     const preloadRoomInfo = () => {
         if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
@@ -293,13 +294,38 @@ const CreateRoom = ({ roomID }) => {
                                 aria-controls="panel1a-content"
                                 id="panel1a-header"
                             >
-                                <Typography>Accordion 1</Typography>
+                                <Typography>Rules</Typography>
+                                {rulesSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography>
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                                </Typography>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <CustomTextarea
+                                            placeholder='General Rules'
+                                            minRows={2}
+                                            maxRows={4}
+                                            onValueChanged={(value) => setNewRoom({...newRoom, rules: value})}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            error={!newRoom?.minimumStay || newRoom?.minimumStay === 0}
+                                            value={newRoom?.minimumStay}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, minimumStay: event.target.value })
+                                            }
+                                            id="minimumStay"
+                                            type="number"
+                                            fullWidth
+                                            label="Minimum Stays"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </AccordionDetails>
                         </Accordion>
 
