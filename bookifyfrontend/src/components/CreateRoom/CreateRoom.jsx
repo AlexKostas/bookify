@@ -55,7 +55,34 @@ const CreateRoom = ({ roomID }) => {
     const preloadRoomInfo = () => {
         if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
 
-        //TODO: preload the required info the newRoom state
+        setNewRoom({
+            name: oldRoom.name,
+            summary: oldRoom.summary,
+            description: oldRoom.description,
+            notes: oldRoom.notes,
+            address: oldRoom.address,
+            neighborhood: oldRoom.neighborhood,
+            neighborhoodOverview: oldRoom.neighborhoodOverview,
+            transitInfo: oldRoom.transitInfo,
+            city: oldRoom.city,
+            state: oldRoom.state,
+            country: oldRoom.country,
+            zipcode: oldRoom.zipcode,
+            latitude: oldRoom.latitude,
+            longitude: oldRoom.longitude,
+            minimumStay: oldRoom.minimumStay,
+            rules: oldRoom.rules,
+            nBeds: oldRoom.nBeds,
+            nBaths: oldRoom.nBaths,
+            nBedrooms: oldRoom.nBedrooms,
+            surfaceArea: oldRoom.surfaceArea,
+            accommodates: oldRoom.accommodates,
+            roomTypeID: oldRoom.roomTypeID,
+            pricePerNight: oldRoom.pricePerNight,
+            maxTenants: oldRoom.maxTenants,
+            extraCostPerTenant: oldRoom.extraCostPerTenant,
+            amenityIDs: oldRoom.amenityIDs,
+        });
     }
 
     const onSubmit = async () => {
