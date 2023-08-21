@@ -73,7 +73,8 @@ public class InitializeDatabase {
                 "admin@gmail.com", "",
                 encodedAdminPassword,
                 profilePic,
-                adminRoles));
+                adminRoles,
+                Constants.ADMIN_ROLE));
     }
 
     private void preloadAmenities(AmenityRepository amenityRepository){

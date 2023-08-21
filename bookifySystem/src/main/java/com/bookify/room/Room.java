@@ -197,6 +197,16 @@ public class Room {
         return result;
     }
 
+    public List<Integer> getAmenityIDs() {
+        Set<Amenity> roomAmenities = this.getAmenities();
+        List<Integer> result = new ArrayList<>();
+
+        for (Amenity amenity : roomAmenities)
+            result.add(amenity.getId());
+
+        return result;
+    }
+
     public List<String> getPhotosGUIDs() {
         List<String> result = new ArrayList<>();
 
