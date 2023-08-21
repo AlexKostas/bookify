@@ -219,6 +219,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.address !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
                                                 <Grid item xs={6}>
@@ -234,6 +235,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.neighborhood !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -250,6 +252,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.city !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -266,6 +269,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.state !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -282,6 +286,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.country !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -298,6 +303,7 @@ const CreateRoom = ({ roomID }) => {
                                                         InputLabelProps={{
                                                             shrink: newRoom?.zipcode !== '', // Control whether the label should shrink
                                                         }}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -309,6 +315,7 @@ const CreateRoom = ({ roomID }) => {
                                                         maxRows={4}
                                                         onValueChanged={(value) => setNewRoom({...newRoom, neighborhoodOverview: value})}
                                                         emptyError={'Neighborhood Overview is empty'}
+                                                        required={true}
                                                     />
                                                 </Grid>
 
@@ -319,6 +326,7 @@ const CreateRoom = ({ roomID }) => {
                                                         maxRows={4}
                                                         onValueChanged={(value) => setNewRoom({...newRoom, transitInfo: value})}
                                                         emptyError={'Transit Info is empty'}
+                                                        required={true}
                                                     />
                                                 </Grid>
 

@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import TextField from "@mui/material/TextField";
 
-export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10, onValueChanged, emptyError = ''}) {
+export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10, onValueChanged, emptyError = '', required=false}) {
     const [inputValue, setInputValue] = useState('')
 
     return <div>
@@ -16,6 +16,7 @@ export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10,
             minRows={minRows}
             maxRows={maxRows}
             value={inputValue}
+            required={required}
             onChange={(event) => {
                 setInputValue(event.target.value)
                 if(onValueChanged) onValueChanged(event.target.value);
