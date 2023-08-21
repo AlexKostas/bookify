@@ -4,7 +4,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Button, CircularProgress, Grid} from "@mui/material";
+import {Button, CircularProgress, Grid, InputAdornment} from "@mui/material";
 import {useEffect, useState} from "react";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
@@ -31,11 +31,14 @@ const CreateRoom = ({ roomID }) => {
 
     const { auth } = useAuth();
 
+    const generalSet = newRoom?.name && newRoom?.summary && newRoom?.description;
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
         && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
+    const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1;
+    const pricingSet = newRoom?.pricePerNight > 0 && newRoom?.maxTenants > 0 && newRoom?.extraCostPerTenant;
     const rulesSet = newRoom?.minimumStay > 0;
-    const submitButtonEnabled = locationSet && availabilitySet && rulesSet;
+    const submitButtonEnabled = generalSet && locationSet && spaceSet && pricingSet && availabilitySet && rulesSet;
 
     const preloadRoomInfo = () => {
         if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
@@ -78,6 +81,52 @@ const CreateRoom = ({ roomID }) => {
                     <h1>New Room</h1>
 
                     <div className="accordion-parent">
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography>General Info</Typography>
+                                {generalSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <CustomTextarea
+                                            placeholder='Name'
+                                            minRows={2}
+                                            maxRows={4}
+                                            onValueChanged={(value) => setNewRoom({...newRoom, name: value})}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={7}>
+                                        <CustomTextarea
+                                            placeholder='Summary'
+                                            minRows={2}
+                                            maxRows={4}
+                                            onValueChanged={(value) => setNewRoom({...newRoom, summary: value})}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={5}>
+                                        <CustomTextarea
+                                            placeholder='Notes'
+                                            minRows={2}
+                                            maxRows={4}
+                                            onValueChanged={(value) => setNewRoom({...newRoom, notes: value})}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <CustomTextarea
+                                            placeholder='Description'
+                                            minRows={2}
+                                            maxRows={4}
+                                            onValueChanged={(value) => setNewRoom({...newRoom, description: value})}
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </AccordionDetails>
+                        </Accordion>
 
                         {/*LOCATION*/}
                         <Accordion defaultExpanded={true}>
@@ -248,8 +297,86 @@ const CreateRoom = ({ roomID }) => {
                                 id="panel1a-header"
                             >
                                 <Typography>Space</Typography>
+                                {spaceSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
                             </AccordionSummary>
                             <AccordionDetails>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            error={!newRoom?.nBeds}
+                                            value={newRoom?.nBeds}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, nBeds: event.target.value })
+                                            }
+                                            id="nBeds"
+                                            type="number"
+                                            fullWidth
+                                            label="Beds"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            error={!newRoom?.nBaths}
+                                            value={newRoom?.nBaths}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, nBaths: event.target.value })
+                                            }
+                                            id="nBaths"
+                                            type="number"
+                                            fullWidth
+                                            label="Bathrooms"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 0,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField
+                                            error={!newRoom?.surfaceArea}
+                                            value={newRoom?.surfaceArea}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, surfaceArea: event.target.value })
+                                            }
+                                            id="surfaceArea"
+                                            type="number"
+                                            fullWidth
+                                            label="Surface Area"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">ft²</InputAdornment>,
+                                            }}
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField
+                                            error={!newRoom?.accommodates}
+                                            value={newRoom?.accommodates}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, accommodates: event.target.value })
+                                            }
+                                            id="accommodates"
+                                            type="number"
+                                            fullWidth
+                                            label="Accommodates"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                                 <div>
                                     <Button
                                         onClick={() => setAmenitiesActive(true)}
@@ -263,6 +390,82 @@ const CreateRoom = ({ roomID }) => {
                                         Select room type
                                     </Button>
                                 </div>
+                            </AccordionDetails>
+                        </Accordion>
+
+                        {/* Pricing */}
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography>Pricing</Typography>
+                                {pricingSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            error={!newRoom?.pricePerNight}
+                                            value={newRoom?.pricePerNight}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, pricePerNight: event.target.value })
+                                            }
+                                            id="pricePerNight"
+                                            type="number"
+                                            fullWidth
+                                            label="Price per Night"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                                            }}
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <TextField
+                                            error={!newRoom?.maxTenants}
+                                            value={newRoom?.maxTenants}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, maxTenants: event.target.value })
+                                            }
+                                            id="maxTenants"
+                                            type="number"
+                                            fullWidth
+                                            label="Max Tenants"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <TextField
+                                            error={!newRoom?.extraCostPerTenant}
+                                            value={newRoom?.extraCostPerTenant}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, extraCostPerTenant: event.target.value })
+                                            }
+                                            id="extraCostPerTenant"
+                                            type="number"
+                                            fullWidth
+                                            label="Extra Cost Per Tenant"
+                                            InputProps={{
+                                                startAdornment: <InputAdornment position="start">€</InputAdornment>,
+                                            }}
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text'
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </AccordionDetails>
                         </Accordion>
 
@@ -299,7 +502,7 @@ const CreateRoom = ({ roomID }) => {
                             </AccordionSummary>
                             <AccordionDetails>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={9}>
                                         <CustomTextarea
                                             placeholder='General Rules'
                                             minRows={2}
@@ -307,9 +510,9 @@ const CreateRoom = ({ roomID }) => {
                                             onValueChanged={(value) => setNewRoom({...newRoom, rules: value})}
                                         />
                                     </Grid>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={3}>
                                         <TextField
-                                            error={!newRoom?.minimumStay || newRoom?.minimumStay === 0}
+                                            error={!newRoom?.minimumStay}
                                             value={newRoom?.minimumStay}
                                             onChange={(event) =>
                                                 setNewRoom({ ...newRoom, minimumStay: event.target.value })
@@ -317,7 +520,7 @@ const CreateRoom = ({ roomID }) => {
                                             id="minimumStay"
                                             type="number"
                                             fullWidth
-                                            label="Minimum Stays"
+                                            label="Minimum Stay"
                                             inputProps={{
                                                 step: 1,
                                                 min: 1,
