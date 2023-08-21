@@ -1,10 +1,10 @@
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {DateRange} from "react-date-range";
-import { format } from "date-fns";
 import './availabilitySelection.css';
+import dayjs from "dayjs";
 
 const AvailabilitySelection = ({ onAvailabilityChanged }) => {
     const [availabilities, setAvailabilities] = useState([]);
@@ -26,7 +26,8 @@ const AvailabilitySelection = ({ onAvailabilityChanged }) => {
                     availabilities.length > 0 ? (
                         availabilities.map((availability, index) => (
                             <div className="selection-card">
-                                {`${availability.startDate} - ${availability.endDate}`}
+                                {`${dayjs(availability.startDate).format('MM/DD/YYYY')} - 
+                                    ${dayjs(availability.endDate).format('MM/DD/YYYY')}`}
 
                                 <IconButton
                                     onClick={() => {
@@ -93,11 +94,12 @@ const AvailabilitySelection = ({ onAvailabilityChanged }) => {
 
                                 const newAvailabilities = [...availabilities,
                                     {
-                                        startDate: format(dates[0].startDate, "MM/dd/yyyy"),
-                                        endDate: format(dates[0].endDate, "MM/dd/yyyy")
+                                        startDate: dates[0].startDate.toISOString(),
+                                        endDate: dates[0].endDate.toISOString(),
                                     }
                                 ];
                                 setAvailabilities(newAvailabilities);
+                                console.log(newAvailabilities)
                                 if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
                                 setShowDate(false);
                             }}
