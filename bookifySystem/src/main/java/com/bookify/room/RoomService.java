@@ -129,6 +129,7 @@ public class RoomService{
                 room.getPricePerNight(),
                 room.getMaxTenants(),
                 room.getExtraCostPerTenant(),
+                room.getRoomType().getId(),
                 room.getAmenitiesNames(),
                 room.getAmenitiesDescriptions(),
                 room.getAmenityIDs(),
