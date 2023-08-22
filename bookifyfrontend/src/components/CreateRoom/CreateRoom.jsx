@@ -1,11 +1,18 @@
-import './createRoom.css';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Button, CircularProgress, Grid, InputAdornment} from "@mui/material";
-import {useEffect, useState} from "react";
+import {
+    Button,
+    CircularProgress,
+    ClickAwayListener,
+    Grid,
+    ImageList,
+    ImageListItem,
+    InputAdornment
+} from "@mui/material";
+import {useEffect, useRef, useState} from "react";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
@@ -23,23 +30,45 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Tooltip from "@mui/material/Tooltip";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
+import {faCircleExclamation, faUpload, faEdit} from "@fortawesome/free-solid-svg-icons";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import * as React from "react";
+import './createRoom.css';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import useFetchImages from "../../hooks/useFetchImages";
+
 
 const CreateRoom = ({ roomID }) => {
     const [oldRoom, setOldRoom] = useState(null);
     const [newRoom, setNewRoom] = useState({amenityIDs: []});
+
     const [amenitiesActive, setAmenitiesActive] = useState(false);
     const [roomTypeActive, setRoomTypeActive] = useState(false);
+
     const [unauthenticated, setUnauthenticated] = useState(false);
+
     const [tempAmenities, setTempAmenities] = useState([]);
     const [tempRoomTypeID, setTempRoomTypeID] = useState(-1);
+
+    const [selectedThumbnail, setSelectedThumbnail] = useState(null);
+    const [thumbnailToSend, setThumbnailToSend] = useState(null);
+
+    const [currentImages, setCurrentImages] = useState([]);
+    const [imagesToSend, setImagesToSend] = useState([]);
+    const [imagesToDelete, setImagesToDelete] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
+
+    const thumbnailInputRef = useRef();
+    const imageInputRef = useRef();
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
     const { auth } = useAuth();
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
+    const { fetchImages } = useFetchImages();
 
     const isEditingRoom = oldRoom !== null && oldRoom !== undefined;
 
@@ -47,13 +76,28 @@ const CreateRoom = ({ roomID }) => {
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
         && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
-    const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1 && newRoom?.roomTypeID >= 0;
+    const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1 && newRoom?.roomTypeID >= 0 && newRoom?.nBedrooms > 0;
     const pricingSet = newRoom?.pricePerNight > 0 && newRoom?.maxTenants > 0 && newRoom?.extraCostPerTenant;
     const rulesSet = newRoom?.minimumStay > 0;
-    const submitButtonEnabled = generalSet && locationSet && spaceSet && pricingSet && availabilitySet && rulesSet;
+    const imagesSet = selectedThumbnail !== null && selectedThumbnail !== undefined;
+    const submitButtonEnabled = generalSet && locationSet && spaceSet && pricingSet
+        && availabilitySet && rulesSet && imagesSet;
 
-    const preloadRoomInfo = () => {
-        if(oldRoom.hostUsername !== auth?.user) setUnauthenticated(true);
+    const removeItemFromArray = (array, index) => {
+        if(array.length === 1) return [];
+
+        return array.slice(0, index).concat(array.slice(index + 1));
+    }
+
+    const imageInImagesToSend = (image) => {
+        return imagesToSend.some(item => item.url === image);
+    }
+
+    const preloadRoomInfo = async () => {
+        if(oldRoom.hostUsername !== auth?.user) {
+            setUnauthenticated(true);
+            return;
+        }
 
         setNewRoom({
             name: oldRoom.name,
@@ -83,6 +127,75 @@ const CreateRoom = ({ roomID }) => {
             extraCostPerTenant: oldRoom.extraCostPerTenant,
             amenityIDs: oldRoom.amenityIDs,
         });
+
+        const thumbnail = await fetchImages([`/roomPhotos/get/${oldRoom.thumbnailGuid}`]);
+        setSelectedThumbnail(thumbnail[0]);
+
+        const urls = oldRoom.photosGUIDs.map((guid) => `/roomPhotos/get/${guid}`);
+        const images = await fetchImages(urls);
+        setCurrentImages(images);
+    }
+
+    const deleteImage = async (url) => {
+        try {
+            await axiosPrivate.delete(url);
+
+            setError('');
+        }
+        catch(err) {
+            console.log(err);
+
+            if (!err?.response)
+                setError('No Server Response');
+            else if (err.response?.status === 403)
+                setError('You do not have permission to perform this operation');
+            else if (err.response?.status === 404)
+                setError('Image not found');
+            else
+                setError('Deleting profile picture failed. Check the console for more details');
+
+            throw new Error("ImageUploadError");
+        }
+    }
+
+    const uploadImage = async (image, url) => {
+        const formData = new FormData();
+        formData.append('file', image);
+        console.log(formData);
+
+        try {
+            await axiosPrivate.post(url, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setError('');
+        }
+        catch(err) {
+            console.log(err);
+
+            if (!err?.response)
+                setError('No Server Response');
+            else if (err.response?.status === 400)
+                setError('Only “jpg” and “png” image file formats are accepted');
+            else if (err.response?.status === 500)
+                setError('Internal server error');
+            else
+                setError('Uploading image failed. Check the sonsole for more details');
+
+            throw new Error("ImageUploadError");
+        }
+    }
+
+    const uploadImages = () => {
+        imagesToSend.map((image) => {
+            uploadImage(image.file, `roomPhotos/addPhoto/${roomID}`);
+        });
+    }
+
+    const deleteImages = () => {
+        imagesToDelete.map((guid) => deleteImage(`roomPhotos/delete/${guid}/${roomID}`));
     }
 
     const onSubmit = async () => {
@@ -94,11 +207,19 @@ const CreateRoom = ({ roomID }) => {
         try {
             setLoading(true);
 
-            isEditingRoom ? await axiosPrivate.put(endpointURL, newRoom) :
+            const response = isEditingRoom ? await axiosPrivate.put(endpointURL, newRoom) :
                 await axiosPrivate.post(endpointURL, newRoom);
+
+            roomID = response.data
+
+            if(thumbnailToSend) await uploadImage(thumbnailToSend, `roomPhotos/addThumbnail/${roomID}`);
+            uploadImages();
+            deleteImages();
 
             navigate('/host');
         } catch (err) {
+            if(err?.message === "ImageUploadError") return;
+
             if (!err?.response)
                 setError('No server response');
             else if (err.response?.status === 400)
@@ -143,6 +264,7 @@ const CreateRoom = ({ roomID }) => {
 
                     <div className="accordion-parent">
 
+                        {/*General Info*/}
                         <Accordion defaultExpanded={true}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -175,6 +297,9 @@ const CreateRoom = ({ roomID }) => {
                                             minRows={2}
                                             maxRows={4}
                                             onValueChanged={(value) => setNewRoom({...newRoom, summary: value})}
+                                            initValue={newRoom?.summary}
+                                            required={true}
+                                            emptyError= {newRoom?.summary ? '' : "Summary not set"}
                                         />
                                     </Grid>
                                     <Grid item xs={5}>
@@ -183,6 +308,7 @@ const CreateRoom = ({ roomID }) => {
                                             minRows={2}
                                             maxRows={4}
                                             onValueChanged={(value) => setNewRoom({...newRoom, notes: value})}
+                                            initValue={newRoom?.notes}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -191,6 +317,9 @@ const CreateRoom = ({ roomID }) => {
                                             minRows={4}
                                             maxRows={6}
                                             onValueChanged={(value) => setNewRoom({...newRoom, description: value})}
+                                            initValue={newRoom?.description}
+                                            required={true}
+                                            emptyError= {newRoom?.description ? '' : "Description not set"}
                                         />
                                     </Grid>
                                 </Grid>
@@ -343,8 +472,9 @@ const CreateRoom = ({ roomID }) => {
                                                         minRows={2}
                                                         maxRows={4}
                                                         onValueChanged={(value) => setNewRoom({...newRoom, neighborhoodOverview: value})}
-                                                        emptyError={'Neighborhood Overview is empty'}
+                                                        initValue={newRoom?.neighborhoodOverview}
                                                         required={true}
+                                                        emptyError= {newRoom?.neighborhoodOverview ? '' : "'Neighborhood Overview is empty'"}
                                                     />
                                                 </Grid>
 
@@ -354,8 +484,9 @@ const CreateRoom = ({ roomID }) => {
                                                         minRows={2}
                                                         maxRows={4}
                                                         onValueChanged={(value) => setNewRoom({...newRoom, transitInfo: value})}
-                                                        emptyError={'Transit Info is empty'}
                                                         required={true}
+                                                        initValue={newRoom?.transitInfo}
+                                                        emptyError= {newRoom?.transitInfo ? '' : "'Transit info is empty'"}
                                                     />
                                                 </Grid>
 
@@ -368,6 +499,7 @@ const CreateRoom = ({ roomID }) => {
                             </AccordionDetails>
                         </Accordion>
 
+                        {/*Space*/}
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -393,8 +525,34 @@ const CreateRoom = ({ roomID }) => {
                                             inputProps={{
                                                 step: 1,
                                                 min: 1,
-                                                'aria-labelledby': 'input-error-helper-text'
+                                                'aria-labelledby': 'input-error-helper-text',
                                             }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.nBeds !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <TextField
+                                            error={!newRoom?.nBedrooms}
+                                            value={newRoom?.nBedrooms}
+                                            onChange={(event) =>
+                                                setNewRoom({ ...newRoom, nBedrooms: event.target.value })
+                                            }
+                                            id="nBeds"
+                                            type="number"
+                                            fullWidth
+                                            label="Bedrooms"
+                                            inputProps={{
+                                                step: 1,
+                                                min: 1,
+                                                'aria-labelledby': 'input-error-helper-text',
+                                            }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.nBedrooms !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
                                         />
                                     </Grid>
                                     <Grid item xs={2}>
@@ -411,8 +569,12 @@ const CreateRoom = ({ roomID }) => {
                                             inputProps={{
                                                 step: 1,
                                                 min: 0,
-                                                'aria-labelledby': 'input-error-helper-text'
+                                                'aria-labelledby': 'input-error-helper-text',
                                             }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.nBaths !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
                                         />
                                     </Grid>
                                     <Grid item xs={4}>
@@ -432,8 +594,10 @@ const CreateRoom = ({ roomID }) => {
                                             inputProps={{
                                                 step: 1,
                                                 min: 1,
-                                                'aria-labelledby': 'input-error-helper-text'
+                                                'aria-labelledby': 'input-error-helper-text',
+                                                shrink: newRoom?.surfaceArea !== ''
                                             }}
+                                            required={true}
                                         />
                                     </Grid>
                                     <Grid item xs={4}>
@@ -452,6 +616,10 @@ const CreateRoom = ({ roomID }) => {
                                                 min: 1,
                                                 'aria-labelledby': 'input-error-helper-text'
                                             }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.accomodates !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
                                         />
                                     </Grid>
                                 </Grid>
@@ -502,6 +670,7 @@ const CreateRoom = ({ roomID }) => {
                                                 min: 1,
                                                 'aria-labelledby': 'input-error-helper-text'
                                             }}
+                                            required={true}
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
@@ -520,6 +689,10 @@ const CreateRoom = ({ roomID }) => {
                                                 min: 1,
                                                 'aria-labelledby': 'input-error-helper-text'
                                             }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.maxTenants !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
@@ -541,12 +714,14 @@ const CreateRoom = ({ roomID }) => {
                                                 min: 1,
                                                 'aria-labelledby': 'input-error-helper-text'
                                             }}
+                                            required={true}
                                         />
                                     </Grid>
                                 </Grid>
                             </AccordionDetails>
                         </Accordion>
 
+                        {/*Availability*/}
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -568,7 +743,7 @@ const CreateRoom = ({ roomID }) => {
                             </AccordionDetails>
                         </Accordion>
 
-
+                        {/*Rules*/}
                         <Accordion>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
@@ -586,6 +761,7 @@ const CreateRoom = ({ roomID }) => {
                                             minRows={2}
                                             maxRows={4}
                                             onValueChanged={(value) => setNewRoom({...newRoom, rules: value})}
+                                            initValue={newRoom?.rules}
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
@@ -604,7 +780,168 @@ const CreateRoom = ({ roomID }) => {
                                                 min: 1,
                                                 'aria-labelledby': 'input-error-helper-text'
                                             }}
+                                            InputLabelProps={{
+                                                shrink: newRoom?.minimumStay !== '', // Control whether the label should shrink
+                                            }}
+                                            required={true}
                                         />
+                                    </Grid>
+                                </Grid>
+                            </AccordionDetails>
+                        </Accordion>
+
+                        {/*Images*/}
+                        <Accordion>
+                            <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-controls="panel1a-content"
+                                id="panel1a-header"
+                            >
+                                <Typography>Images</Typography>
+                                {imagesSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                        <div className="thumbnail-container">
+
+                                            <button
+                                                onClick={() => thumbnailInputRef.current.click()}
+                                                className={"select-thumbnail"}
+                                            >
+
+                                                {
+                                                    selectedThumbnail ?
+                                                        <div className="thumbnail-photo-container">
+                                                            <h3>Thumbnail</h3>
+
+                                                            <img
+                                                                className={`thumbnail-pic`}
+                                                                src={selectedThumbnail}
+                                                                alt="Could not load thumbnail"
+                                                            />
+
+                                                            <div>
+                                                                <CloudUploadIcon className="thumbnail-overlay"/>
+                                                            </div>
+
+                                                        </div> :
+
+                                                        <div className="no-thumbnail-container">
+
+                                                            <span className="add-thumbnail-prompt">Click to add thumbnail...</span>
+                                                            <CloudUploadIcon className="thumbnail-upload-icon" />
+
+                                                        </div>
+                                                }
+
+                                                <input
+                                                    style={{display: 'none'}}
+                                                    ref={thumbnailInputRef}
+                                                    type="file"
+                                                    accept=".png, .jpg"
+                                                    onChange={(event) => {
+                                                        if(!event.target.files) return;
+
+                                                        const imageData = URL.createObjectURL(event.target.files[0]);
+                                                        setSelectedThumbnail(imageData);
+                                                        setThumbnailToSend(event.target.files[0]);
+                                                    }}
+                                                />
+                                            </button>
+
+                                            {
+                                                selectedThumbnail &&
+                                                    <Tooltip title="Remove thumbnail" placement="top" arrow>
+                                                        <IconButton
+                                                            onClick={() => {
+                                                                setSelectedThumbnail(null);
+                                                            }}
+                                                            style={{ color: 'red' }}
+                                                            className="thumbnail-delete-button"
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                            }
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={6}>
+
+                                        <div className="image-selection-parent">
+                                            <ClickAwayListener onClickAway={() => setSelectedIndex(-1)}>
+
+                                                <ImageList sx={{ height: 450 }} cols={3} rowHeight={170}>
+                                                    {currentImages.map((item, index) => (
+                                                        <ImageListItem key={index}>
+                                                            <button
+                                                                className={`image-select-button`}
+                                                                onClick={() => setSelectedIndex(index)}
+                                                            >
+                                                                <img
+                                                                    src={`${item}`}
+                                                                    alt={item.title}
+                                                                    loading="lazy"
+                                                                    className={`image-grid-item ${selectedIndex === index ? 
+                                                                        'highlighted-button' : ''}`}
+                                                                />
+                                                            </button>
+                                                        </ImageListItem>
+                                                    ))}
+                                                </ImageList>
+
+                                            </ClickAwayListener>
+
+
+                                            <div className="image-selection-actions">
+                                                <Tooltip title="Delete Image" placement="top" arrow>
+                                                    <IconButton
+                                                        disabled={selectedIndex < 0}
+                                                        onClick={() => {
+                                                            if(imageInImagesToSend(currentImages[selectedIndex]))
+                                                                setImagesToSend(removeItemFromArray(imagesToSend, selectedIndex));
+                                                            else
+                                                                oldRoom && setImagesToDelete([...imagesToDelete, oldRoom.photosGUIDs[selectedIndex]]);
+
+                                                            setCurrentImages(removeItemFromArray(currentImages, selectedIndex));
+
+                                                        }}
+                                                        style={{ color: `${selectedIndex < 0 ? 'gray':'red'}` }}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+
+                                                <Tooltip title="Add Image" placement="top" arrow>
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            imageInputRef.current.click();
+                                                        }}
+                                                        style={{ color: 'blue' }}
+                                                    >
+                                                        <AddIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+
+                                                <input
+                                                    style={{display: 'none'}}
+                                                    ref={imageInputRef}
+                                                    type="file"
+                                                    accept=".png, .jpg"
+                                                    onChange={(event) => {
+                                                        if(!event.target.files) return;
+
+                                                        const imageData = URL.createObjectURL(event.target.files[0]);
+                                                        setCurrentImages([...currentImages, imageData]);
+                                                        setImagesToSend([...imagesToSend, {
+                                                            file: event.target.files[0],
+                                                            url: imageData
+                                                        }])
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+
                                     </Grid>
                                 </Grid>
                             </AccordionDetails>
@@ -612,29 +949,32 @@ const CreateRoom = ({ roomID }) => {
 
                     </div>
 
-                    <Tooltip
-                        title={submitButtonEnabled ? (isEditingRoom ? 'Edit Room' : 'Create Room') : 'Please fill in all the required fields'}
-                        placement="top"
-                        arrow
-                    >
-                        <button
-                            disabled={!submitButtonEnabled}
-                            onClick={() => onSubmit()}
-                            className="register-room-button"
+                    <div  className="register-room-button-container">
+                        <Tooltip
+                            title={submitButtonEnabled ? (isEditingRoom ? 'Edit Room' : 'Create Room') : 'Please fill in all the required fields'}
+                            placement="top"
+                            arrow
                         >
-                            {loading ? <CircularProgress /> : isEditingRoom ? 'Edit Room' : 'Create Room'}
-                        </button>
-                    </Tooltip>
+                            <button
+                                disabled={!submitButtonEnabled}
+                                onClick={() => onSubmit()}
+                                className="register-room-button"
+                            >
+                                {loading ? <CircularProgress /> : isEditingRoom ? 'Edit Room' : 'Create Room'}
+                            </button>
+                        </Tooltip>
 
-
-                {
-                    error &&
-                    <div
-                        style={{display: 'flex', flexDirection: 'row', gap: '1%', alignItems: 'center', justifyContent: 'center', marginTop: '1%'}}>
-                        <FontAwesomeIcon icon={faCircleExclamation} style={{color: "#ff0000", marginRight: '0'}}/>
-                        {error}
+                        {
+                            error &&
+                            <div
+                                style={{display: 'flex', flexDirection: 'row', gap: '1%', alignItems: 'center', justifyContent: 'center', marginTop: '1%'}}>
+                                <FontAwesomeIcon icon={faCircleExclamation} style={{color: "#ff0000", marginRight: '0'}}/>
+                                {error}
+                            </div>
+                        }
                     </div>
-                }
+
+
                 </div>
 
             <Dialog

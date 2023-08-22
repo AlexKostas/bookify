@@ -71,3 +71,119 @@
     background-color: gray;
     cursor: default;
 }
+
+.register-room-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+.thumbnail-container{
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.select-thumbnail {
+    width: 100%;
+    height: fit-content;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+
+    background: none;
+    border: none;
+    outline: none;
+
+    position: relative;
+}
+
+.thumbnail-pic {
+    min-width: 60%;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+
+    transition: filter 0.3s ease-in-out;
+}
+
+.thumbnail-pic:hover {
+    filter: brightness(20%);
+}
+
+.no-thumbnail-container{
+    width: 100%;
+    height: 40vh;
+    border: 3px dashed gray;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-thumbnail-prompt {
+    color: #5e5e5e;
+}
+
+.thumbnail-upload-icon {
+    color: gray;
+    font-size: 4rem;
+}
+
+.thumbnail-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
+    pointer-events: none;
+
+    color: dodgerblue;
+}
+
+.select-thumbnail:hover .thumbnail-overlay {
+    opacity: 1;
+}
+
+.thumbnail-photo-container {
+    position: relative;
+}
+
+.thumbnail-delete-button {
+    background-color: gray;
+    z-index: 10;
+}
+
+.image-select-button {
+    background: none;
+    border: none;
+    outline: none;
+
+    padding: 0;
+}
+
+.image-selection-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    margin-right: 3%;
+}
+
+.highlighted-button {
+    border: 4px dashed blue;
+}
+
+.image-grid-item {
+    width: 20vh;
+    height: 20vh;
+    object-fit: cover;
+}

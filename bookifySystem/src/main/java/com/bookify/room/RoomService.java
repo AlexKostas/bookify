@@ -189,7 +189,7 @@ public class RoomService{
             roomDTO.minimumStay() < 1    || roomDTO.nBeds() < 1         || roomDTO.nBaths() < 0             ||
             roomDTO.surfaceArea() < 2    || roomDTO.accommodates() < 1  || roomDTO.country() == null        ||
             roomDTO.maxTenants() < 1     || roomDTO.pricePerNight() < 1 || roomDTO.extraCostPerTenant() < 0 ||
-            roomDTO.amenityIDs() == null
+            roomDTO.amenityIDs() == null || roomDTO.nBedrooms() < 1
         )
             throw new OperationNotSupportedException("Incompatible room fields");
 

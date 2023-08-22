@@ -1,5 +1,6 @@
 package com.bookify.room;
 
+import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageStorage;
 import jakarta.persistence.EntityNotFoundException;
@@ -42,7 +43,8 @@ public class RoomPhotoService {
         roomAuthenticationUtility.verifyRoomEditingPrivileges(room);
 
         Image oldThumbnail = room.getThumbnail();
-        if(oldThumbnail != null) imageStorage.deleteImage(oldThumbnail);
+        if(oldThumbnail != null && !oldThumbnail.getImageGuid().equals(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME))
+            imageStorage.deleteImage(oldThumbnail);
 
         Image newThumbnail = imageStorage.saveImage(thumbnail);
         room.setThumbnail(newThumbnail);

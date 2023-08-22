@@ -68,7 +68,9 @@ public class ReviewService {
                 review.getStars(),
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
-                review.getReviewer().getUsername());
+                review.getReviewer().getUsername(),
+                review.getDate()
+                );
     }
 
     public ReviewResponseDTO getReviewOfUser(Integer roomID) throws EntityNotFoundException {
@@ -89,7 +91,8 @@ public class ReviewService {
                 review.getStars(),
                 review.getComment(),
                 review.isReviewerVisitedRoom(),
-                review.getReviewer().getUsername()
+                review.getReviewer().getUsername(),
+                review.getDate()
         );
     }
 
@@ -109,7 +112,8 @@ public class ReviewService {
                     review.getStars(),
                     review.getComment(),
                     review.isReviewerVisitedRoom(),
-                    review.getReviewer().getUsername()
+                    review.getReviewer().getUsername(),
+                    review.getDate()
             ));
 
             count++;
@@ -124,6 +128,7 @@ public class ReviewService {
 
         review.setStars(reviewDTO.stars());
         review.setComment(reviewDTO.comment());
+        review.setDate(LocalDate.now());
 
         User reviewer = review.getReviewer();
         Room roomReviewed = review.getRoom();

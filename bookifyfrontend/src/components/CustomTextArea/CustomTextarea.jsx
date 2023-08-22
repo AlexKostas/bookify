@@ -1,16 +1,22 @@
 import * as React from 'react';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import TextField from "@mui/material/TextField";
 
-export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10, onValueChanged, emptyError = '', required=false}) {
+export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10, onValueChanged, emptyError = '', required=false, initValue}) {
     const [inputValue, setInputValue] = useState('')
+
+    useEffect(() => {
+        initValue && setInputValue(initValue);
+    }, [initValue]);
 
     return <div>
         <TextField
             id="outlined-multiline-flexible"
             label={placeholder}
+            error={emptyError && emptyError!==''}
+            helperText={emptyError}
             multiline
             placeholder={placeholder || ''}
             minRows={minRows}
@@ -23,13 +29,5 @@ export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10,
             }}
             style={{ resize: 'none', width: '100%' }}
         />
-
-        {
-            (emptyError !== '' && inputValue === '') &&
-            <div style={{display: 'flex', flexDirection: 'row', gap: '1%', alignItems: 'center', justifyContent: 'center'}}>
-                <FontAwesomeIcon icon={faCircleExclamation} style={{color: "#ff0000", marginRight: '0'}}/>
-                {emptyError}
-            </div>
-        }
     </div>
 }
