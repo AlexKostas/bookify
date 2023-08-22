@@ -3,7 +3,7 @@ import Dropdown from "../Dropdown/Dropdown";
 import "./navbar.css";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({image}) => {
     const { auth } = useAuth();
 
     return (
@@ -12,7 +12,7 @@ const Navbar = () => {
                 <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
                     <span className="logo">Bookify</span>
                 </Link>
-                {auth ? <Dropdown username={auth.user} /> : (
+                {auth ? <Dropdown username={auth.user} image={image} /> : (
                     <div className="navItems">
                         <div className="buttons">
                             <Link to='/register'>
