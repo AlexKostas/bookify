@@ -1,11 +1,11 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
 import './mapInteraction.css'
 
-function MapInteraction({ onClick }) {
+function MapInteraction({ onClick, initValues }) {
     const [clickedLatLng, setClickedLatLng] = useState(null);
     const mapRef = useRef(null);
     function ClickHandler({ onMapClick }) {
@@ -54,11 +54,15 @@ function MapInteraction({ onClick }) {
 
     };
 
+    useEffect(() => {
+        if(initValues) setClickedLatLng(initValues)
+    }, [initValues]);
+
     return (
             <MapContainer
                 ref={mapRef}
                 center={[38.0742, 23.8243]}
-                zoom={6}
+                zoom={initValues ? 14 : 6}
                 className="room-view-map room-edit-map"
 
             >

@@ -94,7 +94,8 @@ const CreateRoom = ({ roomID }) => {
         try {
             setLoading(true);
 
-            await axiosPrivate.post(endpointURL, newRoom);
+            isEditingRoom ? await axiosPrivate.put(endpointURL, newRoom) :
+                await axiosPrivate.post(endpointURL, newRoom);
 
             navigate('/host');
         } catch (err) {
@@ -138,7 +139,7 @@ const CreateRoom = ({ roomID }) => {
     return (
         <div className="create-room-parent">
             <div className="create-room-content">
-                    <h1>New Room</h1>
+                {isEditingRoom ? <h1>Edit Room</h1> : <h1>New Room</h1>}
 
                     <div className="accordion-parent">
 
@@ -213,6 +214,7 @@ const CreateRoom = ({ roomID }) => {
                                         <span>Please click anywhere on the map to set the location</span>
                                     }
                                     <MapInteraction
+                                        initValues={isEditingRoom && {lat: oldRoom?.latitude, lng: oldRoom?.longitude}}
                                         onClick={ (latitude, longitude, address, neighborhood, city, state, country, postcode) => {
                                             setNewRoom({
                                                 ...newRoom,
@@ -611,7 +613,7 @@ const CreateRoom = ({ roomID }) => {
                     </div>
 
                     <Tooltip
-                        title={submitButtonEnabled ? 'Create Room' : 'Please fill in all the required fields'}
+                        title={submitButtonEnabled ? (isEditingRoom ? 'Edit Room' : 'Create Room') : 'Please fill in all the required fields'}
                         placement="top"
                         arrow
                     >
@@ -620,7 +622,7 @@ const CreateRoom = ({ roomID }) => {
                             onClick={() => onSubmit()}
                             className="register-room-button"
                         >
-                            {loading ? <CircularProgress /> : 'Create Room'}
+                            {loading ? <CircularProgress /> : isEditingRoom ? 'Edit Room' : 'Create Room'}
                         </button>
                     </Tooltip>
 
