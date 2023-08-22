@@ -801,7 +801,7 @@ const CreateRoom = ({ roomID }) => {
                                 {imagesSet && <CheckCircleIcon style={{ color: 'green', marginLeft: '1%' }} />}
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Grid container spacing={2}>
+                                <Grid container spacing={2} className="image-section-parent">
                                     <Grid item xs={6}>
                                         <div className="thumbnail-container">
 
@@ -869,77 +869,91 @@ const CreateRoom = ({ roomID }) => {
                                     <Grid item xs={6}>
 
                                         <div className="image-selection-parent">
-                                            <ClickAwayListener onClickAway={() => setSelectedIndex(-1)}>
+                                            <input
+                                                style={{display: 'none'}}
+                                                ref={imageInputRef}
+                                                type="file"
+                                                accept=".png, .jpg"
+                                                onChange={(event) => {
+                                                    if(!event.target.files) return;
 
-                                                <ImageList sx={{ height: 450 }} cols={3} rowHeight={170}>
-                                                    {currentImages.map((item, index) => (
-                                                        <ImageListItem key={index}>
-                                                            <button
-                                                                className={`image-select-button`}
-                                                                onClick={() => setSelectedIndex(index)}
-                                                            >
-                                                                <img
-                                                                    src={`${item}`}
-                                                                    alt={item.title}
-                                                                    loading="lazy"
-                                                                    className={`image-grid-item ${selectedIndex === index ? 
-                                                                        'highlighted-button' : ''}`}
-                                                                />
-                                                            </button>
-                                                        </ImageListItem>
-                                                    ))}
-                                                </ImageList>
+                                                    const imageData = URL.createObjectURL(event.target.files[0]);
+                                                    setCurrentImages([...currentImages, imageData]);
+                                                    setImagesToSend([...imagesToSend, {
+                                                        file: event.target.files[0],
+                                                        url: imageData
+                                                    }])
+                                                }}
+                                            />
 
-                                            </ClickAwayListener>
+                                            {
+                                                currentImages.length > 0 ?
+                                                    <>
+                                                        <ClickAwayListener onClickAway={() => setSelectedIndex(-1)}>
+
+                                                            <ImageList cols={3} rowHeight={'auto'} className="image-grid">
+                                                                {currentImages.map((item, index) => (
+                                                                    <ImageListItem key={index}>
+                                                                        <button
+                                                                            className={`image-select-button`}
+                                                                            onClick={() => setSelectedIndex(index)}
+                                                                        >
+                                                                            <img
+                                                                                src={`${item}`}
+                                                                                alt={item.title}
+                                                                                loading="lazy"
+                                                                                className={`image-grid-item ${selectedIndex === index ?
+                                                                                    'highlighted-button' : ''}`}
+                                                                            />
+                                                                        </button>
+                                                                    </ImageListItem>
+                                                                ))}
+                                                            </ImageList>
+
+                                                        </ClickAwayListener>
+                                                        <div className="image-selection-actions">
+                                                            <Tooltip title="Delete Image" placement="top" arrow>
+                                                                <IconButton
+                                                                    disabled={selectedIndex < 0}
+                                                                    onClick={() => {
+                                                                        if(imageInImagesToSend(currentImages[selectedIndex]))
+                                                                            setImagesToSend(removeItemFromArray(imagesToSend, selectedIndex));
+                                                                        else
+                                                                            oldRoom && setImagesToDelete([...imagesToDelete, oldRoom.photosGUIDs[selectedIndex]]);
+
+                                                                        setCurrentImages(removeItemFromArray(currentImages, selectedIndex));
+
+                                                                    }}
+                                                                    style={{ color: `${selectedIndex < 0 ? 'gray':'red'}` }}
+                                                                >
+                                                                    <DeleteIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+
+                                                            <Tooltip title="Add Image" placement="top" arrow>
+                                                                <IconButton
+                                                                    onClick={() => {
+                                                                        imageInputRef.current.click();
+                                                                    }}
+                                                                    style={{ color: 'blue' }}
+                                                                >
+                                                                    <AddIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
 
 
-                                            <div className="image-selection-actions">
-                                                <Tooltip title="Delete Image" placement="top" arrow>
-                                                    <IconButton
-                                                        disabled={selectedIndex < 0}
-                                                        onClick={() => {
-                                                            if(imageInImagesToSend(currentImages[selectedIndex]))
-                                                                setImagesToSend(removeItemFromArray(imagesToSend, selectedIndex));
-                                                            else
-                                                                oldRoom && setImagesToDelete([...imagesToDelete, oldRoom.photosGUIDs[selectedIndex]]);
+                                                        </div>
+                                                    </>
+                                                    : <div className="no-thumbnail-container" style={{height: '100%'}}>
 
-                                                            setCurrentImages(removeItemFromArray(currentImages, selectedIndex));
+                                                        <button onClick={() => imageInputRef.current.click()} className="add-images-button">
+                                                            <span className="add-thumbnail-prompt">Click to add images</span>
+                                                            <CloudUploadIcon className="thumbnail-upload-icon" />
+                                                        </button>
 
-                                                        }}
-                                                        style={{ color: `${selectedIndex < 0 ? 'gray':'red'}` }}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </Tooltip>
+                                                    </div>
+                                            }
 
-                                                <Tooltip title="Add Image" placement="top" arrow>
-                                                    <IconButton
-                                                        onClick={() => {
-                                                            imageInputRef.current.click();
-                                                        }}
-                                                        style={{ color: 'blue' }}
-                                                    >
-                                                        <AddIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-
-                                                <input
-                                                    style={{display: 'none'}}
-                                                    ref={imageInputRef}
-                                                    type="file"
-                                                    accept=".png, .jpg"
-                                                    onChange={(event) => {
-                                                        if(!event.target.files) return;
-
-                                                        const imageData = URL.createObjectURL(event.target.files[0]);
-                                                        setCurrentImages([...currentImages, imageData]);
-                                                        setImagesToSend([...imagesToSend, {
-                                                            file: event.target.files[0],
-                                                            url: imageData
-                                                        }])
-                                                    }}
-                                                />
-                                            </div>
                                         </div>
 
                                     </Grid>
