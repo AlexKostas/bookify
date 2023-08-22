@@ -24,7 +24,7 @@ const CheckboxSelection = ({title, onFiltersChanged, endpointURL, defaultData, o
         if(!defaultData) return;
 
         setSelectedItems(new Set(defaultData));
-    }, []);
+    }, [defaultData]);
 
     return (
         <div>

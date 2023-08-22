@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import SearchField from "../SearchField/SearchField";
 import {useSearchContext} from "../../context/SearchContext";
 import {useLocalStorage} from "../../hooks/useLocalStorage";
+import {useFilterOptions} from "../../context/FilterOptionsContext";
 
 const SearchBar = ({ type }) => {
     const [destination, setDestination] = useState("");
@@ -34,6 +35,7 @@ const SearchBar = ({ type }) => {
 
     const navigate = useNavigate();
     const {searchInfo, setSearchInfo} = useSearchContext();
+    const { resetState } = useFilterOptions();
 
     const dateRef = useRef();
     const optionsRef = useRef();
@@ -61,8 +63,9 @@ const SearchBar = ({ type }) => {
         }
 
         setSearchInfo(newSearchInfo);
-
         setItem("searchInfo", JSON.stringify(newSearchInfo));
+
+        resetState();
 
         navigate('/search');
     };

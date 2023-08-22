@@ -7,9 +7,12 @@ import './styles/searchPage.css'
 import axios from "../api/axios";
 import {Pagination} from "@mui/material";
 import {useLocalStorage} from "../hooks/useLocalStorage";
+import {useFilterOptions} from "../context/FilterOptionsContext";
 
 const SearchPage = () => {
-    const { searchInfo, setSearchInfo } = useSearchContext();
+    const { searchInfo } = useSearchContext();
+    const { filterOptions, setOptions:setFilterOptions } = useFilterOptions();
+
     const itemsPerPage = 9;
     const [rooms, setRooms] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
@@ -21,6 +24,8 @@ const SearchPage = () => {
         roomTypes: [],
         orderDirection: 'ASC',
     });
+    const [initSetup, setInitSetup] = useState(true);
+    const [isMounted, setIsMounted] = useState(false);
 
     const fetchRooms = async (currentPage) => {
         if(!searchInfo) return;
@@ -44,6 +49,7 @@ const SearchPage = () => {
 
             setRooms(response.data.content);
             setTotalPages(response.data.totalPages);
+            // console.log(response.data.totalPages);
         }
         catch(error){
             console.log(error);
@@ -56,16 +62,22 @@ const SearchPage = () => {
             top: 0,
             behavior: 'smooth',
         });
+
+        setFilterOptions({...filterOptions, page: newPage})
     }
 
     const onOptionsChanged = (newOptions) => {
         setOrderDirection(newOptions.orderDirection);
-        setCurrentPage(1);
         setOptions(newOptions);
+
+        (initSetup && filterOptions?.page) ? setCurrentPage(filterOptions.page) : setCurrentPage(1);
+
+        setInitSetup(false);
     }
 
     useEffect(() => {
-        fetchRooms(currentPage);
+        (isMounted || !filterOptions) && fetchRooms(currentPage);
+        setIsMounted(true);
     }, [currentPage, options, searchInfo]);
 
     return (

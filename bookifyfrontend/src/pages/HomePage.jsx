@@ -1,13 +1,11 @@
 import Navbar from "../components/Navbar/Navbar";
 import SearchBar from "../components/SearchBar/SearchBar";
 import RoomGrid from "../components/RoomGrid/RoomGrid";
-import {useSearchContext} from "../context/SearchContext";
 import {useEffect, useState} from "react";
 import axios from "../api/axios";
 
 const HomePage = () => {
     const endpointURL = '/search/searchAll';
-    const { resetSearch } = useSearchContext();
     const [rooms, setRooms] = useState([]);
 
     const fetchRooms = async () => {
@@ -22,7 +20,6 @@ const HomePage = () => {
     }
 
     useEffect(() => {
-        resetSearch();
         fetchRooms()
     }, []);
 

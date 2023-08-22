@@ -293,6 +293,5 @@ public class RoomService{
                 break;
         }
         availabilityRepository.saveAll(availabilityList);
-        //TODO: Make sure duplicated entries do not cause a problem and are safely ignored
     }
 }
