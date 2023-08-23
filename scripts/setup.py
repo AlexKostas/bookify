@@ -56,8 +56,19 @@ def delete_reviews(connection):
     connection.commit()
 
     cursor.close()
+    
+def get_role_ids(connection):
+    cursor = connection.cursor()
+    query = "SELECT t.app_role_id, h.app_role_id FROM roles t, roles h WHERE t.authority = 'tenant' AND h.authority = 'host'"
+    
+    cursor.execute(query)
+    result = cursor.fetchone()
 
-def insert_users_from_csv(connection, csv_file):
+    cursor.close()
+    
+    return result[0], result[1]
+
+def insert_users_from_csv(connection, tenant_role_id, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Review Users --")
 
@@ -73,19 +84,28 @@ def insert_users_from_csv(connection, csv_file):
             global usernames
             usernames.add(username)
 
-            insert_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
-            values = (id, createUniqueUsername(connection, username), '1234', 'default')
+            insert_user_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
+            user_values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
+            insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
+            user_role_values = (id, tenant_role_id)
+            
             try:
-                cursor.execute(insert_query, values)
+                cursor.execute(insert_user_query, user_values)
             except mysql.connector.Error as e:
                 print(f"Error inserting user {username} with id {id}: {e}")
                 connection.rollback()
 
+            try:
+                cursor.execute(insert_user_role_query, user_role_values)
+            except mysql.connector.Error as e:
+                print(f"Error inserting user_role with ids {id}, {tenant_role_id}: {e}")
+                connection.rollback()
+                
     connection.commit()
     cursor.close()
 
-def insert_host_users(connection):
+def insert_host_users(connection, host_role_id):
     cursor = connection.cursor()
     print("-- Inserting Host Users --")
 
@@ -101,15 +121,24 @@ def insert_host_users(connection):
             global usernames
             usernames.add(username)
 
-            insert_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
-            values = (id, createUniqueUsername(connection, username), '1234', 'default')
+            insert_host_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
+            host_values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
+            insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
+            user_role_values = (id, host_role_id)
+            
             try:
-                cursor.execute(insert_query, values)
+                cursor.execute(insert_host_query, host_values)
             except mysql.connector.Error as e:
                 print(f"Error inserting user {username} with id {id}: {e}")
                 connection.rollback()
-
+                
+            try:
+                cursor.execute(insert_user_role_query, user_role_values)
+            except mysql.connector.Error as e:
+                print(f"Error inserting user_role with ids {id}, {host_role_id}: {e}")
+                connection.rollback()
+                
     connection.commit()
     cursor.close()
 
@@ -227,8 +256,9 @@ if __name__ == "__main__":
         connection.cursor().execute("SET AUTOCOMMIT = 0;")
         connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
 
-        insert_users_from_csv(connection, 'reviews.csv')
-        insert_host_users(connection)
+        tenant_role_id, host_role_id = get_role_ids(connection)
+        insert_users_from_csv(connection, tenant_role_id, 'reviews.csv')
+        insert_host_users(connection, host_role_id)
         insert_reviews(connection, 'reviews.csv')
         enable_foreign_key_checks(connection)
         connection.close()
