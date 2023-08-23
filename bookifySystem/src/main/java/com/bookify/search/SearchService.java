@@ -49,7 +49,6 @@ public class SearchService {
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
 
-    //TODO: also search by location
     public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
                                          SearchRequestDTO searchDTO){
 
@@ -89,20 +88,23 @@ public class SearchService {
         long nights = Utils.getDaysBetween(searchDTO.startDate(), searchDTO.endDate());
 
         // Unfortunately, due to the way JPA works it is not allowed to use named parameters in the order by clause
-        // and although it works, it is non-standard and could break at any moment. Since there is no way to conveniently
-        // parameterize the order direction, two separate queries are needed
+        // and although it works, it is non-standard, throws exceptions and could break at any moment. Since there is
+        // no way to conveniently parameterize the order direction, two separate queries are needed
         Page<Room> searchResult = direction == OrderDirection.UP ?
                 roomRepository.filterRoomsASC(
-                amenitiesFilter,
-                amenitiesFilter.size(),
-                searchDTO.startDate(),
-                searchDTO.endDate(),
-                nights,
-                roomTypesFilter,
-                roomTypesFilter.size(),
-                searchDTO.maxPrice(),
-                searchDTO.tenants(),
-                pageable
+                        amenitiesFilter,
+                        amenitiesFilter.size(),
+                        searchDTO.startDate(),
+                        searchDTO.endDate(),
+                        nights,
+                        roomTypesFilter,
+                        roomTypesFilter.size(),
+                        searchDTO.maxPrice(),
+                        searchDTO.tenants(),
+                        searchDTO.city(),
+                        searchDTO.state(),
+                        searchDTO.country(),
+                        pageable
         ) : roomRepository.filterRoomsDESC(
                 amenitiesFilter,
                 amenitiesFilter.size(),
@@ -113,6 +115,9 @@ public class SearchService {
                 roomTypesFilter.size(),
                 searchDTO.maxPrice(),
                 searchDTO.tenants(),
+                searchDTO.city(),
+                searchDTO.state(),
+                searchDTO.country(),
                 pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().

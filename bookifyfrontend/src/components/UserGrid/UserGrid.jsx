@@ -249,7 +249,6 @@ const UserGrid = () => {
                     color="primary"
                     onClick={() => handleExport(`admin/getHostRev${selectedFileType}`)}
                     startIcon={<CloudDownloadIcon />}
-                    disabled={fileLoading}
                 >
                     Export Host Reviews
                 </Button>
