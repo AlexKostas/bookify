@@ -59,7 +59,7 @@ def delete_reviews(connection):
     
 def get_role_ids(connection):
     cursor = connection.cursor()
-    query = "SELECT t.app_role_id, h.app_role_id FROM roles WHERE t.authority = 'tenant' AND h.authority = 'host'"
+    query = "SELECT t.app_role_id, h.app_role_id FROM roles t, roles h WHERE t.authority = 'tenant' AND h.authority = 'host'"
     
     cursor.execute(query)
     result = cursor.fetchone()
@@ -68,7 +68,7 @@ def get_role_ids(connection):
     
     return result[0], result[1]
 
-def insert_users_from_csv(connection, tenant_id, csv_file):
+def insert_users_from_csv(connection, tenant_role_id, csv_file):
     cursor = connection.cursor()
     print("-- Inserting Review Users --")
 
@@ -88,19 +88,24 @@ def insert_users_from_csv(connection, tenant_id, csv_file):
             user_values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
             insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
-            user_role_values = (id, tenant_id)
+            user_role_values = (id, tenant_role_id)
             
             try:
                 cursor.execute(insert_user_query, user_values)
-                cursor.execture(insert_user_role_query, user_role_values)
             except mysql.connector.Error as e:
                 print(f"Error inserting user {username} with id {id}: {e}")
                 connection.rollback()
 
+            try:
+                cursor.execute(insert_user_role_query, user_role_values)
+            except mysql.connector.Error as e:
+                print(f"Error inserting user_role with ids {id}, {tenant_role_id}: {e}")
+                connection.rollback()
+                
     connection.commit()
     cursor.close()
 
-def insert_host_users(connection, host_id):
+def insert_host_users(connection, host_role_id):
     cursor = connection.cursor()
     print("-- Inserting Host Users --")
 
@@ -119,17 +124,21 @@ def insert_host_users(connection, host_id):
             insert_host_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier) VALUES (%s, %s, %s, %s)"
             host_values = (id, createUniqueUsername(connection, username), '1234', 'default')
 
-
             insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
-            user_role_values = (id, host_id)
+            user_role_values = (id, host_role_id)
             
             try:
                 cursor.execute(insert_host_query, host_values)
-                cursor.execture(insert_user_role_query, user_role_values)
             except mysql.connector.Error as e:
                 print(f"Error inserting user {username} with id {id}: {e}")
                 connection.rollback()
-
+                
+            try:
+                cursor.execute(insert_user_role_query, user_role_values)
+            except mysql.connector.Error as e:
+                print(f"Error inserting user_role with ids {id}, {host_role_id}: {e}")
+                connection.rollback()
+                
     connection.commit()
     cursor.close()
 
