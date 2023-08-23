@@ -34,6 +34,10 @@ const SearchPage = () => {
                         tenants: searchInfo.tenants,
                         startDate: searchInfo.checkInDate,
                         endDate: searchInfo.checkOutDate,
+                        city: searchInfo.city,
+                        state: searchInfo.state,
+                        country: searchInfo.country,
+
                         amenitiesIDs: options.amenities,
                         maxPrice: options.maxPrice,
                         roomTypesIDs: options.roomTypes,

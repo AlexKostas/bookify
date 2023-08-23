@@ -5,7 +5,7 @@ import csv
 import re
 
 current_date = datetime.datetime.now()
-dates = [current_date + datetime.timedelta(days=x) for x in range(11)]
+dates = [current_date + datetime.timedelta(days=x) for x in range(0, 30)]
 location_data = dict()
 ids = set()
 
