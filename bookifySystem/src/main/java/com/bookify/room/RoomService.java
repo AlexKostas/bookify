@@ -105,6 +105,7 @@ public class RoomService{
         assert(room.getRoomID() == roomID);
 
         List<LocalDate> bookedDays = getBookedDays ? bookingService.getBookedDaysForRoom(room) : new ArrayList<>();
+        List<DatePairDTO> bookedRanges = getBookedDays ? bookingService.getBookedDateRangesForRoom(room) : new ArrayList<>();
 
         return new RoomResponseDTO(
                 room.getRoomHost().getUsername(),
@@ -141,7 +142,8 @@ public class RoomService{
                 room.getPhotosGUIDs(),
                 room.getRating(),
                 room.getReviewCount(),
-                bookedDays
+                bookedDays,
+                bookedRanges
         );
     }
 
@@ -274,8 +276,11 @@ public class RoomService{
     private void setAvailability(List<DatePairDTO> availability, Room room){
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;
-        Boolean reachedMax = false;
-        Set<LocalDate> usedDates = new HashSet<>();
+        boolean reachedMax = false;
+
+        // Make sure we are not re-adding availability dates that have previously been removed for bookings. Also keeps
+        // track of already added days, so they are not added twice.
+        Set<LocalDate> usedDates = new HashSet<>(bookingService.getBookedDaysForRoom(room));
 
         for(DatePairDTO datePair : availability){
             LocalDate date = datePair.startDate();

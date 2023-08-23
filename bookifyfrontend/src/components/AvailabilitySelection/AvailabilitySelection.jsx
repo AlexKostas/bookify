@@ -5,8 +5,9 @@ import {useEffect, useState} from "react";
 import {DateRange} from "react-date-range";
 import './availabilitySelection.css';
 import dayjs from "dayjs";
+import Tooltip from "@mui/material/Tooltip";
 
-const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays }) => {
+const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges }) => {
     const [availabilities, setAvailabilities] = useState([]);
     const [showDate, setShowDate] = useState(false);
     const [disabledDates, setDisabledDates] = useState([])
@@ -24,6 +25,14 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays }) => {
         setDisabledDates(bookedDays.map((date) => new Date(date)));
     }, [bookedDays])
 
+    useEffect(() => {
+        if(!bookedRanges || bookedRanges.length < 1) return;
+        console.log(bookedRanges);
+
+        setAvailabilities(bookedRanges.map((item) => ({...item, deletable: false})));
+        console.log(bookedRanges.map((item) => ({...item, deletable: false})));
+    }, [bookedRanges])
+
     return (
         <div className="selection-holder">
 
@@ -36,20 +45,30 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays }) => {
                                 {`${dayjs(availability.startDate).format('MM/DD/YYYY')} - 
                                     ${dayjs(availability.endDate).format('MM/DD/YYYY')}`}
 
-                                <IconButton
-                                    onClick={() => {
-                                        setShowDate(false);
-
-                                        const newAvailabilities = availabilities.length > 1 ?
-                                            availabilities.splice(index, 1) : [];
-
-                                        setAvailabilities(newAvailabilities);
-                                        if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
-                                    }}
-                                    style={{ color: 'red' }}
+                                <Tooltip
+                                    title={`${availability.deletable ? 'Delete Range' : 'You can not delete this range because the room is already booked for those dates'}`}
+                                    placement="top"
+                                    sx={{textAlign: "center"}}
+                                    arrow
                                 >
-                                    <DeleteIcon />
-                                </IconButton>
+                                    <span>
+                                        <IconButton
+                                            disabled={!availability.deletable}
+                                            onClick={() => {
+                                                setShowDate(false);
+
+                                                const newAvailabilities = availabilities.length > 1 ?
+                                                    availabilities.splice(index, 1) : [];
+
+                                                setAvailabilities(newAvailabilities);
+                                                if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
+                                            }}
+                                            style={{ color: `${availability.deletable ? 'red' : 'gray'}` }}
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
                             </div>
                         ))
 
@@ -104,11 +123,14 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays }) => {
                                     {
                                         startDate: dates[0].startDate.toISOString(),
                                         endDate: dates[0].endDate.toISOString(),
+                                        deletable: true
                                     }
                                 ];
                                 setAvailabilities(newAvailabilities);
-                                console.log(newAvailabilities)
-                                if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
+                                if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities.map((item) => ({
+                                    startDate: item.startDate,
+                                    endDate: item.endDate
+                                })));
                                 setShowDate(false);
                             }}
                             className="selection-confirm-button"

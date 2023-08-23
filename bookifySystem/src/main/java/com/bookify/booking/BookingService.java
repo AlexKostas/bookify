@@ -1,6 +1,7 @@
 package com.bookify.booking;
 
 import com.bookify.availability.AvailabilityService;
+import com.bookify.room.DatePairDTO;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
@@ -94,6 +95,17 @@ public class BookingService {
 
         for(Booking booking : bookings)
             result.addAll(booking.getBookedDates());
+
+        return result;
+    }
+
+    public List<DatePairDTO> getBookedDateRangesForRoom(Room room){
+        List<DatePairDTO> result = new ArrayList<>();
+
+        List<Booking> bookings = bookingRepository.findAllByRoom(room);
+
+        for(Booking booking : bookings)
+            result.add(booking.getBookedRange());
 
         return result;
     }

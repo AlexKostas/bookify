@@ -59,7 +59,8 @@ const CreateRoom = ({ roomID }) => {
     const [imagesToDelete, setImagesToDelete] = useState([]);
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
-    const [bookedDays, setBookedDays] = useState([])
+    const [bookedDays, setBookedDays] = useState([]);
+    const [bookedRanges, setBookedRanges] = useState([]);
 
     const thumbnailInputRef = useRef();
     const imageInputRef = useRef();
@@ -131,6 +132,7 @@ const CreateRoom = ({ roomID }) => {
         });
 
         setBookedDays(oldRoom.bookedDays);
+        setBookedRanges(oldRoom.bookedRanges);
 
         const thumbnail = await fetchImages([`/roomPhotos/get/${oldRoom.thumbnailGuid}`]);
         setSelectedThumbnail(thumbnail[0]);
@@ -739,6 +741,7 @@ const CreateRoom = ({ roomID }) => {
                                                 console.log(newAvailability);
                                             }}
                                             bookedDays={bookedDays}
+                                            bookedRanges={bookedRanges}
                                         />
                                     </div>
                                 </AccordionDetails>
@@ -758,7 +761,7 @@ const CreateRoom = ({ roomID }) => {
                                     <Grid container spacing={2}>
                                         <Grid item xs={9}>
                                             <CustomTextarea
-                                                placeholder='General Rules'
+                                                placeholder='Rules'
                                                 minRows={2}
                                                 maxRows={4}
                                                 onValueChanged={(value) => setNewRoom({...newRoom, rules: value})}

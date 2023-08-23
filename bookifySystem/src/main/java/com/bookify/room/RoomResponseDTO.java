@@ -13,5 +13,5 @@ public record RoomResponseDTO (
         List<String> amenityNames,  List<String> amenityDescriptions,                   List<Integer> amenityIDs,
         String thumbnailGuid,       List<String> photosGUIDs,                           float rating,                   int reviewCount,
 
-        List<LocalDate> bookedDays
+        List<LocalDate> bookedDays, List<DatePairDTO> bookedRanges
 ) {}
