@@ -210,7 +210,7 @@ const RoomView = ({ roomID }) => {
                                             <Marker position={[latitude, longitude]} icon={customIcon}>
                                                 <Popup>
                                                     {room?.name && (
-                                                        <div style={{  maxWidth: '200px' }}>
+                                                        <div style={{  maxWidth: '200px', textAlign: 'center' }}>
                                                             <div style={{ fontWeight: 'bold' }}>{room.name}</div>
                                                             <div>
                                                                 Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}

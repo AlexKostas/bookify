@@ -64,7 +64,11 @@ def insert_listings(connection, csv_file):
         for row in reader:
             room_id = row['id']
             accommodates = row['accommodates']
-            address = location_data[room_id]['street'] + ', ' + (str(location_data[room_id]['number']) if location_data[room_id]['number'] else '') + ', ' + location_data[room_id]['suburb']
+
+            temp_address = location_data[room_id]['street'] + ' ' + (str(location_data[room_id]['number']) if location_data[room_id]['number'] else '') + ', ' + location_data[room_id]['suburb'] + ', ' + location_data[room_id]['state'] + ' ' + location_data[room_id]['postcode'] + ', ' + location_data[room_id]['country']
+
+            address = temp_address if location_data[room_id]['number'] and location_data[room_id]['suburb'] else row['street']
+
             city = location_data[room_id]['suburb']
             country = location_data[room_id]['country']
             description = row['description']
