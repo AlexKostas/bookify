@@ -299,7 +299,6 @@ public class RoomService{
                 }
 
                 date = date.plusDays(1);
-                counter += 1;
             }
             if(reachedMax)
                 break;
