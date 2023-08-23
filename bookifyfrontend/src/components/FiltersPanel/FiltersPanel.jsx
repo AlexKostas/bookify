@@ -80,13 +80,6 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
         setSelectedRoomTypes(filterOptions.roomTypes || []);
         setMaxPrice(filterOptions.maxPrice || 600);
         setOrderDirection(filterOptions.orderDirection || 'ASC');
-
-        // onFiltersChanged({
-        //     amenities: filterOptions.amenities || [],
-        //     roomTypes: filterOptions.roomTypes || [],
-        //     maxPrice: filterOptions.maxPrice || 600,
-        //     orderDirection: filterOptions.orderDirection || 'ASC',
-        // });
     }, [filterOptions]);
 
     return (
@@ -120,7 +113,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                         aria-label="Always visible"
                         min = {50}
                         max = {3000}
-                        defaultValue={maxPrice || 600}
+                        defaultValue={filterOptions?.maxPrice || 600}
                         getAriaValueText={valueToText}
                         step={5}
                         valueLabelDisplay="auto"
