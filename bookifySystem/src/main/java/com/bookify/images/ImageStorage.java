@@ -5,9 +5,13 @@ import com.bookify.utils.GUIDGenerator;
 import com.bookify.utils.ImageFormatDetector;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -20,15 +24,15 @@ import java.util.List;
 @Slf4j
 public class ImageStorage {
     private final ImageRepository imageRepository;
-    private final ResourceLoader resourceLoader;
     private final ImageFormatDetector imageFormatDetector;
     private final String pathRoot;
 
-    public ImageStorage(ImageRepository imageRepository, ResourceLoader resourceLoader,
-                        ImageFormatDetector imageFormatDetector) throws IOException {
+    private final Environment env;
+
+    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, Environment env) throws IOException {
         this.imageRepository = imageRepository;
-        this.resourceLoader = resourceLoader;
         this.imageFormatDetector = imageFormatDetector;
+        this.env = env;
 
         pathRoot = getImageDirectoryPath();
     }
@@ -104,8 +108,9 @@ public class ImageStorage {
     }
 
     private String getImageDirectoryPath() throws IOException {
-        String directoryPath = resourceLoader.getResource("classpath:").getFile().getAbsolutePath() +
-                Configuration.IMAGES_SUBFOLDER;
+        String appDataDirectory = env.getProperty("upload.directory.root");
+
+        String directoryPath = appDataDirectory + Configuration.IMAGES_SUBFOLDER;
 
         Path path = Path.of(directoryPath);
         if(!Files.exists(path))
