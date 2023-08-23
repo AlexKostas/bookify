@@ -1,10 +1,31 @@
 import mysql.connector
 import datetime
+import json
 import csv
 import re
 
 current_date = datetime.datetime.now()
 dates = [current_date + datetime.timedelta(days=x) for x in range(11)]
+location_data = dict()
+ids = set()
+
+def setup_ids():
+    global ids
+    
+    with open('listings.csv', 'r', newline='', encoding='utf8') as csvfile:
+        reader = csv.DictReader(csvfile)
+
+        for row in reader:
+            ids.add(row['id'])
+
+
+def load_location_data():
+    with open('locations.json', 'r') as jsonfile:
+        global location_data
+
+        data = json.load(jsonfile)
+
+        location_data = {item['room_id']: item for item in data}
 
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
@@ -20,7 +41,7 @@ def delete_rooms(connection):
     print("-- Deleting Rooms --")
 
     cursor = connection.cursor()
-    cursor.execute("DELETE FROM rooms")
+    cursor.execute(f"DELETE FROM rooms where room_id in ({','.join(ids)})")
     connection.commit()
     cursor.close()
 
@@ -28,7 +49,7 @@ def delete_availability(connection):
     print("-- Deleting Availability --")
 
     cursor = connection.cursor()
-    cursor.execute("DELETE FROM availability")
+    cursor.execute(f"DELETE FROM availability where room_id in ({','.join(ids)})")
     connection.commit()
     cursor.close()
 
@@ -43,9 +64,9 @@ def insert_listings(connection, csv_file):
         for row in reader:
             room_id = row['id']
             accommodates = row['accommodates']
-            address = row['street']
-            city = row['city']
-            country = row['country']
+            address = location_data[room_id]['street'] + ', ' + (str(location_data[room_id]['number']) if location_data[room_id]['number'] else '') + ', ' + location_data[room_id]['suburb']
+            city = location_data[room_id]['suburb']
+            country = location_data[room_id]['country']
             description = row['description']
             extra_cost_per_tenant = re.search(r'\d+\.\d+', row['extra_people']).group()
             latitude = row['latitude']
@@ -53,7 +74,7 @@ def insert_listings(connection, csv_file):
             max_tenants = row['guests_included']
             minimum_stay = row['minimum_nights']
             name = row['name']
-            neighborhood = row['neighbourhood_cleansed']
+            neighborhood = location_data[room_id]['neighbourhood']
             neighborhood_overview = row['neighborhood_overview']
             notes = row['notes']
             num_of_baths = row['bathrooms'] if row['bathrooms'] else 0
@@ -61,11 +82,11 @@ def insert_listings(connection, csv_file):
             num_of_beds = row['beds'] if row['beds'] else 0
             price_per_night = re.search(r'\d+\.\d+', row['price']).group()
             rules = 'No rules'
-            state = row['state']
+            state = location_data[room_id]['state']
             summary = row['summary']
             surface_area = row['square_feet'] if row['square_feet'] else 0
             transit_info = row['transit']
-            zipcode = row['zipcode']
+            zipcode = location_data[room_id]['postcode']
 
             # Foreign keys
             room_host_id = row['host_id']
@@ -130,9 +151,11 @@ if __name__ == "__main__":
         )
         disable_foreign_key_checks(connection)
 
+        load_location_data()
+        setup_ids()
+
         delete_availability(connection)
         delete_rooms(connection)
-
 
         connection.cursor().execute("SET AUTOCOMMIT = 0;")
         connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
