@@ -34,7 +34,6 @@ export const FilterOptionsProvider = ({ children }) => {
         const rawInfo = getItem('paginationState')
         if(!rawInfo) return;
 
-        console.log(rawInfo);
         const info = JSON.parse(rawInfo);
 
         if(info) setFilterOptions(info);

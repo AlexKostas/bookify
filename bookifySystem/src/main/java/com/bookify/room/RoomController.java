@@ -46,9 +46,11 @@ public class RoomController {
     }
 
     @GetMapping("/getRoom/{roomID}")
-    public ResponseEntity<?> getRoom(@PathVariable Integer roomID){
+    public ResponseEntity<?> getRoom(
+            @PathVariable Integer roomID,
+            @RequestParam(defaultValue = "false") boolean getBookedDays){
         try{
-            return ResponseEntity.ok(roomService.loadRoomData(roomID));
+            return ResponseEntity.ok(roomService.loadRoomData(roomID, getBookedDays));
         }
         catch (EntityNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

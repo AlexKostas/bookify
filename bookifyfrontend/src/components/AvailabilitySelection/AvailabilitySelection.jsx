@@ -1,14 +1,15 @@
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {DateRange} from "react-date-range";
 import './availabilitySelection.css';
 import dayjs from "dayjs";
 
-const AvailabilitySelection = ({ onAvailabilityChanged }) => {
+const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays }) => {
     const [availabilities, setAvailabilities] = useState([]);
     const [showDate, setShowDate] = useState(false);
+    const [disabledDates, setDisabledDates] = useState([])
     const [dates, setDates] = useState([
         {
             startDate: new Date(),
@@ -16,6 +17,12 @@ const AvailabilitySelection = ({ onAvailabilityChanged }) => {
             key: "selection",
         },
     ]);
+
+    useEffect(() => {
+        if(!bookedDays || bookedDays.length < 1) return;
+
+        setDisabledDates(bookedDays.map((date) => new Date(date)));
+    }, [bookedDays])
 
     return (
         <div className="selection-holder">
@@ -78,6 +85,7 @@ const AvailabilitySelection = ({ onAvailabilityChanged }) => {
                         ranges={dates}
                         className="availability-range"
                         minDate={new Date()}
+                        disabledDates={disabledDates}
                     />
 
                     <div className="date-selection-buttons">

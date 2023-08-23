@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -83,6 +85,17 @@ public class BookingService {
         );
 
         return generateBookingPDF(bookingResponse, currentUser);
+    }
+
+    public List<LocalDate> getBookedDaysForRoom(Room room){
+        List<LocalDate> result = new ArrayList<>();
+
+        List<Booking> bookings = bookingRepository.findAllByRoom(room);
+
+        for(Booking booking : bookings)
+            result.addAll(booking.getBookedDates());
+
+        return result;
     }
 
     private byte[] generateBookingPDF(BookingResponseDTO bookingDTO, User user) throws IOException {

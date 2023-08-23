@@ -3,6 +3,7 @@ package com.bookify.room;
 import com.bookify.availability.Availability;
 import com.bookify.availability.AvailabilityRepository;
 import com.bookify.booking.BookingRepository;
+import com.bookify.booking.BookingService;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
@@ -43,6 +44,7 @@ public class RoomService{
     private final UserRepository userRepository;
     private final RoomTypeRepository roomTypeRepository;
     private final BookingRepository bookingRepository;
+    private final BookingService bookingService;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
     private final ImageStorage imageStorage;
@@ -98,10 +100,12 @@ public class RoomService{
         return roomID;
     }
 
-    public RoomResponseDTO loadRoomData(Integer roomID) throws EntityNotFoundException {
+    public RoomResponseDTO loadRoomData(Integer roomID, boolean getBookedDays) throws EntityNotFoundException {
         Room room = loadRoomDataById(roomID);
-
         assert(room.getRoomID() == roomID);
+
+        List<LocalDate> bookedDays = getBookedDays ? bookingService.getBookedDaysForRoom(room) : new ArrayList<>();
+
         return new RoomResponseDTO(
                 room.getRoomHost().getUsername(),
                 room.getName(),
@@ -136,7 +140,8 @@ public class RoomService{
                 room.getThumbnail().getImageGuid(),
                 room.getPhotosGUIDs(),
                 room.getRating(),
-                room.getReviewCount()
+                room.getReviewCount(),
+                bookedDays
         );
     }
 
@@ -265,6 +270,7 @@ public class RoomService{
         return roomTypeOptional.get();
     }
 
+    //TODO: Maybe move this to availability service
     private void setAvailability(List<DatePairDTO> availability, Room room){
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;

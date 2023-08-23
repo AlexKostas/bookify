@@ -68,7 +68,7 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
 
         if(numberOfDays < minStay){
             setAvailable(false);
-            setError(`Minimum stay is ${minStay} night${minStay > 1 && 's'}`)
+            setError(`Minimum stay is ${minStay} night${minStay > 1 ? 's' : ''}`)
             return;
         }
 
