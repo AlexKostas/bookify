@@ -94,27 +94,6 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/getUsersXML")
-    public String getUserFileXML() throws Exception {
-        //TODO: implement this
-        //TODO: delete exception
-        throw new Exception("Method not yet implemented");
-    }
-
-    @GetMapping("/getUsersJSON")
-    public String getUserFileJSON() throws Exception {
-        //TODO: implement this
-        //TODO: delete exception
-        throw new Exception("Method not yet implemented");
-    }
-
-    @GetMapping("/getRoomsXML")
-    public String getRoomsFileXML() throws Exception {
-        //TODO: implement this
-        //TODO: delete exception
-        throw new Exception("Method not yet implemented");
-    }
-
     @GetMapping("/getDataJSON")
     public ResponseEntity<?> getDataJSON()  {
         try {

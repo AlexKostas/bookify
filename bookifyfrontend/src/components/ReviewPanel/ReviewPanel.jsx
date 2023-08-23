@@ -7,7 +7,7 @@ import ComposeReview from "../ComposeReview/ComposeReview";
 import useAuth from "../../hooks/useAuth";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
-const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
+const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
     const [reviewCount, setReviewCount] = useState(4);
     const [flag, setFlag] = useState(false);
     const [composeActive, setComposeActive] = useState(false);
@@ -25,7 +25,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
     const containerRef = useRef();
 
     const { auth } = useAuth();
-    const canReview = auth && auth.roles.includes('tenant');
+    const canReview = auth && auth.roles.includes('tenant') && auth?.user !== roomHost;
 
     const fetchUsersReview = async () => {
         if(!canReview) return;
@@ -129,7 +129,8 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged }) => {
                             className="add-review-button"
                             disabled={!canReview}
                         >
-                            {!auth ? 'Login to submit a review' : (canReview ? 'Add your review' : 'You need to be a tenant to add a review')}
+                            {!auth ? 'Login to submit a review' : (canReview ? 'Add your review' :
+                                (roomHost === auth?.user ? 'Can not review your own room' : 'You need to be a tenant to add a review'))}
                         </button>
             }
 

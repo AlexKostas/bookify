@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {Slider, Stack} from "@mui/material";
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
+import {useFilterOptions} from "../../context/FilterOptionsContext";
 
 const Input = styled(MuiInput)`
   width: 40%;
@@ -27,6 +28,8 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
     const [orderDirection, setOrderDirection] = useState('ASC');
     const [isMounted, setIsMounted] = useState(false);
 
+    const { filterOptions, setOptions } = useFilterOptions();
+
     const onAmenitiesChanged = (newAmenities) => {
         setSelectedAmenities(newAmenities);
     }
@@ -43,7 +46,10 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
             orderDirection,
         }
 
-        onFiltersChanged(options);
+        if(isMounted) {
+            setOptions(options);
+            onFiltersChanged(options);
+        }
     }
 
     const handleSortingChange = (value) => {
@@ -67,6 +73,15 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
         setIsMounted(true)
     }, [selectedAmenities, selectedRoomTypes, orderDirection, maxPrice]);
 
+    useEffect(() => {
+        if(!filterOptions) return;
+
+        setSelectedAmenities(filterOptions.amenities || []);
+        setSelectedRoomTypes(filterOptions.roomTypes || []);
+        setMaxPrice(filterOptions.maxPrice || 600);
+        setOrderDirection(filterOptions.orderDirection || 'ASC');
+    }, [filterOptions]);
+
     return (
         <div className="filtersPanel">
             <h1>Filters</h1>
@@ -77,6 +92,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                     title={'Amenities'}
                     endpointURL={'/amenities/getAllAmenities'}
                     onFiltersChanged={onAmenitiesChanged}
+                    defaultData={selectedAmenities}
                 />
 
                 <br/>
@@ -85,6 +101,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                     title={'Room Type'}
                     endpointURL={'/roomType/getAll'}
                     onFiltersChanged={onRoomTypesChanged}
+                    defaultData={selectedRoomTypes}
                 />
 
                 <br/>
@@ -96,7 +113,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                         aria-label="Always visible"
                         min = {50}
                         max = {3000}
-                        defaultValue={600}
+                        defaultValue={filterOptions?.maxPrice || 600}
                         getAriaValueText={valueToText}
                         step={5}
                         valueLabelDisplay="auto"
@@ -126,7 +143,9 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                 <div className="sort">
                     <label>
                         Order By Price:
-                        <select value={orderDirection} onChange={(event) => handleSortingChange(event.target.value)}>
+                        <select value={orderDirection} defaultValue={orderDirection || 'ASC'}
+                                onChange={(event) => handleSortingChange(event.target.value)}
+                        >
                             <option value="ASC">Ascending</option>
                             <option value="DESC">Descending</option>
                         </select>

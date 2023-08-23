@@ -70,6 +70,7 @@ const BookingPanel = ({ room, roomID }) => {
 
             setSelectedCheckInDate(null);
             setSelectedCheckOutDate(null);
+            setNights(0);
             setVisitors(1);
 
             setBackdropOpen(true);
@@ -101,11 +102,14 @@ const BookingPanel = ({ room, roomID }) => {
     useEffect(() => {
         if(!searchInfo) return;
 
-        setSelectedCheckInDate(dayjs(searchInfo.checkInDate));
-        setSelectedCheckOutDate(dayjs(searchInfo.checkOutDate));
+        const tempCheckInDate = dayjs(searchInfo.checkInDate);
+        const tempCheckoutDate = dayjs(searchInfo.checkOutDate);
+
+        setSelectedCheckInDate(tempCheckInDate);
+        setSelectedCheckOutDate(tempCheckoutDate);
         setVisitors(searchInfo.tenants);
 
-        const numberOfNights = (!selectedCheckInDate ||selectedCheckOutDate.isSame(selectedCheckInDate)) ? 0 : selectedCheckOutDate.diff(selectedCheckInDate, 'day') + 1;
+        const numberOfNights = (!tempCheckInDate ||tempCheckoutDate.isSame(tempCheckInDate)) ? 0 : tempCheckoutDate.diff(tempCheckInDate, 'day') + 1;
         setNights(numberOfNights);
     }, [searchInfo]);
 

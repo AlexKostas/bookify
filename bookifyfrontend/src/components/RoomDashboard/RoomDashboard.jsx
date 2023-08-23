@@ -87,7 +87,7 @@ const RoomDashboard = () => {
                         <Tooltip title="Edit Room" placement="top">
                             <IconButton
                                 aria-label="rdit"
-                                // onClick={() => navigate(`/room/${roomID}`)}
+                                onClick={() => navigate(`/create`, {state: roomID })}
                             >
                                 <EditIcon />
                             </IconButton>
@@ -114,7 +114,7 @@ const RoomDashboard = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    // onClick={handleExport}
+                    onClick={() => navigate('/create')}
                     startIcon={<AddIcon />}
                 >
                     Create

@@ -15,6 +15,7 @@ import {Link as ScrollLink} from 'react-scroll';
 import {Link} from 'react-router-dom';
 import useImageFetcher from "../../hooks/useImageFetcher";
 import {CircularProgress} from "@mui/material";
+import useFetchImages from "../../hooks/useFetchImages";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -22,10 +23,10 @@ const RoomView = ({ roomID }) => {
     const [room, setRoom] = useState({});
     const [shouldRedraw, setShouldRedraw] = useState(true); // MUST BE INITIALIZED TO TRUE
     const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
     const { imageData } = useImageFetcher(profilePicURL);
+    const { fetchImages, loading } = useFetchImages();
 
     const latitude = parseFloat(room?.latitude);
     const longitude = parseFloat(room?.longitude);
@@ -62,29 +63,18 @@ const RoomView = ({ roomID }) => {
         }
     }, [ROOM_URL, room]);
 
-    const fetchImages = async (urls) => {
-        const promises = urls.map(url =>
-            axios.get(url, { responseType: 'blob' })
-                .then(response => URL.createObjectURL(response.data))
-                .catch(error => {
-                    console.error(`Failed to fetch image from ${url}:`, error);
-                    return null;
-                })
-        );
-
-        const imageUrls = await Promise.all(promises);
-        setImages(imageUrls.filter(url => url !== null));
-        setLoading(false);
+    const downloadImages = async () => {
+        let urls = [`/roomPhotos/get/${room.thumbnailGuid}`]
+        urls = [...urls, ...room.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
+        const downloadedImages = await fetchImages(urls);
+        setImages(downloadedImages || []);
     }
+
 
     useEffect(() => {
         if(!room || !room.photosGUIDs) return;
 
-        console.log(room.photosGUIDs);
-
-        let urls = [`/roomPhotos/get/${room.thumbnailGuid}`]
-        urls = [...urls, ...room.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
-        fetchImages(urls);
+        downloadImages();
     }, [room]);
 
     useEffect(() => {
@@ -151,7 +141,7 @@ const RoomView = ({ roomID }) => {
                                     <Carousel useKeyboardArrows={true}>
                                         {images.map((URL, index) => (
                                             <div className="slide">
-                                                <img alt="sample_file" src={URL} key={index} />
+                                                <img className="slide-item" alt="sample_file" src={URL} key={index} />
                                             </div>
                                         ))}
                                     </Carousel>
@@ -315,6 +305,7 @@ const RoomView = ({ roomID }) => {
                         roomID={roomID}
                         maxReviews={room.reviewCount}
                         onReviewsChanged={() => setShouldRedraw(true)}
+                        roomHost={room.hostUsername}
                     />
 
                 </div>

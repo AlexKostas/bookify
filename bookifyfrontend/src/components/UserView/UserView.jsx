@@ -14,7 +14,7 @@ import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserStats from "../UserStats/UserStats";
 
-const UserView = ({ username }) => {
+const UserView = ({ username, onProfilePicChanged }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
     const editProfilePicUrl = `/upload/uploadProfilePic/${username}`;
 
@@ -52,9 +52,12 @@ const UserView = ({ username }) => {
                     }
                 });
                 setSuccess("Profile picture updated successfully!");
-                setImageData(URL.createObjectURL(selectedImage));
+                const data = URL.createObjectURL(selectedImage)
+                setImageData(data);
                 setError(null);
                 setTimeout(() => {setSuccess(null)}, 5000);
+
+                if(onProfilePicChanged) onProfilePicChanged(data);
             }
             catch(err) {
                 console.log(err);

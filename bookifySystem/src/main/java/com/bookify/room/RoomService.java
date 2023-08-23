@@ -3,6 +3,7 @@ package com.bookify.room;
 import com.bookify.availability.Availability;
 import com.bookify.availability.AvailabilityRepository;
 import com.bookify.booking.BookingRepository;
+import com.bookify.booking.BookingService;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
@@ -43,6 +44,7 @@ public class RoomService{
     private final UserRepository userRepository;
     private final RoomTypeRepository roomTypeRepository;
     private final BookingRepository bookingRepository;
+    private final BookingService bookingService;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
     private final ImageStorage imageStorage;
@@ -98,10 +100,13 @@ public class RoomService{
         return roomID;
     }
 
-    public RoomResponseDTO loadRoomData(Integer roomID) throws EntityNotFoundException {
+    public RoomResponseDTO loadRoomData(Integer roomID, boolean getBookedDays) throws EntityNotFoundException {
         Room room = loadRoomDataById(roomID);
-
         assert(room.getRoomID() == roomID);
+
+        List<LocalDate> bookedDays = getBookedDays ? bookingService.getBookedDaysForRoom(room) : new ArrayList<>();
+        List<DatePairDTO> bookedRanges = getBookedDays ? bookingService.getBookedDateRangesForRoom(room) : new ArrayList<>();
+
         return new RoomResponseDTO(
                 room.getRoomHost().getUsername(),
                 room.getName(),
@@ -129,13 +134,16 @@ public class RoomService{
                 room.getPricePerNight(),
                 room.getMaxTenants(),
                 room.getExtraCostPerTenant(),
+                room.getRoomType().getId(),
                 room.getAmenitiesNames(),
                 room.getAmenitiesDescriptions(),
                 room.getAmenityIDs(),
                 room.getThumbnail().getImageGuid(),
                 room.getPhotosGUIDs(),
                 room.getRating(),
-                room.getReviewCount()
+                room.getReviewCount(),
+                bookedDays,
+                bookedRanges
         );
     }
 
@@ -188,7 +196,7 @@ public class RoomService{
             roomDTO.minimumStay() < 1    || roomDTO.nBeds() < 1         || roomDTO.nBaths() < 0             ||
             roomDTO.surfaceArea() < 2    || roomDTO.accommodates() < 1  || roomDTO.country() == null        ||
             roomDTO.maxTenants() < 1     || roomDTO.pricePerNight() < 1 || roomDTO.extraCostPerTenant() < 0 ||
-            roomDTO.amenityIDs() == null
+            roomDTO.amenityIDs() == null || roomDTO.nBedrooms() < 1
         )
             throw new OperationNotSupportedException("Incompatible room fields");
 
@@ -264,11 +272,15 @@ public class RoomService{
         return roomTypeOptional.get();
     }
 
+    //TODO: Maybe move this to availability service
     private void setAvailability(List<DatePairDTO> availability, Room room){
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;
-        Boolean reachedMax = false;
-        Set<LocalDate> usedDates = new HashSet<>();
+        boolean reachedMax = false;
+
+        // Make sure we are not re-adding availability dates that have previously been removed for bookings. Also keeps
+        // track of already added days, so they are not added twice.
+        Set<LocalDate> usedDates = new HashSet<>(bookingService.getBookedDaysForRoom(room));
 
         for(DatePairDTO datePair : availability){
             LocalDate date = datePair.startDate();

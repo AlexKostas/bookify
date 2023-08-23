@@ -10,6 +10,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import dayjs from "dayjs";
 
 const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
     const textRef = useRef();
@@ -89,7 +90,11 @@ const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
                             />
                         }
 
-                        <h4>{review.username}</h4>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <h4>{review.username}</h4>
+                            <h5 style={{color: "lightgray"}}>on {dayjs(review.date).format("MM/DD/YYYY")}</h5>
+                        </div>
+
 
                         <Tooltip
                             title={expanded ? "View less" : "View more"}

@@ -240,6 +240,7 @@ const UserGrid = () => {
                     color="primary"
                     onClick={() => handleExport(`admin/getData${selectedFileType}`)}
                     startIcon={<CloudDownloadIcon />}
+                    disabled={fileLoading}
                 >
                     Export Room Data
                 </Button>

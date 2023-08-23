@@ -1,11 +1,23 @@
-import CreateRoomSteps from "../components/RoomCreation/CreateRoomSteps/CreateRoomSteps"
 import Navbar from "../components/Navbar/Navbar"
+import {useLocation} from "react-router-dom";
+import {useEffect, useState} from "react";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+import CreateRoom from "../components/CreateRoom/CreateRoom";
 
 const CreateRoomPage = () => {
+    const location = useLocation();
+    const [roomID, setRoomID] = useState(null);
+
+    useEffect(() => {
+        if(location) setRoomID(location.state);
+    }, [location]);
+
     return (
         <>
             <Navbar />
-            <CreateRoomSteps />
+
+            <CreateRoom roomID={roomID} />
         </>
     )
 }

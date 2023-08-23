@@ -1,6 +1,7 @@
 package com.bookify.booking;
 
 import com.bookify.availability.AvailabilityService;
+import com.bookify.room.DatePairDTO;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -83,6 +86,28 @@ public class BookingService {
         );
 
         return generateBookingPDF(bookingResponse, currentUser);
+    }
+
+    public List<LocalDate> getBookedDaysForRoom(Room room){
+        List<LocalDate> result = new ArrayList<>();
+
+        List<Booking> bookings = bookingRepository.findAllByRoom(room);
+
+        for(Booking booking : bookings)
+            result.addAll(booking.getBookedDates());
+
+        return result;
+    }
+
+    public List<DatePairDTO> getBookedDateRangesForRoom(Room room){
+        List<DatePairDTO> result = new ArrayList<>();
+
+        List<Booking> bookings = bookingRepository.findAllByRoom(room);
+
+        for(Booking booking : bookings)
+            result.add(booking.getBookedRange());
+
+        return result;
     }
 
     private byte[] generateBookingPDF(BookingResponseDTO bookingDTO, User user) throws IOException {

@@ -6,7 +6,7 @@ import useImageFetcher from '../../hooks/useImageFetcher';
 import useAuth from '../../hooks/useAuth';
 import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 
-const Dropdown = ({username}) => {
+const Dropdown = ({username, image}) => {
     const dropdownRef = useRef();
     const { auth } = useAuth();
 
@@ -16,7 +16,7 @@ const Dropdown = ({username}) => {
     const logout = useLogout();
 
     const profilePicURL = `/upload/getProfilePic/${username}`;
-    const {imageData, loading} = useImageFetcher(profilePicURL);
+    const {imageData, loading, setImageData} = useImageFetcher(profilePicURL);
 
     const unreadMessages = useAutoFetchMessages();
 
@@ -38,6 +38,10 @@ const Dropdown = ({username}) => {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
+
+    useEffect(() => {
+        if(image) setImageData(image);
+    }, [image]);
 
     return (
         <div className="user-dropdown" ref={dropdownRef}>

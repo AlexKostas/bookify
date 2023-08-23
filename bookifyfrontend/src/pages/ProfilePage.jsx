@@ -11,6 +11,7 @@ const ProfilePage = () => {
     const { auth } = useAuth();
     const navigate = useNavigate();
     const { resetSearch } = useSearchContext();
+    const [profilePic, setProfilePic] = useState(null);
 
     useEffect(() => {
         resetSearch();
@@ -18,9 +19,9 @@ const ProfilePage = () => {
 
   return (
     <>
-        <Navbar />
+        <Navbar image={profilePic} />
         <h1>Profile</h1>
-        <UserView username={auth.user}/>
+        <UserView username={auth.user} onProfilePicChanged={(image) => setProfilePic(image)}/>
         <button onClick={() => navigate('/updateProfile')}>
             <FontAwesomeIcon icon={faEdit} />
             Edit Profile

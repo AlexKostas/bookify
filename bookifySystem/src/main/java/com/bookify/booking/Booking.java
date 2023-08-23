@@ -1,5 +1,7 @@
 package com.bookify.booking;
 
+import com.bookify.availability.Availability;
+import com.bookify.room.DatePairDTO;
 import com.bookify.room.Room;
 import com.bookify.user.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -8,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.bookify.utils.Constants.MAX_AVAILABILITY_DAYS_PER_ROOM;
 
 @Entity
 @Getter
@@ -41,5 +47,21 @@ public class Booking {
         this.bookingDate = bookingDate;
         this.numberOfTenants = numberOfTenants;
         this.price = price;
+    }
+
+    public List<LocalDate> getBookedDates() {
+        List<LocalDate> results = new ArrayList<>();
+
+        LocalDate date = checkInDate;
+        while(!date.isAfter(checkOutDate)){
+            results.add(date);
+            date = date.plusDays(1);
+        }
+
+        return results;
+    }
+
+    public DatePairDTO getBookedRange() {
+        return new DatePairDTO(checkInDate, checkOutDate);
     }
 }

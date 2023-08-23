@@ -152,3 +152,8 @@ ul, ol {
     margin-left: 4%;
     margin-bottom: 3%;
 }
+
+.slide-item {
+    max-height: 50vh;
+    object-fit: contain;
+}
