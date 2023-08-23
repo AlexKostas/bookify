@@ -53,11 +53,21 @@ const SearchBar = ({ type }) => {
             return;
         }
 
+        const parts = destination.split(', ');
+
+        const city = parts[0];
+        const state = parts[1];
+        const country = parts[2];
+        console.log({city, state, country})
+
         const newSearchInfo = {
             location: destination,
             checkInDate: dates[0].startDate,
             checkOutDate: dates[0].endDate,
-            tenants: options.people
+            tenants: options.people,
+            city,
+            state,
+            country
         }
 
         setSearchInfo(newSearchInfo);
