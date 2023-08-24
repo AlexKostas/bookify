@@ -6,8 +6,12 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.UtilityComponent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,8 +29,14 @@ public class RecommendationService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+
+    private final UtilityComponent utility;
     
-    public List<Room> recommend(Long userID) {
+    public List<Room> recommend() {
+        User currentUser = utility.getCurrentAuthenticatedUserIfExists();
+
+        if(currentUser == null) return getTopRatedRooms();
+
         List<User> users = userRepository.findAll();
         List<Room> rooms = roomRepository.findAll();
         List<Review> reviews = reviewRepository.findAll();
@@ -49,6 +59,7 @@ public class RecommendationService {
             roomDictionary.put(rooms.get(i).getRoomID(), i);
 
         for(Review review : reviews){
+            if(review.getRoom() == null) System.out.println(review.getReviewID());
             int row = userDictionary.get(review.getReviewer().getUserID());
             int column = roomDictionary.get(review.getRoom().getRoomID());
 
@@ -61,7 +72,7 @@ public class RecommendationService {
         double[][] userMatrix = result.get(0);
         double[][] roomMatrix = result.get(1);
 
-        int userRow = userDictionary.get(userID);
+        int userRow = userDictionary.get(currentUser.getUserID());
         RoomRatingPair[] similarities = new RoomRatingPair[rooms.size()];
         for(int i = 0; i < rooms.size(); i++) {
             double rating = dotProduct(userMatrix, roomMatrix, userRow, i);
@@ -73,6 +84,8 @@ public class RecommendationService {
         List<Room> recommendations = new ArrayList<>();
         for(int i = 0; i < numberOfRecommendations; i++)
             recommendations.add(similarities[i].room);
+
+        log.info("Finished");
 
         return recommendations;
     }

@@ -58,6 +58,7 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/admin/**").hasRole(Constants.ADMIN_ROLE);
                     auth.requestMatchers("/api/messages").authenticated();
                     auth.requestMatchers("/api/user/**").permitAll();
+                    auth.requestMatchers("/api/recommendation/**").permitAll();
                     auth.anyRequest().permitAll();
                 }).
             oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthenticationConverter());

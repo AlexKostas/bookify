@@ -3,10 +3,13 @@ import SearchBar from "../components/SearchBar/SearchBar";
 import RoomGrid from "../components/RoomGrid/RoomGrid";
 import {useEffect, useState} from "react";
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 const HomePage = () => {
-    const endpointURL = '/search/searchAll';
+    const endpointURL = '/recommendation/recommend';
     const [rooms, setRooms] = useState([]);
+
+    const { auth } = useAuth();
 
     const fetchRooms = async () => {
         try{
@@ -28,7 +31,7 @@ const HomePage = () => {
         <Navbar />
         <SearchBar />
         <br />
-        <h1>Rooms you may like</h1>
+        <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
         <br />
         <RoomGrid rooms={rooms} />
         </>   

@@ -1,5 +1,6 @@
 package com.bookify.recommendation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
+@Slf4j
 public class MatrixFactorizer {
 
     private final int K = 100;
@@ -26,6 +28,7 @@ public class MatrixFactorizer {
         randomize(itemMatrix, 0, 1);
 
         for(int iteration = 0; iteration < maxIterations; iteration++){
+            System.out.println(iteration + "/" + maxIterations);
             for(int i = 0; i < userCount; i++){
                 for(int j = 0; j < itemCount; j++) {
                     if(ratingMatrix[i][j] <= 0) continue;

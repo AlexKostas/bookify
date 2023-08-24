@@ -18,4 +18,12 @@ public class UtilityComponent {
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
                 .orElseThrow(() -> new EntityNotFoundException("Current authenticated user not found"));
     }
+
+    public User getCurrentAuthenticatedUserIfExists() {
+        if(SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(Constants.ANONYMOUS_USER_PRINCIPAL))
+            return null;
+
+        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("Current authenticated user not found"));
+    }
 }

@@ -32,7 +32,7 @@ public class Review {
     private User reviewer;
 
     @JsonBackReference
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_ID")
     private Room room;
 

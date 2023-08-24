@@ -5,6 +5,7 @@ import com.bookify.images.ImageRepository;
 import com.bookify.recommendation.RecommendationService;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
+import com.bookify.room.Room;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Configuration
