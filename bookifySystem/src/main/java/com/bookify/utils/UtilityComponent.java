@@ -1,5 +1,7 @@
 package com.bookify.utils;
 
+import com.bookify.room.Room;
+import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,5 +26,16 @@ public class UtilityComponent {
             return null;
 
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+    }
+
+    public SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
+        return new SearchPreviewDTO(room.getRoomID(),
+                room.getName(),
+                room.getRating(),
+                room.getReviewCount(),
+                room.getNumOfBeds(),
+                room.calculateCost(tenants, (int) nights),
+                room.getRoomType().getName(),
+                room.getThumbnail().getImageGuid());
     }
 }

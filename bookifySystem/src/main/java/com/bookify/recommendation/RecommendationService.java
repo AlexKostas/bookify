@@ -45,7 +45,7 @@ public class RecommendationService {
         }
         
         double[][] ratingMatrix = new double[users.size()][rooms.size()];
-        zeroOutArray(ratingMatrix);
+        MatrixUtility.zeroOutMatrix(ratingMatrix);
 
         Map<Long, Integer> userDictionary = new HashMap<>();
         Map<Integer, Integer> roomDictionary = new HashMap<>();
@@ -73,7 +73,7 @@ public class RecommendationService {
         int userRow = userDictionary.get(currentUser.getUserID());
         RoomRatingPair[] similarities = new RoomRatingPair[rooms.size()];
         for(int i = 0; i < rooms.size(); i++) {
-            double rating = dotProduct(userMatrix, roomMatrix, userRow, i);
+            double rating = MatrixUtility.dotProduct(userMatrix, roomMatrix, userRow, i);
             similarities[i] = new RoomRatingPair(rating, rooms.get(i));
         }
 
@@ -85,7 +85,7 @@ public class RecommendationService {
 
         log.info("Finished");
 
-        return recommendations.stream().map((room)-> mapRoomToDTO(room, 1, 3))
+        return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
     }
 
@@ -94,43 +94,7 @@ public class RecommendationService {
                 .limit(numberOfRecommendations)
                 .toList();
         return rooms.stream()
-                .map(room -> mapRoomToDTO(room, 1, 3))
+                .map(room -> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
-    }
-
-    private void zeroOutArray(double[][] arr) {
-        for(int i = 0; i < arr.length; i++) {
-            for(int j = 0; j < arr[0].length; j++) {
-                arr[i][j] = 0;
-            }
-        }
-    }
-
-    //TODO: move to utility
-    private double dotProduct(double[][] arr1, double[][] arr2, int rowIndex, int colIndex){
-        int numRows1 = arr1.length;
-        int numCols1 = arr1[0].length;
-
-        int numCols2 = arr2[0].length;
-
-        assert(numRows1 == numCols2);           // Validate if dot product is possible
-
-        double result = 0;
-        for (int i = 0; i < numCols1; i++) {
-            result += arr1[rowIndex][i] * arr2[i][colIndex];
-        }
-
-        return result;
-    }
-
-    private SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
-        return new SearchPreviewDTO(room.getRoomID(),
-                room.getName(),
-                room.getRating(),
-                room.getReviewCount(),
-                room.getNumOfBeds(),
-                room.calculateCost(tenants, (int) nights),
-                room.getRoomType().getName(),
-                room.getThumbnail().getImageGuid());
     }
 }

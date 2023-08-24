@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import static com.bookify.recommendation.MatrixUtility.dotProduct;
 
 @Component
 @Slf4j
@@ -24,8 +25,8 @@ public class MatrixFactorizer {
         double[][] userMatrix = new double[userCount][K];
         double[][] itemMatrix = new double[K][itemCount];
 
-        randomize(userMatrix, 0, 1);
-        randomize(itemMatrix, 0, 1);
+        MatrixUtility.randomize(userMatrix, 0, 1);
+        MatrixUtility.randomize(itemMatrix, 0, 1);
 
         for(int iteration = 0; iteration < maxIterations; iteration++){
             System.out.println(iteration + "/" + maxIterations);
@@ -53,51 +54,6 @@ public class MatrixFactorizer {
         return result;
     }
 
-
-    /**
-     * This method initializes a given matrix with random values
-     * between minValue and maxValue.
-     *
-     * @param matrix   The matrix to be randomized.
-     * @param minValue The lower bound of random values (chosen 0.0).
-     * @param maxValue The upper bound of random values (chosen 1.0).
-     */
-    private void randomize(double[][] matrix, double minValue, double maxValue){
-        Random random = new Random();
-
-        int numRows = matrix.length;
-        int numCols = matrix[0].length;
-
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                matrix[i][j] = minValue + (maxValue - minValue) * random.nextDouble();
-            }
-        }
-    }
-
-    /**
-     * This method computes the dot product.
-     *
-     * @param arr1     2-d double array.
-     * @param arr2     2-d double array.
-     * @return         The dot product of the arr1[rowIndex][], arr2[][colIndex] vectors.
-     */
-    private double dotProduct(double[][] arr1, double[][] arr2, int rowIndex, int colIndex){
-        int numRows1 = arr1.length;
-        int numCols1 = arr1[0].length;
-
-        int numCols2 = arr2[0].length;
-
-        assert(numRows1 == numCols2);           // Validate if dot product is possible
-
-        double result = 0;
-        for (int i = 0; i < numCols1; i++) {
-            result += arr1[rowIndex][i] * arr2[i][colIndex];
-        }
-
-        return result;
-    }
-
     private double computeError(double[][] ratingMatrix, double[][] userMatrix, double[][] itemMatrix) {
         int numUsers = ratingMatrix.length;
         int numItems = ratingMatrix[0].length;
@@ -121,35 +77,6 @@ public class MatrixFactorizer {
         }
 
         return error;
-    }
-
-    private double[][] matrixMultiply(double[][] matrixA, double[][] matrixB) {
-        int numRowsA = matrixA.length;
-        int numColsA = matrixA[0].length;
-        int numRowsB = matrixB.length;
-        int numColsB = matrixB[0].length;
-
-        if (numColsA != numRowsB) {
-            throw new IllegalArgumentException("Matrix dimensions are not compatible for multiplication");
-        }
-
-        double[][] result = new double[numRowsA][numColsB];
-
-        for (int i = 0; i < numRowsA; i++)
-            for (int j = 0; j < numColsB; j++)
-                result[i][j] = dotProduct(matrixA, matrixB, i, j);
-
-        return result;
-    }
-
-    private void printArray(double[][] array) {
-        for (double[] row : array) {
-            for (double value : row) {
-                System.out.print(String.format("%.3f", value) + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 
     private double square(double number) {
