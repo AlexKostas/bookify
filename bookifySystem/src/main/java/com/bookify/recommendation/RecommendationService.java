@@ -4,19 +4,15 @@ import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
+import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +30,7 @@ public class RecommendationService {
 
     private final UtilityComponent utility;
     
-    public List<Room> recommend() {
+    public List<SearchPreviewDTO> recommend() {
         User currentUser = utility.getCurrentAuthenticatedUserIfExists();
 
         if(currentUser == null) return getTopRatedRooms();
@@ -89,14 +85,17 @@ public class RecommendationService {
 
         log.info("Finished");
 
-        return recommendations;
+        return recommendations.stream().map((room)-> mapRoomToDTO(room, 1, 3))
+                .toList();
     }
 
-    private List<Room> getTopRatedRooms() {
-        List<Room> rooms = roomRepository.findBestRooms();
-        return rooms.stream()
+    private List<SearchPreviewDTO> getTopRatedRooms() {
+        List<Room> rooms = roomRepository.findBestRooms().stream()
                 .limit(numberOfRecommendations)
-                .collect(Collectors.toList());
+                .toList();
+        return rooms.stream()
+                .map(room -> mapRoomToDTO(room, 1, 3))
+                .toList();
     }
 
     private void zeroOutArray(double[][] arr) {
@@ -122,5 +121,16 @@ public class RecommendationService {
         }
 
         return result;
+    }
+
+    private SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
+        return new SearchPreviewDTO(room.getRoomID(),
+                room.getName(),
+                room.getRating(),
+                room.getReviewCount(),
+                room.getNumOfBeds(),
+                room.calculateCost(tenants, (int) nights),
+                room.getRoomType().getName(),
+                room.getThumbnail().getImageGuid());
     }
 }

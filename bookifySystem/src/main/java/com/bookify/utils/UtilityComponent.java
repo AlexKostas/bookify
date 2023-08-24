@@ -23,7 +23,6 @@ public class UtilityComponent {
         if(SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(Constants.ANONYMOUS_USER_PRINCIPAL))
             return null;
 
-        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new EntityNotFoundException("Current authenticated user not found"));
+        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();
     }
 }
