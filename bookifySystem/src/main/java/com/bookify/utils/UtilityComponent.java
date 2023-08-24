@@ -20,7 +20,7 @@ public class UtilityComponent {
     }
 
     public User getCurrentAuthenticatedUserIfExists() {
-        if(SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals(Constants.ANONYMOUS_USER_PRINCIPAL))
+        if(SecurityContextHolder.getContext().getAuthentication().getName().equals(Constants.ANONYMOUS_USER_PRINCIPAL))
             return null;
 
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).get();

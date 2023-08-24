@@ -4,16 +4,18 @@ import RoomGrid from "../components/RoomGrid/RoomGrid";
 import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const HomePage = () => {
     const endpointURL = '/recommendation/recommend';
     const [rooms, setRooms] = useState([]);
 
     const { auth } = useAuth();
+    const axiosPrivate = useAxiosPrivate();
 
     const fetchRooms = async () => {
         try{
-            const response = await axios.get(`${endpointURL}`);
+            const response = (auth && auth.user) ? await axiosPrivate.get(endpointURL) : await axios.get(endpointURL);
 
             setRooms(response.data);
         }
