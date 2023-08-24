@@ -13,7 +13,7 @@ const HomePage = () => {
 
     const fetchRooms = async () => {
         try{
-            const response = await axios.get(`${endpointURL}?pageNumber=0&pageSize=9&orderDirection=ASC`);
+            const response = await axios.get(`${endpointURL}`);
 
             setRooms(response.data.content);
         }
