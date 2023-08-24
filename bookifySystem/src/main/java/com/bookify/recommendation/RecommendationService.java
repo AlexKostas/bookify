@@ -14,7 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.io.Console;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -88,6 +90,13 @@ public class RecommendationService {
         log.info("Finished");
 
         return recommendations;
+    }
+
+    private List<Room> getTopRatedRooms() {
+        List<Room> rooms = roomRepository.findBestRooms();
+        return rooms.stream()
+                .limit(numberOfRecommendations)
+                .collect(Collectors.toList());
     }
 
     private void zeroOutArray(double[][] arr) {

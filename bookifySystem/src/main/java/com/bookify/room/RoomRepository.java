@@ -100,4 +100,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "   OR LOWER(r.country) LIKE CONCAT('%', LOWER(:input), '%') " +
             "LIMIT " + Configuration.MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS)
     List<String[]> findAutocompleteLocationSuggestions(@Param("input") String input);
+
+    @Query("SELECT r FROM Room r " +
+            "JOIN FETCH r.reviews re " +
+            "ORDER BY AVG(re.stars) DESC")
+    List<Room> findBestRooms();
 }
