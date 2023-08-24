@@ -15,7 +15,7 @@ const HomePage = () => {
         try{
             const response = await axios.get(`${endpointURL}`);
 
-            setRooms(response.data.content);
+            setRooms(response.data);
         }
         catch(error){
             console.log(error);

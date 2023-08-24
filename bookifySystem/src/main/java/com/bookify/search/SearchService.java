@@ -139,6 +139,7 @@ public class SearchService {
         return suggestions;
     }
 
+    //TODO: refactor duplicated function
     private SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
         return new SearchPreviewDTO(room.getRoomID(),
                 room.getName(),
