@@ -5,17 +5,15 @@ import com.bookify.utils.GUIDGenerator;
 import com.bookify.utils.ImageFormatDetector;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,6 +33,8 @@ public class ImageStorage {
         this.env = env;
 
         pathRoot = getImageDirectoryPath();
+        preloadImage(Configuration.DEFAULT_PROFILE_PIC_NAME + "." + Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
+        preloadImage(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME + "." + Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION);
     }
 
     public Image saveImage(MultipartFile image) throws IOException {
@@ -117,5 +117,16 @@ public class ImageStorage {
             Files.createDirectories(path);
 
         return directoryPath + "/";
+    }
+
+    private void preloadImage(String filename) throws IOException {
+        Path path = Path.of(pathRoot).resolve(filename);
+        if(!Files.exists(path)){
+            ClassPathResource resource = new ClassPathResource("/images/" + filename);
+
+            try (InputStream inputStream = resource.getInputStream()) {
+                Files.copy(inputStream, path);
+            }
+        }
     }
 }
