@@ -102,7 +102,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     List<String[]> findAutocompleteLocationSuggestions(@Param("input") String input);
 
     @Query("SELECT r FROM Room r " +
-            "JOIN r.reviews re " +
+            "LEFT JOIN r.reviews re " +
             "ORDER BY (SELECT AVG(stars) FROM Review WHERE room = r) DESC")
     List<Room> findBestRooms();
 }
