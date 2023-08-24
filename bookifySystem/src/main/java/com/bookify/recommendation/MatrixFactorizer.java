@@ -15,7 +15,7 @@ public class MatrixFactorizer {
     private final double beta = 0.02;
     private double errorThreshold = 0.0001;
 
-    private List<double[][]> factorize(double[][] ratingMatrix){
+    public List<double[][]> factorize(double[][] ratingMatrix){
         int userCount = ratingMatrix.length;
         int itemCount = ratingMatrix[0].length;
 
