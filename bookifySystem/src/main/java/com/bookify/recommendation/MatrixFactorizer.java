@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.bookify.recommendation.MatrixUtility.dotProduct;
+import static com.bookify.recommendation.MatrixUtility.*;
 
 @Component
 @Slf4j
 public class MatrixFactorizer {
 
-    private final int K = 100;
+    private final int K = 10;
     private final int maxIterations = 10000;
     private final double alpha = 0.002;
     private final double beta = 0.02;
@@ -22,6 +22,8 @@ public class MatrixFactorizer {
         int userCount = ratingMatrix.length;
         int itemCount = ratingMatrix[0].length;
 
+        printMatrix(ratingMatrix);
+
         double[][] userMatrix = new double[userCount][K];
         double[][] itemMatrix = new double[K][itemCount];
 
@@ -29,7 +31,7 @@ public class MatrixFactorizer {
         MatrixUtility.randomize(itemMatrix, 0, 1);
 
         for(int iteration = 0; iteration < maxIterations; iteration++){
-            System.out.println(iteration + "/" + maxIterations);
+//            System.out.println(iteration + "/" + maxIterations);
             for(int i = 0; i < userCount; i++){
                 for(int j = 0; j < itemCount; j++) {
                     if(ratingMatrix[i][j] <= 0) continue;
@@ -46,6 +48,8 @@ public class MatrixFactorizer {
             double error = computeError(ratingMatrix, userMatrix, itemMatrix);
             if(error < errorThreshold) break;
         }
+        System.out.println();
+        printMatrix(matrixMultiply(userMatrix, itemMatrix));
 
         List<double[][]> result = new ArrayList<>();
         result.add(userMatrix);
