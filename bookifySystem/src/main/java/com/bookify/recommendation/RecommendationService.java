@@ -19,7 +19,7 @@ import java.util.*;
 @Slf4j
 public class RecommendationService {
 
-    private record RoomRatingPair(double rating, Room room){};
+    private record RoomRatingPair(double rating, Integer roomID){};
 
     private final int numberOfRecommendations = 9;
 
@@ -40,16 +40,16 @@ public class RecommendationService {
         log.info("--Loading Users--");
         List<Long> userIDs = userRepository.findAllUserIds();
         log.info("--Loading Rooms--");
-        List<Room> rooms = roomRepository.findAll();
+        List<Integer> roomsIDs = roomRepository.findAllRoomIds();
         log.info("--Loading Reviews--");
         List<Review> reviews = reviewRepository.findAll();
 
-        if(userIDs.isEmpty() || rooms.isEmpty()) {
+        if(userIDs.isEmpty() || roomsIDs.isEmpty()) {
             log.warn("Can not produce recommendations. REASON: users or rooms array is empty");
             return new ArrayList<>();
         }
         
-        double[][] ratingMatrix = new double[userIDs.size()][rooms.size()];
+        double[][] ratingMatrix = new double[userIDs.size()][roomsIDs.size()];
         MatrixUtility.zeroOutMatrix(ratingMatrix);
 
         Map<Long, Integer> userDictionary = new HashMap<>();
@@ -58,8 +58,8 @@ public class RecommendationService {
         for(int i = 0; i < userIDs.size(); i++)
             userDictionary.put(userIDs.get(i), i);
 
-        for(int i = 0; i < rooms.size(); i++)
-            roomDictionary.put(rooms.get(i).getRoomID(), i);
+        for(int i = 0; i < roomsIDs.size(); i++)
+            roomDictionary.put(roomsIDs.get(i), i);
 
         log.info("--Creating Rating Matrix--");
         for(Review review : reviews){
@@ -78,17 +78,17 @@ public class RecommendationService {
 
         log.info("--Generating recommendations--");
         int userRow = userDictionary.get(currentUser.getUserID());
-        RoomRatingPair[] similarities = new RoomRatingPair[rooms.size()];
-        for(int i = 0; i < rooms.size(); i++) {
+        RoomRatingPair[] similarities = new RoomRatingPair[roomsIDs.size()];
+        for(int i = 0; i < roomsIDs.size(); i++) {
             double rating = MatrixUtility.dotProduct(userMatrix, roomMatrix, userRow, i);
-            similarities[i] = new RoomRatingPair(rating, rooms.get(i));
+            similarities[i] = new RoomRatingPair(rating, roomsIDs.get(i));
         }
 
         Arrays.sort(similarities, (o1, o2) -> Double.compare(o2.rating, o1.rating));
 
         List<Room> recommendations = new ArrayList<>();
         for(int i = 0; i < numberOfRecommendations; i++)
-            recommendations.add(similarities[i].room);
+            recommendations.add(roomRepository.findById(similarities[i].roomID).get());
 
         log.info("Finished");
 
