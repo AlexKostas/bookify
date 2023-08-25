@@ -14,7 +14,7 @@ html {
 
 body {
     min-height: 100vh;
-    background-color: dodgerblue;
+    background-color: rgba(235, 235, 220, 0.95);
 }
 
 .form-background {

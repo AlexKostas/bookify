@@ -23,10 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -191,7 +188,7 @@ public class UserService implements UserDetailsService {
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
         Optional<User> userOptional = userRepository.findByUsername(newUsername);
-        if(userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername))
+        if((userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername) || (Objects.equals(newUsername, Constants.ANONYMOUS_USER_PRINCIPAL))))
             throw new IllegalArgumentException("Username " + newUsername + " is taken");
 
         userOptional = userRepository.findByEmail(newEmail);

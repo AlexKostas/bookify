@@ -19,7 +19,7 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
     const userRef = useRef();
     const errRef = useRef();
 
-    const [user, setUser] = useState();
+    const [user, setUser] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
