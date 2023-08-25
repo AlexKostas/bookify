@@ -38,25 +38,25 @@ public class RecommendationService {
         log.info("---Running Recommendation Algorithm---");
 
         log.info("--Loading Users--");
-        List<User> users = userRepository.findAll();
+        List<Long> userIDs = userRepository.findAllUserIds();
         log.info("--Loading Rooms--");
         List<Room> rooms = roomRepository.findAll();
         log.info("--Loading Reviews--");
         List<Review> reviews = reviewRepository.findAll();
 
-        if(users.isEmpty() || rooms.isEmpty()) {
+        if(userIDs.isEmpty() || rooms.isEmpty()) {
             log.warn("Can not produce recommendations. REASON: users or rooms array is empty");
             return new ArrayList<>();
         }
         
-        double[][] ratingMatrix = new double[users.size()][rooms.size()];
+        double[][] ratingMatrix = new double[userIDs.size()][rooms.size()];
         MatrixUtility.zeroOutMatrix(ratingMatrix);
 
         Map<Long, Integer> userDictionary = new HashMap<>();
         Map<Integer, Integer> roomDictionary = new HashMap<>();
 
-        for(int i = 0; i < users.size(); i++)
-            userDictionary.put(users.get(i).getUserID(), i);
+        for(int i = 0; i < userIDs.size(); i++)
+            userDictionary.put(userIDs.get(i), i);
 
         for(int i = 0; i < rooms.size(); i++)
             roomDictionary.put(rooms.get(i).getRoomID(), i);
@@ -94,6 +94,10 @@ public class RecommendationService {
 
         return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
+    }
+
+    private void runRecommendationAlgorithm(){
+
     }
 
     private List<SearchPreviewDTO> getTopRatedRooms() {

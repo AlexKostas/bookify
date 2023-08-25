@@ -30,9 +30,6 @@ public class MatrixFactorizer {
         MatrixUtility.randomize(userMatrix, 0, 1);
         MatrixUtility.randomize(itemMatrix, 0, 1);
 
-        printMatrix(userMatrix);
-        printMatrix(itemMatrix);
-
         for(int iteration = 0; iteration < maxIterations; iteration++){
             for(int i = 0; i < userCount; i++){
                 for(int j = 0; j < itemCount; j++) {

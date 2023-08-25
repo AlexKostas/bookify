@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Integer>  {
     Page<User> findAllInactiveHosts(Pageable pageable);
 
     List<User> findAllByRolesAuthority(String roleAuthority);
+
+    @Query("SELECT u.userID FROM User u")
+    List<Long> findAllUserIds();
 }
