@@ -1,7 +1,5 @@
 package com.bookify.recommendation;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Random;
 
 public class MatrixUtility {

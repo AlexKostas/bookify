@@ -103,6 +103,7 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN r.reviews re " +
-            "ORDER BY (SELECT AVG(stars) FROM Review WHERE room = r) DESC")
+            "GROUP BY r " +
+            "ORDER BY AVG(re.stars) DESC, COUNT(*) DESC LIMIT 20")
     List<Room> findBestRooms();
 }
