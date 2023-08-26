@@ -186,6 +186,7 @@ public class UserService implements UserDetailsService {
                 user.getRoleAuthorityList());
     }
 
+    // TODO: test the below function:
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
         Optional<User> userOptional = userRepository.findByUsername(newUsername);
         if((userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername) || (Objects.equals(newUsername, Constants.ANONYMOUS_USER_PRINCIPAL))))
