@@ -55,7 +55,7 @@ public class RecommendationService {
         if(currentUser == null) return topRatedRooms;
 
         //TODO: check if file exists, load dictionaries and matrices from disk. DO NOT RUN recommendation calculations from here
-        runRecommendationAlgorithm(100);
+//        runRecommendationAlgorithm(100);
 
         List<Integer> roomsIDs = roomRepository.findAllRoomIds();
         int numberOfRooms = roomsIDs.size();
