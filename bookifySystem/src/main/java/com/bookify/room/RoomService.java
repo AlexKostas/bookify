@@ -8,6 +8,7 @@ import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
 import com.bookify.images.ImageStorage;
+import com.bookify.reviews.ReviewRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
@@ -49,6 +50,7 @@ public class RoomService{
     private final ImageRepository imageRepository;
     private final ImageStorage imageStorage;
     private final AvailabilityRepository availabilityRepository;
+    private final ReviewRepository reviewRepository;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -140,8 +142,8 @@ public class RoomService{
                 room.getAmenityIDs(),
                 room.getThumbnail().getImageGuid(),
                 room.getPhotosGUIDs(),
-                room.getRating(),
-                room.getReviewCount(),
+                reviewRepository.getAverageRating(room),
+                reviewRepository.countByRoom(room),
                 bookedDays,
                 bookedRanges
         );

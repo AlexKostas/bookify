@@ -15,6 +15,12 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findAllByReviewerUserID(Long userID);
     Optional<Review> findByReviewerAndRoom(User reviewer, Room room);
 
+    int countByRoom(Room room);
+
+    // COALESCE is used to handle the case where the room has no reviews, where we want to return 0 instead of null
+    @Query("SELECT COALESCE(AVG(r.stars), 0) from Review r where r.room = :room")
+    float getAverageRating(Room room);
+
     int countByReviewerUsername(String username);
     int countByReviewerAndRoom(User reviewer, Room room);
 

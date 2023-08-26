@@ -1,5 +1,6 @@
 package com.bookify.utils;
 
+import com.bookify.reviews.ReviewRepository;
 import com.bookify.room.Room;
 import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class UtilityComponent {
 
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
     // Assumes it is only called when the user is actually authenticated
     public User getCurrentAuthenticatedUser() throws EntityNotFoundException {
@@ -31,8 +33,8 @@ public class UtilityComponent {
     public SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
         return new SearchPreviewDTO(room.getRoomID(),
                 room.getName(),
-                room.getRating(),
-                room.getReviewCount(),
+                reviewRepository.getAverageRating(room),
+                reviewRepository.countByRoom(room),
                 room.getNumOfBeds(),
                 room.calculateCost(tenants, (int) nights),
                 room.getRoomType().getName(),
