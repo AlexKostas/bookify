@@ -13,12 +13,11 @@ import static com.bookify.recommendation.MatrixUtility.*;
 public class MatrixFactorizer {
 
     private final int K = 10;
-    private final int maxIterations = 100;
     private final double alpha = 0.002;
     private final double beta = 0.02;
     private double errorThreshold = 0.01;
 
-    public List<double[][]> factorize(double[][] ratingMatrix){
+    public List<double[][]> factorize(double[][] ratingMatrix, int maxIterations){
         int userCount = ratingMatrix.length;
         int itemCount = ratingMatrix[0].length;
 
