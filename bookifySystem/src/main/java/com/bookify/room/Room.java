@@ -151,16 +151,6 @@ public class Room {
         return photos.contains(photo);
     }
 
-    public float getRating(){
-        if(reviews.isEmpty()) return 0.0f;
-
-        int count = 0;
-        for(Review review : reviews)
-            count += review.getStars();
-
-        return (float) count / (float) getReviewCount();
-    }
-
     public float calculateCost(int numberOfTenants, int numberOfNights){
         assert(numberOfNights >= minimumStay);
 
@@ -170,10 +160,6 @@ public class Room {
 
         float costPerNight = pricePerNight + extraCost;
         return  costPerNight * numberOfNights;
-    }
-
-    public int getReviewCount(){
-        return reviews.size();
     }
 
     public List<String> getAmenitiesNames(){

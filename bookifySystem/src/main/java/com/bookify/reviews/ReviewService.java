@@ -1,12 +1,12 @@
 package com.bookify.reviews;
 
 import com.bookify.booking.BookingRepository;
+import com.bookify.recommendation.RecommendationService;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
-import com.bookify.user.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -27,6 +26,7 @@ public class ReviewService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final RecommendationService recommendationService;
 
     private final UtilityComponent utility;
 
@@ -56,6 +56,8 @@ public class ReviewService {
                 room,
                 hasReviewerVisitedRoom(currentUser, room)
         ));
+
+        recommendationService.updateTopRatedRooms();
 
         return review.getReviewID();
     }
@@ -97,7 +99,7 @@ public class ReviewService {
     }
 
     public List<ReviewResponseDTO> getNReviews(Integer roomID, int reviewCount) throws EntityNotFoundException {
-        if(!roomRepository.findById(roomID).isPresent())
+        if(roomRepository.findById(roomID).isEmpty())
             throw new EntityNotFoundException("Room with id " + roomID + " not found");
 
         List<Review> reviews = reviewRepository.findAllByRoomRoomID(roomID);
@@ -134,12 +136,16 @@ public class ReviewService {
         Room roomReviewed = review.getRoom();
         review.setReviewerVisitedRoom(hasReviewerVisitedRoom(reviewer, roomReviewed));
 
+        recommendationService.updateTopRatedRooms();
+
         reviewRepository.save(review);
     }
 
     public void deleteReview(Integer reviewID) throws IllegalAccessException, EntityNotFoundException {
         Review review = findReview(reviewID);
         verifyReviewEditingPrivileges(review);
+
+        recommendationService.updateTopRatedRooms();
 
         reviewRepository.delete(review);
     }
