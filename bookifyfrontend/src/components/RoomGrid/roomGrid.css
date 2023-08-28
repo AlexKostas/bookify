@@ -4,3 +4,15 @@
     gap: 30px;
     margin: 6px;
 }
+
+.room-grid-progress-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    min-height: 50vh;
+}
+
+.room-grid-progress {
+    margin-top: 2%;
+}
