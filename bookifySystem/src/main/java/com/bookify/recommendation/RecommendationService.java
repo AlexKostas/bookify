@@ -10,6 +10,7 @@ import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ public class RecommendationService {
     private final RoomRepository roomRepository;
 
     private final UtilityComponent utility;
-    private final ResourceLoader resourceLoader;
+    private final Environment env;
+
 
 
     private List<SearchPreviewDTO> topRatedRooms = new ArrayList<>();
@@ -42,12 +44,12 @@ public class RecommendationService {
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
                                  UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
-                                 ResourceLoader resourceLoader) throws IOException {
+                                 Environment env) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
-        this.resourceLoader = resourceLoader;
+        this.env = env;
         this.utility = utility;
 
         path = getDataDirectoryPath();
@@ -232,7 +234,7 @@ public class RecommendationService {
     }
 
     private String getDataDirectoryPath() throws IOException {
-        String directoryPath = resourceLoader.getResource("classpath:").getFile().getAbsolutePath() +
+        String directoryPath = env.getProperty("upload.directory.root") +
                 Configuration.DATA_SUBFOLDER;
 
         Path path = Path.of(directoryPath);
