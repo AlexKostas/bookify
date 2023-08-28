@@ -1,5 +1,4 @@
 import {
-    faBed,
     faCalendarDays,
     faPerson,
 } from "@fortawesome/free-solid-svg-icons";

@@ -10,7 +10,7 @@
     justify-content: center;
     position: relative;
     height: 5%;
-    width: 80%;
+    width: 85%;
 }
 
 .headerBtn {
@@ -84,7 +84,8 @@
 .optionItem {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 10%;
 }
 
 .optionCounter {
@@ -113,7 +114,7 @@
 }
 
 .location-bar {
-    width: 40%;
+    width: 43%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -127,9 +128,11 @@
 }
 
 .people-options, .search-button-container {
-    width: 15%;
+    width: 13.5%;
 
     display: flex;
     justify-content: center;
     align-items: center;
+
+    gap: 5%;
 }
