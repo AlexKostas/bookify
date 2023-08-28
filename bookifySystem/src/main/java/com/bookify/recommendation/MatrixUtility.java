@@ -12,12 +12,7 @@ public class MatrixUtility {
      * @return         The dot product of the arr1[rowIndex][], arr2[][colIndex] vectors.
      */
     public static double dotProduct(double[][] arr1, double[][] arr2, int rowIndex, int colIndex){
-        int numRows1 = arr1.length;
         int numCols1 = arr1[0].length;
-
-        int numCols2 = arr2[0].length;
-
-        assert(numRows1 == numCols2);           // Validate if dot product is possible
 
         double result = 0;
         for (int i = 0; i < numCols1; i++) {

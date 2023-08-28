@@ -8,10 +8,9 @@ import com.bookify.room.RoomRepository;
 import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.IOUtility;
 import com.bookify.utils.UtilityComponent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,8 @@ public class RecommendationService {
     private final RoomRepository roomRepository;
 
     private final UtilityComponent utility;
-    private final Environment env;
 
-
+    private final IOUtility ioUtility;
 
     private List<SearchPreviewDTO> topRatedRooms = new ArrayList<>();
 
@@ -44,15 +42,15 @@ public class RecommendationService {
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
                                  UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
-                                 Environment env) throws IOException {
+                                 IOUtility ioUtility) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
-        this.env = env;
+        this.ioUtility = ioUtility;
         this.utility = utility;
 
-        path = getDataDirectoryPath();
+        path = ioUtility.getDirectoryPath(Configuration.DATA_SUBFOLDER);
 
         updateTopRatedRooms();
         runRecommendationAlgorithm(10);
@@ -63,6 +61,7 @@ public class RecommendationService {
 
         if(currentUser == null) return topRatedRooms;
 
+        //TODO: refactor file related code
         if(!Files.exists(Path.of(path + "userDict.file"))){
             log.warn("Can not produce recommendations. REASON: the first iteration of the algorithm has not yet been" +
                     " completed. Producing recommendations based on top ratings instead");
@@ -208,39 +207,9 @@ public class RecommendationService {
             , double[][] userMatrix, double[][] roomMatrix){
         log.info("-- Saving Recommendation Algorithm Results to disk --");
 
-        try {
-            //TODO: refactor this
-            ObjectOutputStream userDictStream = new ObjectOutputStream(new FileOutputStream(path + "userDict.file"));
-            userDictStream.writeObject(userDictionary);
-            userDictStream.close();
-
-            ObjectOutputStream roomDictStream = new ObjectOutputStream(new FileOutputStream(path + "roomDict.file"));
-            roomDictStream.writeObject(roomDictionary);
-            roomDictStream.close();
-
-            ObjectOutputStream userMatrixStream = new ObjectOutputStream(new FileOutputStream(path + "userMatrix.file"));
-            userMatrixStream.writeObject(userMatrix);
-            userMatrixStream.close();
-
-            ObjectOutputStream roomMatrixStream = new ObjectOutputStream(new FileOutputStream(path + "roomMatrix.file"));
-            roomMatrixStream.writeObject(roomMatrix);
-            roomMatrixStream.close();
-
-            log.info("-- SUCCESS --");
-        } catch (IOException e){
-            log.error("Could not save results of recommendation algorithm to disk");
-            System.out.println(Arrays.toString(e.getStackTrace()));
-        }
-    }
-
-    private String getDataDirectoryPath() throws IOException {
-        String directoryPath = env.getProperty("upload.directory.root") +
-                Configuration.DATA_SUBFOLDER;
-
-        Path path = Path.of(directoryPath);
-        if(!Files.exists(path))
-            Files.createDirectories(path);
-
-        return directoryPath + "/";
+        ioUtility.writeToDisk(userDictionary, path + "userDict.file");
+        ioUtility.writeToDisk(roomDictionary, path + "roomDict.file");
+        ioUtility.writeToDisk(userMatrix, path + "userMatrix.file");
+        ioUtility.writeToDisk(roomMatrix, path + "roomMatrix.file");
     }
 }

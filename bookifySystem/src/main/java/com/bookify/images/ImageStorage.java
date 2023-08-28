@@ -2,10 +2,10 @@ package com.bookify.images;
 
 import com.bookify.configuration.Configuration;
 import com.bookify.utils.GUIDGenerator;
+import com.bookify.utils.IOUtility;
 import com.bookify.utils.ImageFormatDetector;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
@@ -23,16 +23,15 @@ import java.util.List;
 public class ImageStorage {
     private final ImageRepository imageRepository;
     private final ImageFormatDetector imageFormatDetector;
+    private final IOUtility ioUtility;
     private final String pathRoot;
 
-    private final Environment env;
-
-    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, Environment env) throws IOException {
+    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, IOUtility ioUtility) throws IOException {
         this.imageRepository = imageRepository;
         this.imageFormatDetector = imageFormatDetector;
-        this.env = env;
+        this.ioUtility = ioUtility;
 
-        pathRoot = getImageDirectoryPath();
+        pathRoot = ioUtility.getDirectoryPath(Configuration.IMAGES_SUBFOLDER);
         preloadImage(Configuration.DEFAULT_PROFILE_PIC_NAME + "." + Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
         preloadImage(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME + "." + Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION);
     }
@@ -105,19 +104,6 @@ public class ImageStorage {
         } catch (IOException e) {
             log.error("Could not delete file {}", imagePath);
         }
-    }
-
-    //TODO: refactor into utility class
-    private String getImageDirectoryPath() throws IOException {
-        String appDataDirectory = env.getProperty("upload.directory.root");
-
-        String directoryPath = appDataDirectory + Configuration.IMAGES_SUBFOLDER;
-
-        Path path = Path.of(directoryPath);
-        if(!Files.exists(path))
-            Files.createDirectories(path);
-
-        return directoryPath + "/";
     }
 
     private void preloadImage(String filename) throws IOException {
