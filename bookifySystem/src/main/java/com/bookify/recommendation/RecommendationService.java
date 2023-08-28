@@ -1,5 +1,6 @@
 package com.bookify.recommendation;
 
+import com.bookify.configuration.Configuration;
 import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.room.Room;
@@ -9,9 +10,13 @@ import com.bookify.user.User;
 import com.bookify.user.UserRepository;
 import com.bookify.utils.UtilityComponent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 @Service
@@ -28,22 +33,24 @@ public class RecommendationService {
     private final RoomRepository roomRepository;
 
     private final UtilityComponent utility;
+    private final ResourceLoader resourceLoader;
+
 
     private List<SearchPreviewDTO> topRatedRooms = new ArrayList<>();
 
-    private double[][] userMatrix;
-    private double[][] roomMatrix;
-
-    Map<Long, Integer> userDictionary;
-    Map<Integer, Integer> roomDictionary;
+    private final String path;
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
-                                 UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility) {
+                                 UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
+                                 ResourceLoader resourceLoader) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
+        this.resourceLoader = resourceLoader;
         this.utility = utility;
+
+        path = getDataDirectoryPath();
 
         updateTopRatedRooms();
         runRecommendationAlgorithm(10);
@@ -54,8 +61,39 @@ public class RecommendationService {
 
         if(currentUser == null) return topRatedRooms;
 
-        //TODO: check if file exists, load dictionaries and matrices from disk. DO NOT RUN recommendation calculations from here
-//        runRecommendationAlgorithm(100);
+        if(!Files.exists(Path.of(path + "userDict.file"))){
+            log.warn("Can not produce recommendations. REASON: the first iteration of the algorithm has not yet been" +
+                    " completed. Producing recommendations based on top ratings instead");
+
+            return topRatedRooms;
+        }
+
+        Map<Long, Integer> userDictionary;
+        double[][] userMatrix;
+        double[][] roomMatrix;
+
+        try {
+            log.info("-- Reading algorithm results from disk --");
+
+            ObjectInputStream userDictStream = new ObjectInputStream(new FileInputStream(path + "userDict.file"));
+            userDictionary = (Map<Long, Integer>) userDictStream.readObject();
+            userDictStream.close();
+
+            ObjectInputStream userMatrixStream = new ObjectInputStream(new FileInputStream(path + "userMatrix.file"));
+            userMatrix = (double[][]) userMatrixStream.readObject();
+            userMatrixStream.close();
+
+            ObjectInputStream roomMatrixStream = new ObjectInputStream(new FileInputStream(path + "roomMatrix.file"));
+            roomMatrix = (double[][]) roomMatrixStream.readObject();
+            roomMatrixStream.close();
+
+            log.info("-- SUCCESS --");
+        } catch (IOException | ClassNotFoundException e) {
+            log.error("Could not load results of recommendation algorithm from diskdue to an IO related error. " +
+                    "Using top rated rooms instead");
+            e.printStackTrace();
+            return topRatedRooms;
+        }
 
         List<Integer> roomsIDs = roomRepository.findAllRoomIds();
         int numberOfRooms = roomsIDs.size();
@@ -82,8 +120,6 @@ public class RecommendationService {
         for(int i = 0; i < numberOfRecommendations; i++)
             recommendations.add(roomRepository.findById(ratings[i].roomID).get());
 
-        log.info("Finished");
-
         return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
     }
@@ -101,7 +137,7 @@ public class RecommendationService {
                 .toList();
     }
 
-    private void runRecommendationAlgorithm(int maxIterations){
+    public void runRecommendationAlgorithm(int maxIterations){
         log.info("---Running Recommendation Algorithm---");
 
         log.info("--Loading Users--");
@@ -114,24 +150,26 @@ public class RecommendationService {
             return;
         }
 
-        populateDictionaries(userIDs, roomsIDs);
+        Map<Long, Integer> userDictionary = createUserDictionary(userIDs);
+        Map<Integer, Integer> roomDictionary = createRoomDictionary(roomsIDs);
 
         double[][] ratingMatrix = new double[userIDs.size()][roomsIDs.size()];
         MatrixUtility.zeroOutMatrix(ratingMatrix);
 
-        populateRatingMatrix(ratingMatrix);
+        populateRatingMatrix(ratingMatrix, userDictionary, roomDictionary);
 
         log.info("--Factorizing Matrix--");
         List<double[][]> result = matrixFactorizer.factorize(ratingMatrix, maxIterations);
         assert(result.size() == 2);
 
-        userMatrix = result.get(0);
-        roomMatrix = result.get(1);
+        double[][] userMatrix = result.get(0);
+        double[][] roomMatrix = result.get(1);
 
-        //TODO: save results to disk for later use
+        saveResults(userDictionary, roomDictionary, userMatrix, roomMatrix);
     }
 
-    private void populateRatingMatrix(double[][] ratingMatrix){
+    private void populateRatingMatrix(double[][] ratingMatrix, Map<Long, Integer> userDictionary,
+                                      Map<Integer, Integer> roomDictionary){
         log.info("--Loading Reviews--");
         List<Review> reviews = reviewRepository.findAll();
 
@@ -146,14 +184,61 @@ public class RecommendationService {
         //TODO: fill in bookings, rooms opened and searches along with corresponding weights
     }
 
-    private void populateDictionaries(List<Long> userIDs, List<Integer> roomsIDs){
-        userDictionary = new HashMap<>();
-        roomDictionary = new HashMap<>();
+    private Map<Long, Integer> createUserDictionary(List<Long> userIDs){
+        Map<Long, Integer> userDictionary = new HashMap<>();
 
         for(int i = 0; i < userIDs.size(); i++)
             userDictionary.put(userIDs.get(i), i);
 
-        for(int i = 0; i < roomsIDs.size(); i++)
-            roomDictionary.put(roomsIDs.get(i), i);
+        return userDictionary;
+    }
+
+    private Map<Integer, Integer> createRoomDictionary(List<Integer> roomIDs){
+        Map<Integer, Integer> roomDictionary = new HashMap<>();
+
+        for(int i = 0; i < roomIDs.size(); i++)
+            roomDictionary.put(roomIDs.get(i), i);
+
+        return roomDictionary;
+    }
+
+    private void saveResults(Map<Long, Integer> userDictionary, Map<Integer, Integer> roomDictionary
+            , double[][] userMatrix, double[][] roomMatrix){
+        log.info("-- Saving Recommendation Algorithm Results to disk --");
+
+        try {
+            //TODO: refactor this
+            ObjectOutputStream userDictStream = new ObjectOutputStream(new FileOutputStream(path + "userDict.file"));
+            userDictStream.writeObject(userDictionary);
+            userDictStream.close();
+
+            ObjectOutputStream roomDictStream = new ObjectOutputStream(new FileOutputStream(path + "roomDict.file"));
+            roomDictStream.writeObject(roomDictionary);
+            roomDictStream.close();
+
+            ObjectOutputStream userMatrixStream = new ObjectOutputStream(new FileOutputStream(path + "userMatrix.file"));
+            userMatrixStream.writeObject(userMatrix);
+            userMatrixStream.close();
+
+            ObjectOutputStream roomMatrixStream = new ObjectOutputStream(new FileOutputStream(path + "roomMatrix.file"));
+            roomMatrixStream.writeObject(roomMatrix);
+            roomMatrixStream.close();
+
+            log.info("-- SUCCESS --");
+        } catch (IOException e){
+            log.error("Could not save results of recommendation algorithm to disk");
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    private String getDataDirectoryPath() throws IOException {
+        String directoryPath = resourceLoader.getResource("classpath:").getFile().getAbsolutePath() +
+                Configuration.DATA_SUBFOLDER;
+
+        Path path = Path.of(directoryPath);
+        if(!Files.exists(path))
+            Files.createDirectories(path);
+
+        return directoryPath + "/";
     }
 }

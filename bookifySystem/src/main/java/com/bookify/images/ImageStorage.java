@@ -103,6 +103,7 @@ public class ImageStorage {
         }
     }
 
+    //TODO: refactor into utility class
     private String getImageDirectoryPath() throws IOException {
         String directoryPath = resourceLoader.getResource("classpath:").getFile().getAbsolutePath() +
                 Configuration.IMAGES_SUBFOLDER;
