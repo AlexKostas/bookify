@@ -7,12 +7,13 @@ import ConversationView from "../ConversationView/ConversationView";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
-import {MenuItem, Select} from "@mui/material";
+import {CircularProgress, MenuItem, Select} from "@mui/material";
 import Badge from "../Badge/Badge";
 import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const axiosPrivate = useAxiosPrivate();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,6 +29,7 @@ const MessageGrid = () => {
 
   const fetchConversations = async (currentPage, orderDirection) => {
     try {
+      setLoading(true);
       const endpointURL = 'messages/getConversations';
       const response = await axiosPrivate.get(`${endpointURL}?pageNumber=${currentPage - 1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`);
 
@@ -36,6 +38,9 @@ const MessageGrid = () => {
     }
     catch (error) {
       console.log(error);
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -126,7 +131,12 @@ const MessageGrid = () => {
                       </Box>
                     </Paper>
                   </Grid>
-              ))) : <p style={{ textAlign: 'center' }}>No messages</p>
+              ))) :
+                  <div className="no-messages-container">
+                    {
+                      loading ? <CircularProgress size={50} /> : <p style={{ textAlign: 'center' }}>No messages</p>
+                    }
+                  </div>
 
               }
             </Grid>
