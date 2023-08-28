@@ -83,15 +83,14 @@ public class InitializeDatabase {
     private void preloadAmenities(AmenityRepository amenityRepository){
         log.info("Preloading amenities to the database");
 
-        //TODO: Fill in descriptions
-        amenityRepository.save(new Amenity("Wi-Fi", "Free wifi for tenants"));
-        amenityRepository.save(new Amenity("Air condition", "..."));
-        amenityRepository.save(new Amenity("Heating", ""));
-        amenityRepository.save(new Amenity("Kitchen", ""));
-        amenityRepository.save(new Amenity("TV", ""));
-        amenityRepository.save(new Amenity("Parking", ""));
-        amenityRepository.save(new Amenity("Elevator", ""));
-        amenityRepository.save(new Amenity("Living Room", ""));
+        amenityRepository.save(new Amenity("Wi-Fi", "Stay connected with free Wi-Fi access throughout your stay"));
+        amenityRepository.save(new Amenity("Air condition", "Enjoy a comfortable atmosphere with adjustable air conditioning"));
+        amenityRepository.save(new Amenity("Heating", "Stay warm and cozy during colder days with efficient heating"));
+        amenityRepository.save(new Amenity("Kitchen", "Prepare your own meals in a fully-equipped kitchen with modern appliances"));
+        amenityRepository.save(new Amenity("TV", " Relax and unwind with a variety of entertainment options on a flat-screen TV"));
+        amenityRepository.save(new Amenity("Parking", "Convenient on-site parking available for your vehicle"));
+        amenityRepository.save(new Amenity("Elevator", "Easily access your accommodation with the convenience of an elevator"));
+        amenityRepository.save(new Amenity("Living Room", "A spacious living area to gather, relax, and socialize with fellow guests"));
     }
 
     private void preloadRoomTypes(RoomTypeRepository roomTypeRepository){

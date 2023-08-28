@@ -20,10 +20,9 @@ public class ProfilePictureController {
 
     @PostMapping("/uploadProfilePic/{username}")
     @PreAuthorize("hasRole('admin') or #username == authentication.name")
-    public ResponseEntity uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
+    public ResponseEntity<?> uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
         try {
-            //TODO: maybe return CREATED http status instead
-            return ResponseEntity.ok(profilePictureService.uploadProfilePicture(username, image));
+            return ResponseEntity.status(HttpStatus.CREATED).body(profilePictureService.uploadProfilePicture(username, image));
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -33,7 +32,7 @@ public class ProfilePictureController {
     }
 
     @GetMapping("/getProfilePic/{username}")
-    public ResponseEntity getProfilePic(@PathVariable String username){
+    public ResponseEntity<?> getProfilePic(@PathVariable String username){
         try{
             //TODO: extend for other image types
             HttpHeaders headers = new HttpHeaders();
@@ -51,7 +50,7 @@ public class ProfilePictureController {
 
     @DeleteMapping("/deleteProfilePic/{username}")
     @PreAuthorize("hasRole('admin') or #username == authentication.name")
-    public ResponseEntity deleteProfilePic(@PathVariable String username){
+    public ResponseEntity<?> deleteProfilePic(@PathVariable String username){
         try {
             return ResponseEntity.ok(profilePictureService.deleteProfilePicture(username));
         }
