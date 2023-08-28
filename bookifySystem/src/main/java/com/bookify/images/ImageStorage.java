@@ -5,13 +5,15 @@ import com.bookify.utils.GUIDGenerator;
 import com.bookify.utils.ImageFormatDetector;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -20,17 +22,19 @@ import java.util.List;
 @Slf4j
 public class ImageStorage {
     private final ImageRepository imageRepository;
-    private final ResourceLoader resourceLoader;
     private final ImageFormatDetector imageFormatDetector;
     private final String pathRoot;
 
-    public ImageStorage(ImageRepository imageRepository, ResourceLoader resourceLoader,
-                        ImageFormatDetector imageFormatDetector) throws IOException {
+    private final Environment env;
+
+    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, Environment env) throws IOException {
         this.imageRepository = imageRepository;
-        this.resourceLoader = resourceLoader;
         this.imageFormatDetector = imageFormatDetector;
+        this.env = env;
 
         pathRoot = getImageDirectoryPath();
+        preloadImage(Configuration.DEFAULT_PROFILE_PIC_NAME + "." + Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
+        preloadImage(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME + "." + Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION);
     }
 
     public Image saveImage(MultipartFile image) throws IOException {
@@ -104,13 +108,25 @@ public class ImageStorage {
     }
 
     private String getImageDirectoryPath() throws IOException {
-        String directoryPath = resourceLoader.getResource("classpath:").getFile().getAbsolutePath() +
-                Configuration.IMAGES_SUBFOLDER;
+        String appDataDirectory = env.getProperty("upload.directory.root");
+
+        String directoryPath = appDataDirectory + Configuration.IMAGES_SUBFOLDER;
 
         Path path = Path.of(directoryPath);
         if(!Files.exists(path))
             Files.createDirectories(path);
 
         return directoryPath + "/";
+    }
+
+    private void preloadImage(String filename) throws IOException {
+        Path path = Path.of(pathRoot).resolve(filename);
+        if(!Files.exists(path)){
+            ClassPathResource resource = new ClassPathResource("/images/" + filename);
+
+            try (InputStream inputStream = resource.getInputStream()) {
+                Files.copy(inputStream, path);
+            }
+        }
     }
 }
