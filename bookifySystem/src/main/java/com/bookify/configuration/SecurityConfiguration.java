@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -31,6 +32,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
+@EnableScheduling
 @AllArgsConstructor
 public class SecurityConfiguration {
 

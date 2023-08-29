@@ -12,6 +12,7 @@ import com.bookify.utils.IOUtility;
 import com.bookify.utils.UtilityComponent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -49,8 +50,6 @@ public class RecommendationService {
         this.utility = utility;
 
         path = ioUtility.getDirectoryPath(Configuration.DATA_SUBFOLDER);
-
-        runRecommendationAlgorithm(10);
     }
 
     public List<SearchPreviewDTO> recommend() {
@@ -122,7 +121,6 @@ public class RecommendationService {
                 .toList();
     }
 
-    @Async
     public List<SearchPreviewDTO> getTopRatedRooms() {
         List<Room> rooms = roomRepository.findBestRooms().stream()
                 .limit(numberOfRecommendations)
@@ -133,7 +131,15 @@ public class RecommendationService {
                 .toList();
     }
 
-    public void runRecommendationAlgorithm(int maxIterations){
+    // Automatically run this task every 30 minutes
+    @Scheduled(fixedRate = 1800000)
+    private void runRecommendationTask(){
+        log.info("----- Running Scheduled Task -----");
+        runRecommendationAlgorithm(500);
+    }
+
+
+    private void runRecommendationAlgorithm(int maxIterations){
         log.info("---Running Recommendation Algorithm---");
 
         log.info("--Loading Users--");
