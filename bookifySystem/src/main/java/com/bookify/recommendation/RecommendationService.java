@@ -36,8 +36,6 @@ public class RecommendationService {
 
     private final IOUtility ioUtility;
 
-    private List<SearchPreviewDTO> topRatedRooms = new ArrayList<>();
-
     private final String path;
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
@@ -52,21 +50,20 @@ public class RecommendationService {
 
         path = ioUtility.getDirectoryPath(Configuration.DATA_SUBFOLDER);
 
-        updateTopRatedRooms();
         runRecommendationAlgorithm(10);
     }
 
     public List<SearchPreviewDTO> recommend() {
         User currentUser = utility.getCurrentAuthenticatedUserIfExists();
 
-        if(currentUser == null) return topRatedRooms;
+        if(currentUser == null) return getTopRatedRooms();
 
         //TODO: refactor file related code
         if(!Files.exists(Path.of(path + "userDict.file"))){
             log.warn("Can not produce recommendations. REASON: the first iteration of the algorithm has not yet been" +
                     " completed. Producing recommendations based on top ratings instead");
 
-            return topRatedRooms;
+            return getTopRatedRooms();
         }
 
         Map<Long, Integer> userDictionary;
@@ -93,7 +90,7 @@ public class RecommendationService {
             log.error("Could not load results of recommendation algorithm from diskdue to an IO related error. " +
                     "Using top rated rooms instead");
             e.printStackTrace();
-            return topRatedRooms;
+            return getTopRatedRooms();
         }
 
         List<Integer> roomsIDs = roomRepository.findAllRoomIds();
@@ -104,7 +101,7 @@ public class RecommendationService {
         if(!userDictionary.containsKey(currentUser.getUserID())){
             log.warn("Can not produce recommendations. REASON: recommendation algorithm has not yet run since " +
                     "user joined. Producing recommendations based on top ratings instead.");
-            return topRatedRooms;
+            return getTopRatedRooms();
         }
 
         int userRow = userDictionary.get(currentUser.getUserID());
@@ -126,14 +123,12 @@ public class RecommendationService {
     }
 
     @Async
-    public void updateTopRatedRooms() {
-        log.info("---Running background task: Updating top rated rooms---");
-
+    public List<SearchPreviewDTO> getTopRatedRooms() {
         List<Room> rooms = roomRepository.findBestRooms().stream()
                 .limit(numberOfRecommendations)
                 .toList();
 
-        topRatedRooms = rooms.stream()
+        return rooms.stream()
                 .map(room -> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
     }

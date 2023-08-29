@@ -26,7 +26,6 @@ public class ReviewService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
-    private final RecommendationService recommendationService;
 
     private final UtilityComponent utility;
 
@@ -56,8 +55,6 @@ public class ReviewService {
                 room,
                 hasReviewerVisitedRoom(currentUser, room)
         ));
-
-        recommendationService.updateTopRatedRooms();
 
         return review.getReviewID();
     }
@@ -136,16 +133,12 @@ public class ReviewService {
         Room roomReviewed = review.getRoom();
         review.setReviewerVisitedRoom(hasReviewerVisitedRoom(reviewer, roomReviewed));
 
-        recommendationService.updateTopRatedRooms();
-
         reviewRepository.save(review);
     }
 
     public void deleteReview(Integer reviewID) throws IllegalAccessException, EntityNotFoundException {
         Review review = findReview(reviewID);
         verifyReviewEditingPrivileges(review);
-
-        recommendationService.updateTopRatedRooms();
 
         reviewRepository.delete(review);
     }
