@@ -91,4 +91,19 @@ public class RoomController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/viewRoom/{roomID}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> viewRoom(@PathVariable Integer roomID) {
+        try {
+            roomService.viewRoom(roomID);
+            return ResponseEntity.ok().build();
+        }
+        catch (EntityNotFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

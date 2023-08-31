@@ -1,5 +1,7 @@
 package com.bookify.recommendation;
 
+import com.bookify.booking.Booking;
+import com.bookify.booking.BookingRepository;
 import com.bookify.configuration.Configuration;
 import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
@@ -11,7 +13,6 @@ import com.bookify.user.UserRepository;
 import com.bookify.utils.IOUtility;
 import com.bookify.utils.UtilityComponent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class RecommendationService {
 
     private final MatrixFactorizer matrixFactorizer;
     private final ReviewRepository reviewRepository;
+    private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
 
@@ -40,10 +42,11 @@ public class RecommendationService {
     private final String path;
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
-                                 UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
+                                 BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
                                  IOUtility ioUtility) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
+        this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.ioUtility = ioUtility;
@@ -175,12 +178,22 @@ public class RecommendationService {
         log.info("--Loading Reviews--");
         List<Review> reviews = reviewRepository.findAll();
 
+        log.info("--Loading Bookings--");
+        List<Booking> bookings = bookingRepository.findAll();
+
         log.info("--Creating Rating Matrix--");
         for(Review review : reviews){
             int row = userDictionary.get(review.getReviewer().getUserID());
             int column = roomDictionary.get(review.getRoom().getRoomID());
 
-            ratingMatrix[row][column] = review.getStars();
+            ratingMatrix[row][column] += review.getStars();
+        }
+
+        for(Booking booking : bookings){
+            int row = userDictionary.get(booking.getUser().getUserID());
+            int column = roomDictionary.get(booking.getRoom().getRoomID());
+
+            ratingMatrix[row][column] += 10;
         }
 
         //TODO: fill in bookings, rooms opened and searches along with corresponding weights

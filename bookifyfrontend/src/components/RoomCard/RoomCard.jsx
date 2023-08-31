@@ -6,10 +6,15 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from '../../api/axios';
 import { CircularProgress } from '@mui/material';
+import useAuth from "../../hooks/useAuth";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const RoomCard = ({room}) => {
     const [imageData, setImageData] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
 
     const fetchImage = async (link) => {
         await axios.get(link, { responseType: 'blob' })
@@ -25,6 +30,16 @@ const RoomCard = ({room}) => {
             setLoading(false);
             setImageData(null);
         });
+    }
+
+    const sendViewedMessage = async () => {
+        if(!auth || !auth.user) return;
+
+        try {
+            await axiosPrivate.post(`/room/viewRoom/${room.roomID}`)
+        }catch (error){
+            console.log(error)
+        }
     }
 
     useEffect(() => {
@@ -55,7 +70,7 @@ const RoomCard = ({room}) => {
   };
 
   return (
-    <Link to={`/room/${room.roomID}`} style={{ textDecoration: 'none' }}>
+    <Link to={`/room/${room.roomID}`} onClick={() => sendViewedMessage()} style={{ textDecoration: 'none' }}>
       <div className="room-card">
         {
           loading ? (<CircularProgress />) : 
