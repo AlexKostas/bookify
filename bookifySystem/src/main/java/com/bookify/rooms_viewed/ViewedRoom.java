@@ -16,11 +16,11 @@ public class ViewedRoom {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "room_id")
+    @JoinColumn(name = "room_id")
     private Room room;
 
     public ViewedRoom(User user, Room room) {

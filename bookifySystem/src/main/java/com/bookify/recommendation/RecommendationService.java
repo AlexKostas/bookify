@@ -7,6 +7,8 @@ import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
+import com.bookify.rooms_viewed.ViewedRoomDTO;
+import com.bookify.rooms_viewed.ViewedRoomRepository;
 import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
@@ -34,6 +36,7 @@ public class RecommendationService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final ViewedRoomRepository viewedRoomRepository;
 
     private final UtilityComponent utility;
 
@@ -42,13 +45,14 @@ public class RecommendationService {
     private final String path;
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
-                                 BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, UtilityComponent utility,
+                                 BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, ViewedRoomRepository viewedRoomRepository, UtilityComponent utility,
                                  IOUtility ioUtility) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
+        this.viewedRoomRepository = viewedRoomRepository;
         this.ioUtility = ioUtility;
         this.utility = utility;
 
@@ -181,6 +185,9 @@ public class RecommendationService {
         log.info("--Loading Bookings--");
         List<Booking> bookings = bookingRepository.findAll();
 
+        log.info("--Loading Views--");
+        List<ViewedRoomDTO> viewedRooms = viewedRoomRepository.getViewedRoomPairs();
+
         log.info("--Creating Rating Matrix--");
         for(Review review : reviews){
             int row = userDictionary.get(review.getReviewer().getUserID());
@@ -195,6 +202,14 @@ public class RecommendationService {
 
             ratingMatrix[row][column] += 10;
         }
+
+        for(ViewedRoomDTO viewedRoomDTO : viewedRooms){
+            int row = userDictionary.get(viewedRoomDTO.userID());
+            int column = roomDictionary.get(viewedRoomDTO.roomID());
+
+            ratingMatrix[row][column] += viewedRoomDTO.views();
+        }
+
 
         //TODO: fill in bookings, rooms opened and searches along with corresponding weights
     }
