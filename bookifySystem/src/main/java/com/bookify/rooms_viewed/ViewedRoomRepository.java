@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ViewedRoomRepository extends JpaRepository<ViewedRoom, Long> {
 
-    @Query("SELECT new com.bookify.rooms_viewed.ViewedRoomDTO(v.user.userID, v.room.roomID, COUNT(*))" +
+    @Query("SELECT NEW com.bookify.rooms_viewed.ViewedRoomDTO(v.user.userID, v.room.roomID, COUNT(*))" +
             "FROM ViewedRoom v " +
             "GROUP BY v.room.roomID, v.user.userID ")
     List<ViewedRoomDTO> getViewedRoomPairs();

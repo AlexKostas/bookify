@@ -9,6 +9,8 @@ import com.bookify.room.Room;
 import com.bookify.room.RoomRepository;
 import com.bookify.rooms_viewed.ViewedRoomDTO;
 import com.bookify.rooms_viewed.ViewedRoomRepository;
+import com.bookify.search.SearchEntryDTO;
+import com.bookify.search.SearchEntryRepository;
 import com.bookify.search.SearchPreviewDTO;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
@@ -31,12 +33,19 @@ public class RecommendationService {
 
     private final int numberOfRecommendations = 9;
 
+    private final double ratingWeight = 4;
+    private final double bookingWeight = 8;
+    private final double searchWeight = 0.5;
+    private final double viewWeight = 1;
+
     private final MatrixFactorizer matrixFactorizer;
     private final ReviewRepository reviewRepository;
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final ViewedRoomRepository viewedRoomRepository;
+
+    private final SearchEntryRepository searchEntryRepository;
 
     private final UtilityComponent utility;
 
@@ -45,7 +54,7 @@ public class RecommendationService {
     private final String path;
 
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
-                                 BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, ViewedRoomRepository viewedRoomRepository, UtilityComponent utility,
+                                 BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, ViewedRoomRepository viewedRoomRepository, SearchEntryRepository searchEntryRepository, UtilityComponent utility,
                                  IOUtility ioUtility) throws IOException {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
@@ -53,6 +62,7 @@ public class RecommendationService {
         this.userRepository = userRepository;
         this.roomRepository = roomRepository;
         this.viewedRoomRepository = viewedRoomRepository;
+        this.searchEntryRepository = searchEntryRepository;
         this.ioUtility = ioUtility;
         this.utility = utility;
 
@@ -188,30 +198,37 @@ public class RecommendationService {
         log.info("--Loading Views--");
         List<ViewedRoomDTO> viewedRooms = viewedRoomRepository.getViewedRoomPairs();
 
+        log.info("--Loading Searches--");
+        List<SearchEntryDTO> searches = searchEntryRepository.getSearches();
+
         log.info("--Creating Rating Matrix--");
         for(Review review : reviews){
             int row = userDictionary.get(review.getReviewer().getUserID());
             int column = roomDictionary.get(review.getRoom().getRoomID());
 
-            ratingMatrix[row][column] += review.getStars();
+            ratingMatrix[row][column] += searchWeight * review.getStars();
         }
 
         for(Booking booking : bookings){
             int row = userDictionary.get(booking.getUser().getUserID());
             int column = roomDictionary.get(booking.getRoom().getRoomID());
 
-            ratingMatrix[row][column] += 10;
+            ratingMatrix[row][column] += bookingWeight;
         }
 
         for(ViewedRoomDTO viewedRoomDTO : viewedRooms){
             int row = userDictionary.get(viewedRoomDTO.userID());
             int column = roomDictionary.get(viewedRoomDTO.roomID());
 
-            ratingMatrix[row][column] += viewedRoomDTO.views();
+            ratingMatrix[row][column] += viewWeight * viewedRoomDTO.views();
         }
 
+        for(SearchEntryDTO searchEntry : searches){
+            int row = userDictionary.get(searchEntry.userID());
+            int column = roomDictionary.get(searchEntry.roomID());
 
-        //TODO: fill in bookings, rooms opened and searches along with corresponding weights
+            ratingMatrix[row][column] += searchWeight * searchEntry.searchesCount();
+        }
     }
 
     private Map<Long, Integer> createUserDictionary(List<Long> userIDs){
