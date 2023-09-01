@@ -8,6 +8,8 @@ import axios from "../api/axios";
 import {Pagination} from "@mui/material";
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import {useFilterOptions} from "../context/FilterOptionsContext";
+import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const SearchPage = () => {
     const { searchInfo } = useSearchContext();
@@ -28,13 +30,16 @@ const SearchPage = () => {
     const [initSetup, setInitSetup] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
 
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
+
     const fetchRooms = async (currentPage) => {
         if(!searchInfo) return;
 
         const endpointURL = '/search/search';
         try{
             setLoading(true);
-            const response = await axios.put
+            const response = await (auth ? axiosPrivate : axios).put
             (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
                 JSON.stringify(
                     {

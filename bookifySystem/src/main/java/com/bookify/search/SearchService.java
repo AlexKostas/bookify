@@ -6,6 +6,7 @@ import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
 import com.bookify.room_type.RoomTypeRepository;
+import com.bookify.user.User;
 import com.bookify.utils.UtilityComponent;
 import com.bookify.utils.Utils;
 import jakarta.persistence.criteria.Order;
@@ -24,6 +25,7 @@ public class SearchService {
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
     private final RoomTypeRepository roomTypeRepository;
+    private final SearchEntryRepository searchEntryRepository;
     private final UtilityComponent utility;
 
     private enum OrderDirection {
@@ -32,6 +34,10 @@ public class SearchService {
 
     public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
                                          SearchRequestDTO searchDTO){
+        User currentUser = utility.getCurrentAuthenticatedUserIfExists();
+        if(currentUser != null)
+            searchEntryRepository.save(new SearchEntry(currentUser, searchDTO.city(), searchDTO.state(), searchDTO.country()));
+
 
         if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc")) {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
