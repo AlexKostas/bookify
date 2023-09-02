@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,16 +64,16 @@ public class ImageStorage {
                 orElseThrow(() -> new EntityNotFoundException("Image with id " + guid + " not found"));
     }
 
-    public FileSystemResource loadImageFile(Image image){
+    public ImageResourceDTO loadImageFile(Image image){
         String finalPath = pathRoot + image.getImageFilename();
-        return new FileSystemResource(finalPath);
+        return new ImageResourceDTO(new FileSystemResource(finalPath), getMediaType(image));
     }
 
-    public FileSystemResource loadImageFileByGuid(String guid) throws EntityNotFoundException {
+    public ImageResourceDTO loadImageFileByGuid(String guid) throws EntityNotFoundException {
         Image image = imageRepository.findByImageGuid(guid).
                 orElseThrow(() -> new EntityNotFoundException("Image with guid "+ guid + " not found"));
         String finalPath = pathRoot + image.getImageFilename();
-        return new FileSystemResource(finalPath);
+        return new ImageResourceDTO(new FileSystemResource(finalPath), getMediaType(image));
     }
 
     public void deleteImages(List<Image> images) throws UnsupportedOperationException {
@@ -115,5 +116,13 @@ public class ImageStorage {
                 Files.copy(inputStream, path);
             }
         }
+    }
+
+    private MediaType getMediaType(Image image){
+        if(image.getExtension().equals("png")) return MediaType.IMAGE_PNG;
+        if(image.getExtension().equals("jpg") || image.getExtension().equals("jpeg")) return MediaType.IMAGE_JPEG;
+
+        log.warn("Unknown image type. Defaulting to IMAGE_PNG");
+        return MediaType.IMAGE_PNG;
     }
 }

@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.images.ImageResourceDTO;
 import com.bookify.user.ProfilePictureService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -34,11 +35,11 @@ public class ProfilePictureController {
     @GetMapping("/getProfilePic/{username}")
     public ResponseEntity<?> getProfilePic(@PathVariable String username){
         try{
-            //TODO: extend for other image types
+            ImageResourceDTO imageResource = profilePictureService.getProfilePicture(username);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.setContentType(imageResource.mediaType());
 
-            return ResponseEntity.ok().headers(headers).body(profilePictureService.getProfilePicture(username));
+            return ResponseEntity.ok().headers(headers).body(imageResource.resource());
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

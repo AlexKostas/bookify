@@ -2,6 +2,7 @@ package com.bookify.room;
 
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
+import com.bookify.images.ImageResourceDTO;
 import com.bookify.images.ImageStorage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -61,7 +62,7 @@ public class RoomPhotoService {
         return room.getPhotos().stream().map(Image::getImageGuid).collect(Collectors.toList());
     }
 
-    public FileSystemResource getPhoto(String guid) throws EntityNotFoundException {
+    public ImageResourceDTO getPhoto(String guid) throws EntityNotFoundException {
         return imageStorage.loadImageFileByGuid(guid);
     }
 
