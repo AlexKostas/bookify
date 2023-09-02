@@ -11,4 +11,9 @@ public class Constants {
     public static final String ANONYMOUS_USER_PRINCIPAL = "anonymousUser";
 
     public static final int MAX_AVAILABILITY_DAYS_PER_ROOM = 10000;
+
+    public static final String userDictionaryFilename = "userDict.file";
+    public static final String roomDictionaryFilename = "roomDict.file";
+    public static final String userMatrixFilename = "userMatrix.file";
+    public static final String roomMatrixFilename = "roomMatrix.file";
 }

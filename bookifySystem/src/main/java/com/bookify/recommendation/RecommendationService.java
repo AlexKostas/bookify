@@ -2,7 +2,6 @@ package com.bookify.recommendation;
 
 import com.bookify.booking.Booking;
 import com.bookify.booking.BookingRepository;
-import com.bookify.configuration.Configuration;
 import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.room.Room;
@@ -20,16 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.*;
 
 @Service
 @Slf4j
 public class RecommendationService {
 
-    private record RoomRatingPair(double rating, Integer roomID){};
+    private record RoomRatingPair(double rating, Integer roomID){}
 
     private final int numberOfRecommendations = 9;
 
@@ -51,11 +48,9 @@ public class RecommendationService {
 
     private final IOUtility ioUtility;
 
-    private final String path;
-
     public RecommendationService(MatrixFactorizer matrixFactorizer, ReviewRepository reviewRepository,
                                  BookingRepository bookingRepository, UserRepository userRepository, RoomRepository roomRepository, ViewedRoomRepository viewedRoomRepository, SearchEntryRepository searchEntryRepository, UtilityComponent utility,
-                                 IOUtility ioUtility) throws IOException {
+                                 IOUtility ioUtility) {
         this.matrixFactorizer = matrixFactorizer;
         this.reviewRepository = reviewRepository;
         this.bookingRepository = bookingRepository;
@@ -65,8 +60,6 @@ public class RecommendationService {
         this.searchEntryRepository = searchEntryRepository;
         this.ioUtility = ioUtility;
         this.utility = utility;
-
-        path = ioUtility.getDirectoryPath(Configuration.DATA_SUBFOLDER);
     }
 
     public List<SearchPreviewDTO> recommend() {
@@ -74,8 +67,7 @@ public class RecommendationService {
 
         if(currentUser == null) return getTopRatedRooms();
 
-        //TODO: refactor file related code
-        if(!Files.exists(Path.of(path + "userDict.file"))){
+        if(!ioUtility.recommendationFilesExist()){
             log.warn("Can not produce recommendations. REASON: the first iteration of the algorithm has not yet been" +
                     " completed. Producing recommendations based on top ratings instead");
 
@@ -89,30 +81,17 @@ public class RecommendationService {
         try {
             log.info("-- Reading algorithm results from disk --");
 
-            ObjectInputStream userDictStream = new ObjectInputStream(new FileInputStream(path + "userDict.file"));
-            userDictionary = (Map<Long, Integer>) userDictStream.readObject();
-            userDictStream.close();
-
-            ObjectInputStream userMatrixStream = new ObjectInputStream(new FileInputStream(path + "userMatrix.file"));
-            userMatrix = (double[][]) userMatrixStream.readObject();
-            userMatrixStream.close();
-
-            ObjectInputStream roomMatrixStream = new ObjectInputStream(new FileInputStream(path + "roomMatrix.file"));
-            roomMatrix = (double[][]) roomMatrixStream.readObject();
-            roomMatrixStream.close();
+            userDictionary = ioUtility.readUserDictionaryFromDisk();
+            userMatrix = ioUtility.readUserMatrixFromDisk();
+            roomMatrix = ioUtility.readRoomMatrixFromDisk();
 
             log.info("-- SUCCESS --");
         } catch (IOException | ClassNotFoundException e) {
-            log.error("Could not load results of recommendation algorithm from diskdue to an IO related error. " +
+            log.error("Could not load results of recommendation algorithm from disk due to an IO related error. " +
                     "Using top rated rooms instead");
-            e.printStackTrace();
+            System.out.println(Arrays.toString(e.getStackTrace()));
             return getTopRatedRooms();
         }
-
-        List<Integer> roomsIDs = roomRepository.findAllRoomIds();
-        int numberOfRooms = roomsIDs.size();
-
-        log.info("--Generating recommendations--");
 
         if(!userDictionary.containsKey(currentUser.getUserID())){
             log.warn("Can not produce recommendations. REASON: recommendation algorithm has not yet run since " +
@@ -121,6 +100,24 @@ public class RecommendationService {
         }
 
         int userRow = userDictionary.get(currentUser.getUserID());
+        return produceBestRecommendations(userRow, userMatrix, roomMatrix);
+    }
+
+    public List<SearchPreviewDTO> getTopRatedRooms() {
+        List<Room> rooms = roomRepository.findBestRooms().stream()
+                .limit(numberOfRecommendations)
+                .toList();
+
+        return rooms.stream()
+                .map(room -> utility.mapRoomToDTO(room, 1, 3))
+                .toList();
+    }
+
+    private List<SearchPreviewDTO> produceBestRecommendations(int userRow, double[][] userMatrix, double[][] roomMatrix){
+        log.info("--Generating recommendations--");
+
+        List<Integer> roomsIDs = roomRepository.findAllRoomIds();
+        int numberOfRooms = roomsIDs.size();
 
         RoomRatingPair[] ratings = new RoomRatingPair[numberOfRooms];
         for(int i = 0; i < numberOfRooms; i++) {
@@ -135,16 +132,6 @@ public class RecommendationService {
             recommendations.add(roomRepository.findById(ratings[i].roomID).get());
 
         return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
-                .toList();
-    }
-
-    public List<SearchPreviewDTO> getTopRatedRooms() {
-        List<Room> rooms = roomRepository.findBestRooms().stream()
-                .limit(numberOfRecommendations)
-                .toList();
-
-        return rooms.stream()
-                .map(room -> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
     }
 
@@ -184,7 +171,7 @@ public class RecommendationService {
         double[][] userMatrix = result.get(0);
         double[][] roomMatrix = result.get(1);
 
-        saveResults(userDictionary, roomDictionary, userMatrix, roomMatrix);
+        ioUtility.saveRecommendationResults(userDictionary, roomDictionary, userMatrix, roomMatrix);
     }
 
     private void populateRatingMatrix(double[][] ratingMatrix, Map<Long, Integer> userDictionary,
@@ -206,7 +193,7 @@ public class RecommendationService {
             int row = userDictionary.get(review.getReviewer().getUserID());
             int column = roomDictionary.get(review.getRoom().getRoomID());
 
-            ratingMatrix[row][column] += searchWeight * review.getStars();
+            ratingMatrix[row][column] += ratingWeight * review.getStars();
         }
 
         for(Booking booking : bookings){
@@ -247,15 +234,5 @@ public class RecommendationService {
             roomDictionary.put(roomIDs.get(i), i);
 
         return roomDictionary;
-    }
-
-    private void saveResults(Map<Long, Integer> userDictionary, Map<Integer, Integer> roomDictionary
-            , double[][] userMatrix, double[][] roomMatrix){
-        log.info("-- Saving Recommendation Algorithm Results to disk --");
-
-        ioUtility.writeToDisk(userDictionary, path + "userDict.file");
-        ioUtility.writeToDisk(roomDictionary, path + "roomDict.file");
-        ioUtility.writeToDisk(userMatrix, path + "userMatrix.file");
-        ioUtility.writeToDisk(roomMatrix, path + "roomMatrix.file");
     }
 }

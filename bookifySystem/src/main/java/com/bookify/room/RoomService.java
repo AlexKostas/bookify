@@ -287,7 +287,6 @@ public class RoomService{
         return roomTypeOptional.get();
     }
 
-    //TODO: Maybe move this to availability service
     private void setAvailability(List<DatePairDTO> availability, Room room){
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;
