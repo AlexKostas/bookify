@@ -5,6 +5,7 @@ import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
+import NewRegistrationForm from "../components/RegistrationForm/NewRegistrationForm";
 
 const REGISTER_URL = '/registration/register';
 
@@ -68,7 +69,7 @@ const RegistrationPage = () => {
         <>
             <Navbar />
             <h1>Register</h1>
-            <RegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
+            <NewRegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
                 success={success} />
         </>
     )
