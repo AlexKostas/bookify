@@ -8,6 +8,7 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
+import NewRegistrationForm from "../components/RegistrationForm/NewRegistrationForm";
 
 const UPDATE_URL = '/user/updateProfile';
 
@@ -69,7 +70,7 @@ const UpdateProfilePage = () => {
         <>
             <Navbar />
             <h1>Update Profile</h1>
-            <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
+            <NewRegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
                               success={success} />
             <div>
             <button onClick={() => navigate('/profile')}>
