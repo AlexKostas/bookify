@@ -1,51 +1,82 @@
-import React, { useRef, useState, useEffect } from "react";
-import useAuth from "../../hooks/useAuth";
-import {faCheck, faTimes, faInfoCircle, faEdit} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "../../api/axios";
-import { Link } from "react-router-dom";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+// RegistrationForm.jsx
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import {Link} from 'react-router-dom';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useGetUserDetails from "../../hooks/useGetUserDetails";
-import "./registrationForm.css"
+import {useEffect, useRef, useState} from "react";
+import {FormControl, InputAdornment, InputLabel, MenuItem, Select} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@material-ui/icons";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const NAME_REGEX = /^[A-Za-z]{2,24}$/;
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@(.+)$/;
 const PHONE_REGEX = /^\d{10,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
 
-const RegistrationForm = ({inRegistration = true, initialUsername = '',
-        onSubmit, errorMessage = '', success = false}) => {
+const theme = createTheme();
+
+const RegistrationForm = ({
+                                 inRegistration = true,
+                                 initialUsername = '',
+                                 onSubmit, errorMessage = '',
+                                 success = false
+}) => {
 
     const userRef = useRef();
     const errRef = useRef();
 
-    const [user, setUser] = useState();
+    const [user, setUser] = useState('');
+    const [validName, setValidName] = useState(true);
+
     const [firstName, setFirstName] = useState('');
+    const [validFirstName, setValidFirstName] = useState(true);
+
     const [lastName, setLastName] = useState('');
+    const [validLastName, setValidLastName] = useState(true);
+
     const [email, setEmail] = useState('');
+    const [validEmail, setValidEmail] = useState(true);
+
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [validPhone, setValidPhone] = useState(true);
+
     const [selectedRole, setSelectedRole] = useState('tenant');
 
-    const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
-
     const [pwd, setPwd] = useState('');
-    const [validPwd, setValidPwd] = useState(false);
-    const [pwdFocus, setPwdFocus] = useState(false);
+    const [validPwd, setValidPwd] = useState(true);
 
     const [matchPwd, setMatchPwd] = useState('');
-    const [validMatch, setValidMatch] = useState(false);
-    const [matchFocus, setMatchFocus] = useState(false);
+    const [validMatch, setValidMatch] = useState(true);
 
-    const [validEmail, setValidEmail] = useState(false);
-    const [emailFocus, setEmailFocus]  = useState(false);
+    const userData = useGetUserDetails(initialUsername);
 
-    const [validPhone, setValidPhone] = useState(false);
-    const [phoneFocus, setPhoneFocus] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showMatchPwd, setShowMatchPwd] = useState(false);
 
     const [errMsg, setErrMsg] = useState('');
 
-    const userData = useGetUserDetails(initialUsername);
+    const validSignUp = user && firstName && lastName && email && phoneNumber && pwd && matchPwd &&
+                            validName && validFirstName && validLastName && validEmail && validPhone &&
+                            validPwd && validMatch;
+
+    const validEdit = user && firstName && lastName && email && phoneNumber &&
+                          validName && validFirstName && validLastName && validEmail && validPhone;
+
+    useEffect(() => {
+        userRef.current.focus();
+    }, [])
 
     useEffect(() => {
         if (!userData) return;
@@ -59,29 +90,8 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
     }, [userData]);
 
     useEffect(() => {
-        userRef.current.focus();
-    }, [])
-
-    useEffect(() => {
-        setValidName(USER_REGEX.test(user));
-    }, [user])
-
-    useEffect(() => {
-        setValidEmail(EMAIL_REGEX.test(email));
-    }, [email])
-
-    useEffect(() => {
-        setValidPhone(PHONE_REGEX.test(phoneNumber));
-    }, [phoneNumber])
-
-    useEffect(() => {
-        setValidPwd(PWD_REGEX.test(pwd));
         setValidMatch(pwd === matchPwd);
-    }, [pwd, matchPwd])
-
-    useEffect(() => {
-        setErrMsg('');
-    }, [user, pwd, matchPwd, email, phoneNumber])
+    }, [matchPwd, pwd])
 
     useEffect(() => {
         setErrMsg(errorMessage);
@@ -91,32 +101,19 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const v1 = USER_REGEX.test(user);
-        const v2 = PWD_REGEX.test(pwd);
-        const v3 = EMAIL_REGEX.test(email);
-        const v4 = PHONE_REGEX.test(phoneNumber);
-        if ( (inRegistration && (!v1 || !v2 || !v3 || !v4)) || (!inRegistration && (!v1 || !v3 || !v4))){
-            setErrMsg("Invalid Entry");
-            return;
-        }
-
         const userDetails = {
-            user, 
-            pwd, 
-            firstName, 
-            lastName, 
-            email, 
-            phoneNumber, 
+            user,
+            pwd,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
             selectedRole,
         };
         onSubmit(userDetails);
 
-        //Clear state
-        //setUser('');
         setPwd('');
         setMatchPwd('');
-        //setEmail('');
-        //setPhoneNumber('');
     }
 
     return (
@@ -129,196 +126,298 @@ const RegistrationForm = ({inRegistration = true, initialUsername = '',
                     </p>
                 </section>
             ) : (
-                <div className="main">
-                <section className="form-background">
-                    <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                    
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="username">
-                            Username:
-                            <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validName || !user ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="text"
-                            id="username"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setUser(e.target.value)}
-                            value={user}
-                            required
-                            aria-invalid={validName ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setUserFocus(true)}
-                            onBlur={() => setUserFocus(false)}
-                        />
-                        <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            4 to 24 characters.<br />
-                            Must begin with a letter.<br />
-                            Letters, numbers, underscores, hyphens allowed.
-                        </p>
-
-                        <label htmlFor="firstName">
-                            First Name:
-                        </label>
-                        <input
-                            type="text"
-                            id="lastname"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setFirstName(e.target.value)}
-                            value={firstName}
-                            required
-                            aria-invalid={validName ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setUserFocus(true)}
-                            onBlur={() => setUserFocus(false)}
-                        />
-
-                        <label htmlFor="lastName">
-                            Last Name:
-                        </label>
-                        <input
-                            type="text"
-                            id="firstname"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setLastName(e.target.value)}
-                            value={lastName}
-                            required
-                            aria-invalid={validName ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setUserFocus(true)}
-                            onBlur={() => setUserFocus(false)}
-                        />
-
-                        <label htmlFor="email">
-                            Email:
-                            <FontAwesomeIcon icon={faCheck} className={validEmail ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validEmail || !email ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="text"
-                            id="email"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setEmail(e.target.value)}
-                            value={email}
-                            required
-                            aria-invalid={validEmail ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setEmailFocus(true)}
-                            onBlur={() => setEmailFocus(false)}
-                        />
-                        <p id="uidnote" className={emailFocus && email && !validEmail ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            Only allowed characters before the @ symbol are: <br/>
-                            Alphanumeric characters, plus symbols (+), underscores (_), dots (.), and hyphens (-).
-                        </p>
-
-                        {inRegistration && (
-                            <>
-                                <label htmlFor="password">
-                            Password:
-                            <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            onChange={(e) => setPwd(e.target.value)}
-                            value={pwd}
-                            required
-                            aria-invalid={validPwd ? "false" : "true"}
-                            aria-describedby="pwdnote"
-                            onFocus={() => setPwdFocus(true)}
-                            onBlur={() => setPwdFocus(false)}
-                        />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            8 to 24 characters.<br />
-                            Must include uppercase and lowercase letters, a number and a special character.<br />
-                            Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
-                        </p>
-
-
-                        <label htmlFor="confirm_pwd">
-                            Confirm Password:
-                            <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="confirm_pwd"
-                            onChange={(e) => setMatchPwd(e.target.value)}
-                            value={matchPwd}
-                            required
-                            aria-invalid={validMatch ? "false" : "true"}
-                            aria-describedby="confirmnote"
-                            onFocus={() => setMatchFocus(true)}
-                            onBlur={() => setMatchFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            Must match the first password input field.
-                        </p>
-                            </>
-                        )}
-
-                        <label htmlFor="phoneNumber">
-                            Phone Number:
-                            <FontAwesomeIcon icon={faCheck} className={validPhone ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validPhone || !phoneNumber ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="text"
-                            id="phonenumber"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            value={phoneNumber}
-                            required
-                            aria-invalid={validPhone ? "false" : "true"}
-                            aria-describedby="uidnote"
-                            onFocus={() => setPhoneFocus(true)}
-                            onBlur={() => setPhoneFocus(false)}
-                        />
-                        <p id="uidnote" className={phoneFocus && phoneNumber && !validPhone ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            At least 10 digits are required.
-                        </p>
-
-                        {
-                            userData?.rolePreference !== 'admin' && (
+                <ThemeProvider theme={theme}>
+                    <Container component="main" maxWidth="sm">
+                        <CssBaseline />
+                        <Box
+                            sx={{
+                                marginTop: 8,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                boxShadow: 6,
+                                borderRadius: 2,
+                                px: 4,
+                                py: 6,
+                            }}
+                        >
+                            {inRegistration ? (
                                 <>
-                                    <label htmlFor="dropdown">Select role:</label>
-                                    <select 
-                                        id="dropdown" 
-                                        value={selectedRole} 
-                                        onChange={(event) => setSelectedRole(event.target.value)}>
-                                        <option value="tenant">Tenant</option>
-                                        <option value="host">Host</option>
-                                        <option value="host_tenant">Host & Tenant</option>
-                                    </select>
+                                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                                        <LockOutlinedIcon />
+                                    </Avatar>
+                                    <Typography component="h1" variant="h5">
+                                        Sign up
+                                    </Typography>
                                 </>
-                            )
-                        }
-
-                        {!inRegistration ? <button><FontAwesomeIcon icon={faEdit} />Edit</button> : <button disabled={!validName || !validPwd || !validMatch || !validEmail || !validPhone}>Sign Up</button>}
-                    </form>
-                    {inRegistration &&
-                    <p>
-                        Already registered?<br />
-                        <span className="line">
-                            <Link to="/login">Sign In</Link>
-                        </span>
-                    </p> }
-                </section>
-                </div>
+                            ) : (
+                                <>
+                                    <Typography component="h1" variant="h5">
+                                        Edit Profile
+                                    </Typography>
+                                </>
+                            )}
+                            <Box
+                                component="form"
+                                noValidate
+                                onSubmit={handleSubmit}
+                                sx={{ mt: 3 }}
+                            >
+                                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={12} >
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            id="userName"
+                                            label="Username"
+                                            name="username"
+                                            autoComplete="off"
+                                            value={user}
+                                            onChange={(e) => {
+                                                setUser(e.target.value);
+                                                setValidName(USER_REGEX.test(e.target.value));
+                                            }}
+                                            error={!validName}
+                                            helperText={
+                                                !validName ? (
+                                                    <>
+                                                        Username must contain 4 to 24 characters. <br/>
+                                                        Must begin with a letter. <br />
+                                                        Letters, numbers, underscores, hyphens allowed.
+                                                    </>
+                                                ) : null
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <TextField
+                                            type="text"
+                                            id="firstname"
+                                            ref={userRef}
+                                            autoComplete="off"
+                                            value={firstName}
+                                            required
+                                            fullWidth
+                                            label="First Name"
+                                            onChange={(e) => {
+                                                setFirstName(e.target.value);
+                                                setValidFirstName(NAME_REGEX.test(e.target.value));
+                                            }}
+                                            error={!validFirstName}
+                                            helperText={
+                                                !validFirstName ? (
+                                                    <>
+                                                        First name must contain 2 to 25 characters. <br/>
+                                                        Only letters are allowed. <br />
+                                                    </>
+                                                ) : null
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            type="text"
+                                            id="lastname"
+                                            ref={userRef}
+                                            autoComplete="off"
+                                            value={lastName}
+                                            required
+                                            fullWidth
+                                            label="Last Name"
+                                            onChange={(e) => {
+                                                setLastName(e.target.value);
+                                                setValidLastName(NAME_REGEX.test(e.target.value));
+                                            }}
+                                            error={!validLastName}
+                                            helperText={
+                                                !validLastName ? (
+                                                    <>
+                                                        Last name must contain 2 to 25 characters. <br/>
+                                                        Only letters are allowed. <br />
+                                                    </>
+                                                ) : null
+                                            }
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} >
+                                        <TextField
+                                            required
+                                            fullWidth
+                                            id="email"
+                                            label="Email Address"
+                                            name="email"
+                                            value={email}
+                                            onChange={(e) => {
+                                                setEmail(e.target.value);
+                                                setValidEmail(EMAIL_REGEX.test(e.target.value));
+                                            }}
+                                            error={!validEmail}
+                                            helperText={
+                                                !validEmail ? (
+                                                    <>
+                                                        Only allowed characters before the @ symbol are: <br/>
+                                                        Alphanumeric characters, plus symbols (+), underscores (_), dots (.), and hyphens (-).
+                                                    </>
+                                                ) : null
+                                            }
+                                        />
+                                    </Grid>
+                                    {inRegistration && (
+                                        <>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    required
+                                                    fullWidth
+                                                    id="password"
+                                                    label="Password"
+                                                    type={showPassword ? "text" : "password"}
+                                                    value={pwd}
+                                                    onChange={(e) => {
+                                                        setPwd(e.target.value);
+                                                        setValidPwd(PWD_REGEX.test(e.target.value));
+                                                    }}
+                                                    error={!validPwd}
+                                                    helperText={
+                                                        !validPwd ? (
+                                                            <>
+                                                                8 to 24 characters.<br />
+                                                                Must include uppercase and lowercase letters, a number and a special character.<br />
+                                                                Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag"># </span>
+                                                                <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+                                                            </>
+                                                        ) : null
+                                                    }
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                <IconButton
+                                                                    onClick={() => setShowPassword(!showPassword)}
+                                                                    edge="end"
+                                                                >
+                                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                                </IconButton>
+                                                            </InputAdornment>
+                                                        ),
+                                                        sx: { height: '3rem' },
+                                                    }}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    required
+                                                    fullWidth
+                                                    id="matchPwd"
+                                                    label="Confirm Password"
+                                                    type={showMatchPwd ? "text" : "password"}
+                                                    value={matchPwd}
+                                                    error={!validMatch}
+                                                    onChange={(e) => {
+                                                        setMatchPwd(e.target.value);
+                                                    }}
+                                                    InputProps={{
+                                                        endAdornment: (
+                                                            <InputAdornment position="end">
+                                                                <IconButton
+                                                                    onClick={() => setShowMatchPwd(!showMatchPwd)}
+                                                                    edge="end"
+                                                                >
+                                                                    {showMatchPwd ? <VisibilityOff /> : <Visibility />}
+                                                                </IconButton>
+                                                            </InputAdornment>
+                                                        ),
+                                                        sx: { height: '3rem' },
+                                                    }}
+                                                />
+                                            </Grid>
+                                        </>
+                                    )}
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            name="phonenumber"
+                                            required
+                                            fullWidth
+                                            label="Phone Number"
+                                            type="text"
+                                            id="phonenumber"
+                                            ref={userRef}
+                                            autoComplete="off"
+                                            onChange={(e) => {
+                                                setPhoneNumber(e.target.value);
+                                                setValidPhone(PHONE_REGEX.test(e.target.value));
+                                            }}
+                                            value={phoneNumber}
+                                            error={!validPhone}
+                                            helperText={
+                                                !validPhone ? (
+                                                    <>
+                                                        At least 10 digits are required.
+                                                    </>
+                                                ) : null
+                                            }
+                                        />
+                                    </Grid>
+                                    {
+                                        userData?.rolePreference !== 'admin' && (
+                                            <>
+                                                <Grid item xs={12} sm={6}>
+                                                    <FormControl fullWidth>
+                                                        <InputLabel id="select-label">Select Role</InputLabel>
+                                                        <Select
+                                                            labelId="select-label"
+                                                            id="dropdown"
+                                                            value={selectedRole}
+                                                            label="Select role"
+                                                            onChange={(event) => setSelectedRole(event.target.value)}>
+                                                        >
+                                                            <MenuItem value="tenant">Tenant</MenuItem>
+                                                            <MenuItem value="host">Host</MenuItem>
+                                                            <MenuItem value="host_tenant">Host & Tenant</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+                                            </>
+                                        )
+                                    }
+                                </Grid>
+                                {inRegistration ? (
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        sx={{ mt: 3, mb: 2 }}
+                                        disabled = {!validSignUp}
+                                    >
+                                        Sign Up
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        sx={{ mt: 3, mb: 2 }}
+                                        disabled = {!validEdit}
+                                    >
+                                        <FontAwesomeIcon icon={faEdit} />
+                                        Edit
+                                    </Button>
+                                )}
+                                {inRegistration && (
+                                    <Grid container justifyContent="flex-end">
+                                        <Grid item>
+                                            <Link to="/login" variant="body2" style={{ color: 'blue' }}>
+                                                Already have an account? Sign in
+                                            </Link>
+                                        </Grid>
+                                    </Grid>
+                                )}
+                            </Box>
+                        </Box>
+                    </Container>
+                </ThemeProvider>
             )}
         </>
     );
 }
 
-export default RegistrationForm
+export default RegistrationForm;

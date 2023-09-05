@@ -1,14 +1,13 @@
 // UpdateProfilePage.jsx
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar/Navbar';
-import RegistrationForm from '../components/RegistrationForm/RegistrationForm';
 import useAuth from '../hooks/useAuth';
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
-import NewRegistrationForm from "../components/RegistrationForm/NewRegistrationForm";
+import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
 
 const UPDATE_URL = '/user/updateProfile';
 
@@ -69,8 +68,7 @@ const UpdateProfilePage = () => {
     return (
         <>
             <Navbar />
-            <h1>Update Profile</h1>
-            <NewRegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
+            <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
                               success={success} />
             <div>
             <button onClick={() => navigate('/profile')}>
