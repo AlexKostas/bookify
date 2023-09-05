@@ -49,7 +49,6 @@ const UpdateUserAboutPage = () => {
     return (
         <>
             <Navbar />
-            <h1>Update "About-Me Information"</h1>
             <div>
                 <AboutInfoForm username={auth.user} onSubmit={submitUpdateRequest} errorMessage={error}
                                   success={success} />
