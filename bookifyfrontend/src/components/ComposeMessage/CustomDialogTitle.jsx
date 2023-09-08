@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import CloseIcon from '@mui/icons-material/Close';
 
-const CustomDialogTitle = ({ onClose }) => {
+const CustomDialogTitle = ({ title, onClose, withClose=false }) => {
     return (
         <div
             style={{
@@ -11,7 +11,8 @@ const CustomDialogTitle = ({ onClose }) => {
                 justifyContent: 'space-between',
             }}
         >
-            <span>New Message</span>
+            <span>{title}</span>
+            {withClose &&
                 <Button
                     onClick={onClose}
                     color="inherit"
@@ -25,13 +26,11 @@ const CustomDialogTitle = ({ onClose }) => {
                         '&:hover': {
                             backgroundColor: 'rgb(225,5,10)',
                         },
-                        '& .MuiSvgIcon-root': {
-                            margin: '4px',
-                        },
                     }}
                 >
                     <CloseIcon/>
                 </Button>
+            }
         </div>
     );
 }

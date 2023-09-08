@@ -7,6 +7,10 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SendIcon from '@mui/icons-material/Send';
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import * as React from "react";
+import Box from "@mui/material/Box";
 
 const ConversationView = ({conversationID, readonly, onClose}) => {
     const [messages, setMessages] = useState([]);
@@ -90,21 +94,38 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
             {
                 replyOpen ? (
                     <form onSubmit={reply} >
-
-                        <label>Message:</label>
-                        <textarea
-                            value={replyBody}
-                            onChange={(e) => {
-                                setReplyBody(e.target.value)
-                            }}
-                            required
-                            className="reply-body"
-                        />
-
+                        <Grid
+                            container
+                            spacing={1}
+                            sx = {{ mt: 1 }}
+                        >
+                            <Grid item xs={12} >
+                                <TextField
+                                    id="reply-body"
+                                    fullWidth
+                                    multiline
+                                    minRows={7}
+                                    maxRows={7}
+                                    value={replyBody}
+                                    label={"Message"}
+                                    onChange={(e) => {
+                                        setReplyBody(e.target.value)
+                                    }}
+                                    inputProps={{ maxLength: 5000 }}
+                                    style={{ resize: 'none' }}
+                                />
+                            </Grid>
+                        </Grid>
 
                         <div className="reply-actions">
                             <Tooltip title="Cancel">
-                                <IconButton color="secondary" onClick={cancelReply}>
+                                <IconButton
+                                    color="secondary"
+                                    onClick={cancelReply}
+                                    sx = {{
+                                        ml: 85
+                                    }}
+                                >
                                     <CancelIcon />
                                 </IconButton>
                             </Tooltip>

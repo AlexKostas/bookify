@@ -10,6 +10,7 @@ import Dialog from "@mui/material/Dialog";
 import {MenuItem, Select} from "@mui/material";
 import Badge from "../Badge/Badge";
 import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
+import CustomDialogTitle from "../ComposeMessage/CustomDialogTitle";
 
 const MessageGrid = () => {
   const [conversations, setConversations] = useState([]);
@@ -25,6 +26,8 @@ const MessageGrid = () => {
   const unreadMessages = useAutoFetchMessages();
 
   const itemsPerPage = 4;
+
+  const errTopic = 'An error occurred, check console for details';
 
   const fetchConversations = async (currentPage, orderDirection) => {
     try {
@@ -96,7 +99,6 @@ const MessageGrid = () => {
             <Grid container spacing={2}>
               { conversations.length > 0 ? (conversations.map((conversation) => (
                   <Grid item xs={12} key={conversation.conversationID}>
-                    {/* Display message as a clickable card */}
                     <Paper elevation={3} className="message-card" onClick={() => handleOpenConversation(conversation)}>
                       <Box display="flex" flexDirection="row" height="100%">
 
@@ -144,7 +146,9 @@ const MessageGrid = () => {
         </Container>
 
         <Dialog open={viewOpen} onClose={onClose} maxWidth="md">
-          <DialogTitle>{currentConversation?.topic || 'An error occured, check console for details'}</DialogTitle>
+          <DialogTitle sx={{ backgroundColor: '#003580', color: 'white' }}>
+            <CustomDialogTitle title={currentConversation?.topic || <span style={{ color: 'rgb(220,40,30)' }}>{errTopic}</span>}/>
+          </DialogTitle>
           <DialogContent>
             {
               currentConversation ? <ConversationView

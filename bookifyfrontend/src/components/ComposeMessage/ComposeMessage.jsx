@@ -69,7 +69,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
         <div>
             <Dialog open={open} onClose={onClose} maxWidth="md">
                 <DialogTitle sx={{ backgroundColor: '#003580', color: 'white' }}>
-                    <CustomDialogTitle onClose={onClose} />
+                    <CustomDialogTitle title={"New Message"} onClose={onClose} withClose={true}/>
                 </DialogTitle>
                 <DialogContent>
                     {
