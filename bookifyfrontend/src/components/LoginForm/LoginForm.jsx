@@ -111,7 +111,7 @@ const LoginForm = () => {
                         boxShadow: 6,
                         borderRadius: 2,
                         px: 4,
-                        py: 6,
+                        py: 2,
                     }}
                 >
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>

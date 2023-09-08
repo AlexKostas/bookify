@@ -6,6 +6,16 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Dialog from "@mui/material/Dialog";
 import './composeMessage.css'
+import TextField from "@mui/material/TextField";
+import * as React from "react";
+import Box from '@mui/material/Box';
+import InputAdornment from '@mui/material/InputAdornment';
+import Grid from '@mui/material/Grid';
+import Button from "@mui/material/Button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import MessageIcon from '@mui/icons-material/Message';
+import SendIcon from '@mui/icons-material/Send';
 
 const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const [recipient, setRecipient] = useState('');
@@ -20,7 +30,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         clearError();
-        
+
         try {
             await axiosPrivate.post('/messages/compose', {
                 recipientUsername: recipient.trim(),
@@ -32,7 +42,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
             setTopic('');
             setMessageBody('');
             onClose();
-        } 
+        }
         catch (error) {
             if(!error.response){
                 setError('No server response. Is the server running?');
@@ -58,7 +68,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     return (
         <div>
             <Dialog open={open} onClose={onClose} maxWidth="md">
-                <DialogTitle>New Message</DialogTitle>
+                <DialogTitle sx={{ backgroundColor: '#003580', color: 'white' }}>New Message</DialogTitle>
                 <DialogContent>
                     {
                         error && (
@@ -69,49 +79,88 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                         )
                     }
 
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label className="label" >Recipient:</label>
-                            <input
-                                type="text"
-                                value={recipient}
-                                onChange={(e) => {
-                                    setRecipient(e.target.value);
-                                    setError(null);
-                                }}
-                                required
-                                className="recipient-input"
-                            />
-                        </div>
-
-                        <div className="topic-field">
-                            <label className="label" >Topic:</label>
-                            <input
-                                type="text"
-                                value={topic}
-                                onChange={(e) => {
-                                    setTopic(e.target.value);
-                                    setError(null);
-                                }}
-                                required
-                                className="topic-input"
-                            />
-                        </div>
-
-                        <label>Message:</label>
-                        <textarea
-                            value={messageBody}
-                            onChange={(e) => {
-                                setMessageBody(e.target.value);
-                                setError(null);
-                            }}
-                            required
-                            className="message-body"
-                        />
-                        <button type="submit">Send Message</button>
-                    </form>
+                    <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleSubmit}
+                        sx={{ mt: 3 }}
+                    >
+                        <Grid container spacing={1}>
+                            <Grid item xs={12} >
+                                <TextField
+                                    name="recipient"
+                                    required
+                                    fullWidth
+                                    size="small"
+                                    type="text"
+                                    id="phonenumber"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                        setRecipient(e.target.value);
+                                        setError(null);
+                                    }}
+                                    value={recipient}
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">Recipient:</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={10} >
+                                <TextField
+                                    name="topic"
+                                    required
+                                    size="small"
+                                    fullWidth
+                                    type="text"
+                                    id="topic"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                        setTopic(e.target.value);
+                                        setError(null);
+                                    }}
+                                    value={topic}
+                                    InputProps={{
+                                        startAdornment: <InputAdornment position="start">Topic:</InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} >
+                                <TextField
+                                    id="message-body"
+                                    fullWidth
+                                    multiline
+                                    minRows={6}
+                                    maxRows={6}
+                                    value={messageBody}
+                                    label={"Message"}
+                                    onChange={(e) => {
+                                        setMessageBody(e.target.value);
+                                        setError(null);
+                                    }}
+                                    inputProps={{ maxLength: 5000 }}
+                                    style={{ resize: 'none' }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={5}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            sx={{ mt: 1.5, mb: 0, ml: 88 }}
+                            endIcon={<SendIcon />}
+                        >
+                            Send
+                        </Button>
+                        </Grid>
+                    </Box>
                 </DialogContent>
-                <button onClick={() => onClose()}>Close</button>
+                <Button
+                    variant="outlined"
+                    sx={{ mt: 0, mb: 0.5, mr: 0.5, ml: 0.5 }}
+                    onClick={() => onClose()}
+                >
+                    Close
+                </Button>
             </Dialog>
         </div>
     )

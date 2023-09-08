@@ -138,7 +138,7 @@ const RegistrationForm = ({
                                 boxShadow: 6,
                                 borderRadius: 2,
                                 px: 4,
-                                py: 6,
+                                py: 1,
                             }}
                         >
                             {inRegistration ? (
@@ -360,7 +360,7 @@ const RegistrationForm = ({
                                     {
                                         userData?.rolePreference !== 'admin' && (
                                             <>
-                                                <Grid item xs={12} sm={6}>
+                                                <Grid item xs={12}>
                                                     <FormControl fullWidth>
                                                         <InputLabel id="select-label">Select Role</InputLabel>
                                                         <Select
@@ -403,9 +403,9 @@ const RegistrationForm = ({
                                     </Button>
                                 )}
                                 {inRegistration && (
-                                    <Grid container justifyContent="flex-end">
+                                    <Grid container justifyContent="flex-end" >
                                         <Grid item>
-                                            <Link to="/login" variant="body2" style={{ color: 'blue' }}>
+                                            <Link to="/login" variant="body2" style={{ color: 'blue'}} >
                                                 Already have an account? Sign in
                                             </Link>
                                         </Grid>

@@ -1,9 +1,10 @@
 import {useEffect, useState} from "react";
 import Navbar from "../components/Navbar/Navbar";
-import ComposeMessage from "../components/ComposeMessage/ComposeMessage";
+import OldComposeMessage from "../components/ComposeMessage/OldComposeMessage";
 import MessageGrid from "../components/MessagesGrid/MessageGrid";
 import {useSearchContext} from "../context/SearchContext";
 import {useParams} from "react-router-dom";
+import ComposeMessage from "../components/ComposeMessage/ComposeMessage";
 
 const MessageDashboard = () => {
     const [composePanelActive, setComposePanelActive] = useState(false);
