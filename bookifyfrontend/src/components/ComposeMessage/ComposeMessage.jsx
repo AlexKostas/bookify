@@ -12,10 +12,8 @@ import Box from '@mui/material/Box';
 import InputAdornment from '@mui/material/InputAdornment';
 import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import MessageIcon from '@mui/icons-material/Message';
 import SendIcon from '@mui/icons-material/Send';
+import CustomDialogTitle from "./CustomDialogTitle";
 
 const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const [recipient, setRecipient] = useState('');
@@ -24,6 +22,8 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const [error, setError] = useState(null);
 
     const axiosPrivate = useAxiosPrivate();
+
+    const validSend = recipient;
 
     const clearError = () => setError(null);
 
@@ -68,7 +68,9 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     return (
         <div>
             <Dialog open={open} onClose={onClose} maxWidth="md">
-                <DialogTitle sx={{ backgroundColor: '#003580', color: 'white' }}>New Message</DialogTitle>
+                <DialogTitle sx={{ backgroundColor: '#003580', color: 'white' }}>
+                    <CustomDialogTitle onClose={onClose} />
+                </DialogTitle>
                 <DialogContent>
                     {
                         error && (
@@ -148,19 +150,13 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                             variant="contained"
                             sx={{ mt: 1.5, mb: 0, ml: 88 }}
                             endIcon={<SendIcon />}
+                            disabled={!validSend}
                         >
                             Send
                         </Button>
                         </Grid>
                     </Box>
                 </DialogContent>
-                <Button
-                    variant="outlined"
-                    sx={{ mt: 0, mb: 0.5, mr: 0.5, ml: 0.5 }}
-                    onClick={() => onClose()}
-                >
-                    Close
-                </Button>
             </Dialog>
         </div>
     )
