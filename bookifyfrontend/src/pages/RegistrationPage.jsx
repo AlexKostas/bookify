@@ -66,7 +66,7 @@ const RegistrationPage = () => {
 
     return (
         <>
-            <Navbar hideButtons={true} />
+            <Navbar hideButtons={false} />
             <RegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
                               success={success} />
         </>
