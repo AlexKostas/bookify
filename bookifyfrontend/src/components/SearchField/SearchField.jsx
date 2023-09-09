@@ -47,7 +47,7 @@ const SearchField = ( {onSelection} ) => {
                 <TextField
                 {...params}
                 value={inputValue ? 'Location...' : ''}
-                variant="outlined"
+                forcePopupIcon={false}
                 InputProps={{
                     ...params.InputProps,
                     startAdornment: (

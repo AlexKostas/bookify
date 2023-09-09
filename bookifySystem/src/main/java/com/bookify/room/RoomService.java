@@ -8,12 +8,16 @@ import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
 import com.bookify.images.ImageStorage;
+import com.bookify.reviews.ReviewRepository;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
 import com.bookify.room_type.RoomTypeRepository;
+import com.bookify.rooms_viewed.ViewedRoom;
+import com.bookify.rooms_viewed.ViewedRoomRepository;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
+import com.bookify.utils.UtilityComponent;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -49,6 +53,9 @@ public class RoomService{
     private final ImageRepository imageRepository;
     private final ImageStorage imageStorage;
     private final AvailabilityRepository availabilityRepository;
+    private final ReviewRepository reviewRepository;
+    private final ViewedRoomRepository viewedRoomRepository;
+    private final UtilityComponent utility;
 
     public Integer registerRoom(RoomRegistrationDTO roomDTO) throws OperationNotSupportedException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -140,8 +147,8 @@ public class RoomService{
                 room.getAmenityIDs(),
                 room.getThumbnail().getImageGuid(),
                 room.getPhotosGUIDs(),
-                room.getRating(),
-                room.getReviewCount(),
+                reviewRepository.getAverageRating(room),
+                reviewRepository.countByRoom(room),
                 bookedDays,
                 bookedRanges
         );
@@ -187,6 +194,14 @@ public class RoomService{
 
         // finally delete the room
         roomRepository.delete(roomToDelete);
+    }
+
+    public void viewRoom(Integer roomID) {
+        Room room = roomRepository.findById(roomID)
+                .orElseThrow(() -> new EntityNotFoundException("Room " + roomID + " not found"));
+
+        User currentUser = utility.getCurrentAuthenticatedUser();
+        viewedRoomRepository.save(new ViewedRoom(currentUser, room));
     }
 
     private Room createRoom(RoomRegistrationDTO roomDTO, String hostUsername) throws OperationNotSupportedException {
@@ -272,7 +287,6 @@ public class RoomService{
         return roomTypeOptional.get();
     }
 
-    //TODO: Maybe move this to availability service
     private void setAvailability(List<DatePairDTO> availability, Room room){
         List<Availability> availabilityList = new ArrayList<>(1500);
         int counter = 0;

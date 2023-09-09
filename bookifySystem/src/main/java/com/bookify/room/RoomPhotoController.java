@@ -1,5 +1,6 @@
 package com.bookify.room;
 
+import com.bookify.images.ImageResourceDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -69,11 +70,11 @@ public class RoomPhotoController {
     @GetMapping("/get/{guid}")
     public ResponseEntity<?> getPhoto(@PathVariable String guid){
         try{
-            //TODO: extend for other image types
+            ImageResourceDTO imageResource = roomPhotoService.getPhoto(guid);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.setContentType(imageResource.mediaType());
 
-            return ResponseEntity.ok().headers(headers).body(roomPhotoService.getPhoto(guid));
+            return ResponseEntity.ok().headers(headers).body(imageResource.resource());
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

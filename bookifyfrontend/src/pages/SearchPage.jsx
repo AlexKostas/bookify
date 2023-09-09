@@ -8,6 +8,8 @@ import axios from "../api/axios";
 import {Pagination} from "@mui/material";
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import {useFilterOptions} from "../context/FilterOptionsContext";
+import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const SearchPage = () => {
     const { searchInfo } = useSearchContext();
@@ -24,15 +26,20 @@ const SearchPage = () => {
         roomTypes: [],
         orderDirection: 'ASC',
     });
+    const [loading, setLoading] = useState(true);
     const [initSetup, setInitSetup] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
+
+    const axiosPrivate = useAxiosPrivate();
+    const { auth } = useAuth();
 
     const fetchRooms = async (currentPage) => {
         if(!searchInfo) return;
 
         const endpointURL = '/search/search';
         try{
-            const response = await axios.put
+            setLoading(true);
+            const response = await (auth ? axiosPrivate : axios).put
             (`${endpointURL}?pageNumber=${currentPage-1}&pageSize=${itemsPerPage}&orderDirection=${orderDirection}`,
                 JSON.stringify(
                     {
@@ -57,6 +64,9 @@ const SearchPage = () => {
         }
         catch(error){
             console.log(error);
+        }
+        finally {
+            setLoading(false)
         }
     }
 
@@ -116,6 +126,7 @@ const SearchPage = () => {
 
                                 <RoomGrid
                                     rooms={rooms}
+                                    loading={loading}
                                 />
 
                                 <div className="pagination-controls">

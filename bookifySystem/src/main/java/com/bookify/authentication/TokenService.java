@@ -1,10 +1,13 @@
 package com.bookify.authentication;
 
 import com.bookify.configuration.Configuration;
+import com.bookify.user.User;
 import com.bookify.utils.Constants;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -19,6 +22,12 @@ import java.util.stream.Collectors;
 public class TokenService {
 
     private JwtEncoder jwtEncoder;
+
+    public String generateNewJWTToken(User user){
+        Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(updatedAuth);
+        return generateJWTToken(updatedAuth);
+    }
 
     public String generateJWTToken(Authentication authentication){
         String scope = authentication.getAuthorities().stream().

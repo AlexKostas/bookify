@@ -2,9 +2,13 @@ package com.bookify.images;
 
 import com.bookify.configuration.Configuration;
 import com.bookify.utils.GUIDGenerator;
+import com.bookify.utils.IOUtility;
 import com.bookify.utils.ImageFormatDetector;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -23,16 +27,16 @@ import java.util.List;
 public class ImageStorage {
     private final ImageRepository imageRepository;
     private final ImageFormatDetector imageFormatDetector;
+    private final IOUtility ioUtility;
     private final String pathRoot;
 
-    private final Environment env;
-
-    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, Environment env) throws IOException {
+    public ImageStorage(ImageRepository imageRepository, ImageFormatDetector imageFormatDetector, IOUtility ioUtility) throws IOException {
         this.imageRepository = imageRepository;
         this.imageFormatDetector = imageFormatDetector;
-        this.env = env;
+        this.ioUtility = ioUtility;
 
-        pathRoot = getImageDirectoryPath();
+        pathRoot = ioUtility.getDirectoryPath(Configuration.IMAGES_SUBFOLDER);
+
         preloadImage(Configuration.DEFAULT_PROFILE_PIC_NAME + "." + Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
         preloadImage(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME + "." + Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION);
     }
@@ -64,16 +68,16 @@ public class ImageStorage {
                 orElseThrow(() -> new EntityNotFoundException("Image with id " + guid + " not found"));
     }
 
-    public FileSystemResource loadImageFile(Image image){
+    public ImageResourceDTO loadImageFile(Image image){
         String finalPath = pathRoot + image.getImageFilename();
-        return new FileSystemResource(finalPath);
+        return new ImageResourceDTO(new FileSystemResource(finalPath), getMediaType(image));
     }
 
-    public FileSystemResource loadImageFileByGuid(String guid) throws EntityNotFoundException {
+    public ImageResourceDTO loadImageFileByGuid(String guid) throws EntityNotFoundException {
         Image image = imageRepository.findByImageGuid(guid).
                 orElseThrow(() -> new EntityNotFoundException("Image with guid "+ guid + " not found"));
         String finalPath = pathRoot + image.getImageFilename();
-        return new FileSystemResource(finalPath);
+        return new ImageResourceDTO(new FileSystemResource(finalPath), getMediaType(image));
     }
 
     public void deleteImages(List<Image> images) throws UnsupportedOperationException {
@@ -107,16 +111,29 @@ public class ImageStorage {
         }
     }
 
+    private MediaType getMediaType(Image image){
+        if(image.getExtension().equals("png")) return MediaType.IMAGE_PNG;
+        if(image.getExtension().equals("jpg") || image.getExtension().equals("jpeg")) return MediaType.IMAGE_JPEG;
+    }
+  
     private String getImageDirectoryPath() throws IOException {
         String appDataDirectory = env.getProperty("upload.directory.root");
 
         String directoryPath = appDataDirectory + Configuration.IMAGES_SUBFOLDER;
 
-        Path path = Path.of(directoryPath);
-        if(!Files.exists(path))
-            Files.createDirectories(path);
+        log.warn("Unknown image type. Defaulting to IMAGE_PNG");
+        return MediaType.IMAGE_PNG;
+    }
 
-        return directoryPath + "/";
+    private void preloadImage(String filename) throws IOException {
+        Path path = Path.of(pathRoot).resolve(filename);
+        if(!Files.exists(path)){
+            ClassPathResource resource = new ClassPathResource("/images/" + filename);
+
+            try (InputStream inputStream = resource.getInputStream()) {
+                Files.copy(inputStream, path);
+            }
+        }
     }
 
     private void preloadImage(String filename) throws IOException {

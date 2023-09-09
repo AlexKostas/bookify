@@ -16,16 +16,6 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping("/searchAll")
-    public ResponseEntity<?> searchAll(
-            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,
-            @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_SIZE) int pageSize,
-            @RequestParam(defaultValue = Configuration.DEFAULT_SEARCH_ORDER) String orderDirection
-    ){
-        Page<SearchPreviewDTO> searchResults = searchService.searchAll(pageNumber, pageSize, orderDirection);
-        return ResponseEntity.ok(searchResults);
-    }
-
     @PutMapping("/search")
     public ResponseEntity<?> search(
             @RequestParam(defaultValue = Configuration.DEFAULT_PAGE_INDEX) int pageNumber,

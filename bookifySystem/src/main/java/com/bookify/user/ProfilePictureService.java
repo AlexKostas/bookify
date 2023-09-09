@@ -2,6 +2,7 @@ package com.bookify.user;
 
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
+import com.bookify.images.ImageResourceDTO;
 import com.bookify.images.ImageStorage;
 import com.bookify.user.User;
 import com.bookify.user.UserRepository;
@@ -37,7 +38,7 @@ public class ProfilePictureService {
         return imageItem.getImageGuid();
     }
 
-    public FileSystemResource getProfilePicture(String username){
+    public ImageResourceDTO getProfilePicture(String username){
         User user = userRepository.findByUsername(username).
                 orElseThrow(() -> new EntityNotFoundException("Could not find user " + username));
         return imageStorage.loadImageFile(user.getProfilePicture());

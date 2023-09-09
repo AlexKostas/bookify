@@ -13,9 +13,6 @@ import com.bookify.role.RoleRepository;
 import com.bookify.utils.Constants;
 import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,10 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -131,7 +125,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
 
         // Generate and return a new token as user info is updated
-        String newAccessToken = generateNewJWTToken(user);
+        String newAccessToken = tokenService.generateNewJWTToken(user);
 
         return new LoginRegistrationResponseDTO(
                 newProfile.newUsername(),
@@ -184,14 +178,19 @@ public class UserService implements UserDetailsService {
 
         return new LoginRegistrationResponseDTO(
                 changePasswordDTO.username(),
-                generateNewJWTToken(user),
+                tokenService.generateNewJWTToken(user),
                 user.getRefreshToken().getToken(),
                 user.getRoleAuthorityList());
     }
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
         Optional<User> userOptional = userRepository.findByUsername(newUsername);
-        if(userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername))
+
+        // Username anonymousUser defined in the ANONYMOUS_USER_PRINCIPAL constant is not allowed because it is used
+        // internally by the Spring Security framework to define an unauthenticated user. Our application makes use
+        // of this assumption, therefore to avoid any confusion this specific name is forbidden
+        if((userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername)) ||
+                Objects.equals(newUsername, Constants.ANONYMOUS_USER_PRINCIPAL))
             throw new IllegalArgumentException("Username " + newUsername + " is taken");
 
         userOptional = userRepository.findByEmail(newEmail);
@@ -233,12 +232,4 @@ public class UserService implements UserDetailsService {
         if(password.length() < Configuration.MIN_PASSWORD_LENGTH)
             throw new InappropriatePasswordException("Password too short");
     }
-
-    //TODO: maybe move this to a more appropriate place
-    private String generateNewJWTToken(User user){
-        Authentication updatedAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(updatedAuth);
-        return tokenService.generateJWTToken(updatedAuth);
-    }
-
 }

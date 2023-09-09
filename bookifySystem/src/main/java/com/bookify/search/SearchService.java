@@ -6,6 +6,8 @@ import com.bookify.room_amenities.Amenity;
 import com.bookify.room_amenities.AmenityRepository;
 import com.bookify.room_type.RoomType;
 import com.bookify.room_type.RoomTypeRepository;
+import com.bookify.user.User;
+import com.bookify.utils.UtilityComponent;
 import com.bookify.utils.Utils;
 import jakarta.persistence.criteria.Order;
 import lombok.AllArgsConstructor;
@@ -23,34 +25,19 @@ public class SearchService {
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
     private final RoomTypeRepository roomTypeRepository;
+    private final SearchEntryRepository searchEntryRepository;
+    private final UtilityComponent utility;
 
     private enum OrderDirection {
         UP, DOWN
     }
 
-    //TODO: to be deleted once the recommendation system is done
-    public Page<SearchPreviewDTO> searchAll(int pageNumber, int pageSize, String sortDirection){
-        // Ascending is assumed to be the default sorting direction, even when the relevant parameter is invalid
-        Sort.Direction direction = Sort.Direction.ASC;
-        if(sortDirection.equalsIgnoreCase("desc"))
-            direction = Sort.Direction.DESC;
-
-        if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc"))
-            log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
-                    "Please use 'asc' or 'desc' to specify the order of the search results");
-
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-
-        Page<Room> searchResult = roomRepository.findAll(pageable);
-
-        List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
-                map((room) -> mapRoomToDTO(room, 1, 3)).toList();
-
-        return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
-    }
-
     public Page<SearchPreviewDTO> search(int pageNumber, int pageSize, String sortDirection,
                                          SearchRequestDTO searchDTO){
+        User currentUser = utility.getCurrentAuthenticatedUserIfExists();
+        if(currentUser != null)
+            searchEntryRepository.save(new SearchEntry(currentUser, searchDTO.city(), searchDTO.state(), searchDTO.country()));
+
 
         if(!sortDirection.equalsIgnoreCase("desc") && !sortDirection.equalsIgnoreCase("asc")) {
             log.warn("Unknown sorting direction '" + sortDirection + "'. Assuming ascending order. " +
@@ -121,7 +108,7 @@ public class SearchService {
                 pageable);
 
         List<SearchPreviewDTO> finalResult = searchResult.getContent().stream().
-                map((room) -> mapRoomToDTO(room, searchDTO.tenants(), nights)).toList();
+                map((room) -> utility.mapRoomToDTO(room, searchDTO.tenants(), nights)).toList();
 
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
@@ -137,16 +124,5 @@ public class SearchService {
         }
 
         return suggestions;
-    }
-
-    private SearchPreviewDTO mapRoomToDTO(Room room, int tenants, long nights){
-        return new SearchPreviewDTO(room.getRoomID(),
-                room.getName(),
-                room.getRating(),
-                room.getReviewCount(),
-                room.getNumOfBeds(),
-                room.calculateCost(tenants, (int) nights),
-                room.getRoomType().getName(),
-                room.getThumbnail().getImageGuid());
     }
 }

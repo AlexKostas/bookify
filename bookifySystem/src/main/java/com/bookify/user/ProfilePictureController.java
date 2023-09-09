@@ -1,5 +1,6 @@
 package com.bookify.user;
 
+import com.bookify.images.ImageResourceDTO;
 import com.bookify.user.ProfilePictureService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,9 @@ public class ProfilePictureController {
 
     @PostMapping("/uploadProfilePic/{username}")
     @PreAuthorize("hasRole('admin') or #username == authentication.name")
-    public ResponseEntity uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
+    public ResponseEntity<?> uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
         try {
-            //TODO: maybe return CREATED http status instead
-            return ResponseEntity.ok(profilePictureService.uploadProfilePicture(username, image));
+            return ResponseEntity.status(HttpStatus.CREATED).body(profilePictureService.uploadProfilePicture(username, image));
         } catch (IllegalArgumentException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -33,13 +33,13 @@ public class ProfilePictureController {
     }
 
     @GetMapping("/getProfilePic/{username}")
-    public ResponseEntity getProfilePic(@PathVariable String username){
+    public ResponseEntity<?> getProfilePic(@PathVariable String username){
         try{
-            //TODO: extend for other image types
+            ImageResourceDTO imageResource = profilePictureService.getProfilePicture(username);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.setContentType(imageResource.mediaType());
 
-            return ResponseEntity.ok().headers(headers).body(profilePictureService.getProfilePicture(username));
+            return ResponseEntity.ok().headers(headers).body(imageResource.resource());
         }
         catch (EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -51,7 +51,7 @@ public class ProfilePictureController {
 
     @DeleteMapping("/deleteProfilePic/{username}")
     @PreAuthorize("hasRole('admin') or #username == authentication.name")
-    public ResponseEntity deleteProfilePic(@PathVariable String username){
+    public ResponseEntity<?> deleteProfilePic(@PathVariable String username){
         try {
             return ResponseEntity.ok(profilePictureService.deleteProfilePicture(username));
         }

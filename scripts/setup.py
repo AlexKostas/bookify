@@ -1,5 +1,6 @@
 import mysql.connector
 import csv
+import random
 from datetime import datetime
 
 guid = 0
@@ -223,7 +224,7 @@ def insert_reviews(connection, csv_file):
         for row in reader:
             review_id = row['id']
             comment = row['comments']
-            stars = 4
+            stars = random.randrange(1, 5)
             reviewer_app_user_id = row['reviewer_id']
             room_id = row['listing_id']
             rawDate = row['date']

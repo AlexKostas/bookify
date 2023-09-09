@@ -18,6 +18,9 @@ import java.util.Set;
 public interface RoomRepository extends JpaRepository<Room, Integer> {
     Page<Room> findAll(Pageable pageable);
 
+    @Query("SELECT r.roomID FROM Room r")
+    List<Integer> findAllRoomIds();
+
     // Unfortunately, due to the way JPA works it is not allowed to use named parameters in the order by clause
     // and although it works, it is non-standard, throws exceptions and could break at any moment. Since there is
     // no way to conveniently parameterize the order direction, two separate queries are needed. BE CAREFUL TO MAKE ANY
@@ -100,4 +103,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
             "   OR LOWER(r.country) LIKE CONCAT('%', LOWER(:input), '%') " +
             "LIMIT " + Configuration.MAX_LOCATION_AUTOCOMPLETE_SUGGESTIONS)
     List<String[]> findAutocompleteLocationSuggestions(@Param("input") String input);
+
+    @Query("SELECT r FROM Room r " +
+            "LEFT JOIN r.reviews re " +
+            "GROUP BY r.roomID " +
+            "ORDER BY AVG(re.stars) DESC, COUNT(*) DESC LIMIT 20")
+    List<Room> findBestRooms();
 }
