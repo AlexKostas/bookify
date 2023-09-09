@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CustomTextarea from "../CustomTextArea/CustomTextarea";
 import TextField from "@mui/material/TextField";
+import MessageIcon from "@mui/icons-material/Message";
 
 
 const theme = createTheme();
@@ -54,7 +55,10 @@ const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                         boxShadow: 6,
                         borderRadius: 2,
                         px: 4,
-                        py: 6,
+                        py: 1,
+                        width: '150%',
+                        marginLeft: '-25%',
+                        marginRight: '-25%',
                     }}
                 >
                     <Typography component="h1" variant="h5">
@@ -79,7 +83,7 @@ const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                             <TextField
                                 id="about-info"
                                 multiline
-                                minRows={3}
+                                minRows={5}
                                 maxRows={7}
                                 value={aboutInfo}
                                 label={"About Me"}
@@ -87,17 +91,16 @@ const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                                     setAboutInfo(event.target.value)
                                 }}
                                 inputProps={{ maxLength: 600 }}
-                                sx={{ maxWidth: '25rem' }}
-                                style={{ resize: 'none', width: '25rem' }}
+                                sx={{ maxWidth: '36rem', }}
+                                style={{ resize: 'none', width: '36rem' }}
                             />
                         </Grid>
                         <Button
                             type="submit"
-                            fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{ mt: 3, width: "30%", mx: "auto"}}
+                            endIcon={<FontAwesomeIcon icon={faEdit} />}
                         >
-                            <FontAwesomeIcon icon={faEdit} />
                             Save
                         </Button>
                     </Box>

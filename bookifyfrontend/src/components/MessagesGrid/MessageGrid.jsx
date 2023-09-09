@@ -12,13 +12,12 @@ import Badge from "../Badge/Badge";
 import useAutoFetchMessages from "../../hooks/useAutoFetchMessages";
 import CustomDialogTitle from "../ComposeMessage/CustomDialogTitle";
 
-const MessageGrid = () => {
+const MessageGrid = ({ orderDirection }) => {
   const [conversations, setConversations] = useState([]);
   const axiosPrivate = useAxiosPrivate();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [orderDirection, setOrderDirection] = useState('DESC');
 
   const [viewOpen, setViewOpen] = useState(false);
   const [currentConversation, setCurrentConversation] = useState(null);
@@ -70,27 +69,15 @@ const MessageGrid = () => {
   }
 
   useEffect(() => {
-    fetchConversations(currentPage, orderDirection);
-  }, []);
-
-  useEffect(() => {
     if(unreadMessages > 0) fetchConversations(currentPage, orderDirection);
   }, [unreadMessages]);
 
+  useEffect(() => {
+    fetchConversations(currentPage, orderDirection);
+  }, [orderDirection]);
+
   return (
       <>
-        Sort by:
-        <Select
-            id="order"
-            value={orderDirection}
-            onChange={(event) => {
-              setOrderDirection(event.target.value);
-              fetchConversations(currentPage, event.target.value)
-            }}
-        >
-          <MenuItem value="DESC">Latest Messages First</MenuItem>
-          <MenuItem value="ASC">Earliest Messages First</MenuItem>
-        </Select>
         <br/>
         <br/>
 
