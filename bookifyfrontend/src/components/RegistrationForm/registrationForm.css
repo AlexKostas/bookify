@@ -15,6 +15,7 @@ html {
 body {
     min-height: 100vh;
     background-color: dodgerblue;
+    /*background-color: Gainsboro; idea for future background colour?*/
 }
 
 .form-background {

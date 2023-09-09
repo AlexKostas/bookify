@@ -5,12 +5,26 @@ import {useNavigate} from "react-router-dom";
 import {useLocalStorage} from "../../hooks/useLocalStorage";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheck, faInfoCircle, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import "./registrationForm.css"
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import {InputAdornment} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@material-ui/icons";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 
 const PASSWORD_UPDATE_URL = "/user/changePassword";
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
+
+const theme = createTheme();
 
 const ChangePasswordForm = () => {
     const [error, setError] = useState('');
@@ -19,35 +33,37 @@ const ChangePasswordForm = () => {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
     const errRef = useRef();
+    const isFirstRender = useRef(true);
     const [user, setUser] = useState();
 
     const [pwd, setPwd] = useState('');
-    const [validPwd, setValidPwd] = useState(false);
-    const [pwdFocus, setPwdFocus] = useState(false);
+    const [validPwd, setValidPwd] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [matchPwd, setMatchPwd] = useState('');
     const [validMatch, setValidMatch] = useState(false);
-    const [matchFocus, setMatchFocus] = useState(false);
+    const [showMatchPwd, setShowMatchPwd] = useState(false);
 
     const [oldPwd, setOldPwd] = useState('');
-    const [validOldPwd, setValidOldPwd] = useState(false);
-    const [oldPwdFocus, setOldPwdFocus] = useState(false);
+    const [showOldPwd, setShowOldPwd] = useState(false);
 
     const [pwdChanged, setPwdChanged] = useState(true);
 
-    useEffect(() => {
-        setValidOldPwd(PWD_REGEX.test(oldPwd));
-    }, [oldPwd]);
+    const validPwdChange =
+                                oldPwd && pwd && matchPwd && pwdChanged &&
+                                validPwd && validMatch;
 
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         setPwdChanged(oldPwd !== pwd);
-    }, [pwd])
+    }, [pwd, oldPwd])
 
     useEffect(() => {
-        setValidPwd(PWD_REGEX.test(pwd) && pwdChanged);
         setValidMatch(pwd === matchPwd);
-    }, [pwd, matchPwd, pwdChanged])
-
+    }, [pwd, matchPwd])
 
     const handleChangePassword = async (userInfo) => {
         try {
@@ -81,22 +97,13 @@ const ChangePasswordForm = () => {
                 errorMessage = 'Old password is not correct';
             else
                 errorMessage = 'Password change Failed'
-
             setError(errorMessage)
-            console.log(err);
         }
     }
 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const v = PWD_REGEX.test(pwd);
-
-        if ( !v){
-            setError("Invalid Entry");
-            return;
-        }
 
         const userDetails = {
             user,
@@ -106,7 +113,6 @@ const ChangePasswordForm = () => {
         await handleChangePassword(userDetails);
 
         //Clear state
-        //setUser('');
         setPwd('');
         setMatchPwd('');
         setOldPwd('');
@@ -114,85 +120,143 @@ const ChangePasswordForm = () => {
     }
 
     return (
-        <>
-            <div className="main">
-                <section className='form-background'>
-                    <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive">{error}</p>
-
-                    <form onSubmit={handleSubmit}>
-                        <label htmlFor="old_password">
-                            Old password:
-                            <FontAwesomeIcon icon={faCheck} className={validOldPwd && oldPwd ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validOldPwd || !oldPwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="old_password"
-                            onChange={(e) => setOldPwd(e.target.value)}
-                            value={oldPwd}
-                            required
-                            aria-invalid={validOldPwd ? "false" : "true"}
-                            aria-describedby="oldpwdnote"
-                            onFocus={() => setOldPwdFocus(true)}
-                            onBlur={() => setOldPwdFocus(false)}
-                        />
-                        <p id="oldpwdnote" className={oldPwdFocus && !validOldPwd ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            Enter your old password.
-                        </p>
-                        <label htmlFor="password">
-                            New password:
-                            <FontAwesomeIcon icon={faCheck} className={validPwd? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            onChange={(e) => setPwd(e.target.value)}
-                            value={pwd}
-                            required
-                            aria-invalid={validPwd ? "false" : "true"}
-                            aria-describedby="pwdnote"
-                            onFocus={() => setPwdFocus(true)}
-                            onBlur={() => setPwdFocus(false)}
-                        />
-                        <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            New password must not be the same with <br/>
-                            the old password. <br/>
-                            8 to 24 characters.<br />
-                            Must include uppercase and lowercase letters, a number and a special character.<br />
-                            Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
-                        </p>
-
-
-                        <label htmlFor="confirm_pwd">
-                            Confirm new password:
-                            <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd && validPwd ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={(validMatch && validPwd) || !matchPwd ? "hide" : "invalid"} />
-                        </label>
-                        <input
-                            type="password"
-                            id="confirm_pwd"
-                            onChange={(e) => setMatchPwd(e.target.value)}
-                            value={matchPwd}
-                            required
-                            aria-invalid={validMatch ? "false" : "true"}
-                            aria-describedby="confirmnote"
-                            onFocus={() => setMatchFocus(true)}
-                            onBlur={() => setMatchFocus(false)}
-                        />
-                        <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
-                            <FontAwesomeIcon icon={faInfoCircle} />
-                            Must match with the new password.
-                        </p>
-
-                        <button disabled={!validPwd || !validMatch}>Change Password</button>
-
-                    </form>
-                </section>
-            </div>
-        </>
+        <ThemeProvider theme={theme}>
+            <Container component="main" maxWidth="sm">
+                <CssBaseline />
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        boxShadow: 6,
+                        borderRadius: 2,
+                        px: 4,
+                        py: 6,
+                    }}
+                >
+                    <Typography component="h1" variant="h5">
+                        Change Password <br/>
+                        <VpnKeyIcon/>
+                    </Typography>
+                    <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleSubmit}
+                        sx={{ mt: 3 }}
+                    >
+                        <p ref={errRef} className={error ? "errmsg" : "offscreen"} aria-live="assertive">{error}</p>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="old_password"
+                                    label="Old Password"
+                                    type={showOldPwd ? "text" : "password"}
+                                    value={oldPwd}
+                                    onChange={(e) => {
+                                        setOldPwd(e.target.value);
+                                    }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => setShowOldPwd(!showOldPwd)}
+                                                    edge="end"
+                                                >
+                                                    {showOldPwd ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        sx: { height: '3rem' },
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="new_password"
+                                    label="New Password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={pwd}
+                                    onChange={(e) => {
+                                        setPwd(e.target.value);
+                                        setValidPwd(PWD_REGEX.test(e.target.value));
+                                    }}
+                                    error={!validPwd || !pwdChanged}
+                                    helperText={
+                                        !pwdChanged ? (
+                                            "New password must not be the same with the old password."
+                                        ) : (
+                                            !validPwd ? (
+                                                <>
+                                                    8 to 24 characters.<br />
+                                                    Must include uppercase and lowercase letters, a number, and a special character.<br />
+                                                    Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag"># </span>
+                                                    <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+                                                </>
+                                            ) : null
+                                        )
+                                    }
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        sx: { height: '3rem' },
+                                    }}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="matchPwd"
+                                    label="Confirm New Password"
+                                    type={showMatchPwd ? "text" : "password"}
+                                    value={matchPwd}
+                                    error={!validMatch}
+                                    onChange={(e) => {
+                                        setMatchPwd(e.target.value);
+                                    }}
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    onClick={() => setShowMatchPwd(!showMatchPwd)}
+                                                    edge="end"
+                                                >
+                                                    {showMatchPwd ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                        sx: { height: '3rem' },
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            disabled = {!validPwdChange}
+                        >
+                            <FontAwesomeIcon icon={faEdit} />
+                            Edit Password
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
+        </ThemeProvider>
     );
 };
 

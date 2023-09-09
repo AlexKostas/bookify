@@ -3,7 +3,7 @@ import Dropdown from "../Dropdown/Dropdown";
 import "./navbar.css";
 import { Link } from "react-router-dom";
 
-const Navbar = ({image}) => {
+const Navbar = ({image, hideButtons = false}) => {
     const { auth } = useAuth();
 
     return (
@@ -12,17 +12,21 @@ const Navbar = ({image}) => {
                 <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
                     <span className="logo">Bookify</span>
                 </Link>
-                {auth ? <Dropdown username={auth.user} image={image} /> : (
-                    <div className="navItems">
-                        <div className="buttons">
-                            <Link to='/register'>
-                                <button className="navButton">Register</button>
-                            </Link>
-                            <Link to='/login'>
-                                <button className="navButton">Login</button>
-                            </Link>
+                {auth ? (
+                    <Dropdown username={auth.user} image={image} />
+                ) : (
+                    !hideButtons && (
+                        <div className="navItems">
+                            <div className="buttons">
+                                <Link to="/register">
+                                    <button className="navButton">Register</button>
+                                </Link>
+                                <Link to="/login">
+                                    <button className="navButton">Login</button>
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    )
                 )}
             </div>
         </div>
