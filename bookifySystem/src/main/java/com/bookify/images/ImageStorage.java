@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +36,7 @@ public class ImageStorage {
         this.ioUtility = ioUtility;
 
         pathRoot = ioUtility.getDirectoryPath(Configuration.IMAGES_SUBFOLDER);
+
         preloadImage(Configuration.DEFAULT_PROFILE_PIC_NAME + "." + Configuration.DEFAULT_PROFILE_PIC_EXTENSION);
         preloadImage(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME + "." + Configuration.DEFAULT_ROOM_THUMBNAIL_EXTENSION);
     }
@@ -110,9 +114,26 @@ public class ImageStorage {
     private MediaType getMediaType(Image image){
         if(image.getExtension().equals("png")) return MediaType.IMAGE_PNG;
         if(image.getExtension().equals("jpg") || image.getExtension().equals("jpeg")) return MediaType.IMAGE_JPEG;
+    }
+  
+    private String getImageDirectoryPath() throws IOException {
+        String appDataDirectory = env.getProperty("upload.directory.root");
+
+        String directoryPath = appDataDirectory + Configuration.IMAGES_SUBFOLDER;
 
         log.warn("Unknown image type. Defaulting to IMAGE_PNG");
         return MediaType.IMAGE_PNG;
+    }
+
+    private void preloadImage(String filename) throws IOException {
+        Path path = Path.of(pathRoot).resolve(filename);
+        if(!Files.exists(path)){
+            ClassPathResource resource = new ClassPathResource("/images/" + filename);
+
+            try (InputStream inputStream = resource.getInputStream()) {
+                Files.copy(inputStream, path);
+            }
+        }
     }
 
     private void preloadImage(String filename) throws IOException {
