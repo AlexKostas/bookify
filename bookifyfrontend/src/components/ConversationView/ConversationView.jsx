@@ -36,8 +36,7 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
         }
     }
 
-    const reply = async (e) => {
-        e.preventDefault();
+    const reply = async () => {
         const endpointURL = `/messages/reply/${conversationID}`;
 
         try {
@@ -93,11 +92,19 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
         <div>
             {
                 replyOpen ? (
-                    <form onSubmit={reply} >
+                    <Box
+                        component="form"
+                        noValidate
+                        sx={{ mt: 0, width: "35rem" }}
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            await reply();
+                        }}
+                    >
                         <Grid
                             container
                             spacing={1}
-                            sx = {{ mt: 1 }}
+                            justifyContent="flex-end"
                         >
                             <Grid item xs={12} >
                                 <TextField
@@ -122,21 +129,21 @@ const ConversationView = ({conversationID, readonly, onClose}) => {
                                 <IconButton
                                     color="secondary"
                                     onClick={cancelReply}
-                                    sx = {{
-                                        ml: 85
-                                    }}
                                 >
                                     <CancelIcon />
                                 </IconButton>
                             </Tooltip>
 
                             <Tooltip title="Send Message">
-                                <IconButton color="primary" type="submit" >
-                                    <SendIcon />
+                                <IconButton
+                                    color="primary"
+                                    type="submit"
+                                >
+                                    <SendIcon/>
                                 </IconButton>
                             </Tooltip>
                         </div>
-                    </form>
+                </Box>
                 ) : (
                     <div className="message-actions">
                         <Tooltip title={readonly ? "This conversation is read-only" : "Reply"}>
