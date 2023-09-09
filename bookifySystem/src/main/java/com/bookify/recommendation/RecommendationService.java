@@ -128,7 +128,7 @@ public class RecommendationService {
         Arrays.sort(ratings, (o1, o2) -> Double.compare(o2.rating, o1.rating));
 
         List<Room> recommendations = new ArrayList<>();
-        for(int i = 0; i < numberOfRecommendations; i++)
+        for(int i = 0; i < Math.min(numberOfRecommendations, numberOfRooms); i++)
             recommendations.add(roomRepository.findById(ratings[i].roomID).get());
 
         return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
