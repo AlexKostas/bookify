@@ -1,10 +1,10 @@
 import Navbar from "../components/Navbar/Navbar";
-import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
 import { useState } from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
+import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
 
 const REGISTER_URL = '/registration/register';
 
@@ -66,10 +66,9 @@ const RegistrationPage = () => {
 
     return (
         <>
-            <Navbar />
-            <h1>Register</h1>
+            <Navbar hideButtons={true} />
             <RegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
-                success={success} />
+                              success={success} />
         </>
     )
 }

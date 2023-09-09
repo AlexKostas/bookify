@@ -107,6 +107,14 @@ public class ImageStorage {
         }
     }
 
+    private MediaType getMediaType(Image image){
+        if(image.getExtension().equals("png")) return MediaType.IMAGE_PNG;
+        if(image.getExtension().equals("jpg") || image.getExtension().equals("jpeg")) return MediaType.IMAGE_JPEG;
+
+        log.warn("Unknown image type. Defaulting to IMAGE_PNG");
+        return MediaType.IMAGE_PNG;
+    }
+
     private void preloadImage(String filename) throws IOException {
         Path path = Path.of(pathRoot).resolve(filename);
         if(!Files.exists(path)){
@@ -116,13 +124,5 @@ public class ImageStorage {
                 Files.copy(inputStream, path);
             }
         }
-    }
-
-    private MediaType getMediaType(Image image){
-        if(image.getExtension().equals("png")) return MediaType.IMAGE_PNG;
-        if(image.getExtension().equals("jpg") || image.getExtension().equals("jpeg")) return MediaType.IMAGE_JPEG;
-
-        log.warn("Unknown image type. Defaulting to IMAGE_PNG");
-        return MediaType.IMAGE_PNG;
     }
 }

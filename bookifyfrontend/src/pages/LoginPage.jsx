@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar/Navbar";
 const LoginPage = () => {
     return (
         <>
-            <Navbar />
+            <Navbar hideButtons={true}/>
             <LoginForm />
         </>
     );
