@@ -5,7 +5,7 @@ import Checkbox from "@mui/material/Checkbox";
 import {blue} from "@mui/material/colors";
 import "./checkboxSelection.css"
 
-const CheckboxSelection = ({title, onFiltersChanged, endpointURL, defaultData, onlyOneOption = false}) => {
+const CheckboxSelection = ({title, onFiltersChanged, endpointURL, defaultData, onlyOneOption = false, enableDescriptions = true}) => {
     const [selectedItems, setSelectedItems] = useState(new Set());
     const { availableItems } = useFetchItems(endpointURL);
 
@@ -53,7 +53,7 @@ const CheckboxSelection = ({title, onFiltersChanged, endpointURL, defaultData, o
 
                                     {item.name}
 
-                                    <p className="description">{item.description}</p>
+                                    {enableDescriptions && <p className="description">{item.description}</p>}
                                 </label>
                             </div>
                         ))
