@@ -6,6 +6,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useSearchContext} from "../context/SearchContext";
+import Footer from "../Footer/Footer";
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -30,6 +31,7 @@ const ProfilePage = () => {
             <FontAwesomeIcon icon={faEdit} />
             Edit About Info
         </button>
+        <Footer/>
     </>
   );
 };

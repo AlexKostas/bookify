@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Footer from "../Footer/Footer";
 
 const HomePage = () => {
     const endpointURL = '/recommendation/recommend';
@@ -41,6 +42,7 @@ const HomePage = () => {
         <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
         <br />
         <RoomGrid rooms={rooms} loading={loading} />
+        <Footer/>
         </>   
     )
 }

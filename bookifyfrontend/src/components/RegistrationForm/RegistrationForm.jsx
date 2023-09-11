@@ -25,7 +25,26 @@ const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@(.+)$/;
 const PHONE_REGEX = /^\d{10,}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
 
-const theme = createTheme();
+const theme = createTheme({
+    components: {
+        Container: {
+            styleOverrides: {
+                root: {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: '100vh',
+                },
+            },
+        },
+        Footer: {
+            styleOverrides: {
+                root: {
+                    marginTop: 'auto',
+                },
+            },
+        },
+    },
+});
 
 const RegistrationForm = ({
                                  inRegistration = true,
@@ -127,7 +146,7 @@ const RegistrationForm = ({
                 </section>
             ) : (
                 <ThemeProvider theme={theme}>
-                    <Container component="main" maxWidth="sm">
+                    <Container component="main" maxWidth="sm" style={{ marginBottom: '260px' }}>
                         <CssBaseline />
                         <Box
                             sx={{

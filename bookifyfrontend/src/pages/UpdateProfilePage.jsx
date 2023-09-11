@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
+import Footer from "../Footer/Footer";
 
 const UPDATE_URL = '/user/updateProfile';
 
@@ -81,6 +82,7 @@ const UpdateProfilePage = () => {
                 Change Password
             </button>
             </div>
+            <Footer/>
         </>
     );
 };

@@ -1,0 +1,20 @@
+.footerContainer {
+    background-color: #003580;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    position: absolute;
+    color: white;
+}
+
+.attributionsLeft {
+    font-size: 14px;
+    margin-left: 20%;
+}
+
+.attributionsRight {
+    font-size: 14px;
+    margin-left: 20%;
+    margin-right: 20%;
+}

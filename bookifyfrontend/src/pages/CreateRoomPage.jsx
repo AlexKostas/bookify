@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import CreateRoom from "../components/CreateRoom/CreateRoom";
+import Footer from "../Footer/Footer";
 
 const CreateRoomPage = () => {
     const location = useLocation();
@@ -18,6 +19,7 @@ const CreateRoomPage = () => {
             <Navbar />
 
             <CreateRoom roomID={roomID} />
+            <Footer/>
         </>
     )
 }

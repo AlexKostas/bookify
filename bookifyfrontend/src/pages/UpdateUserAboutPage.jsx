@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import AboutInfoForm from "../components/AboutInfoForm/AboutInfoForm";
 import OldAboutInfoForm from "../components/AboutInfoForm/OldAboutInfoForm";
+import Footer from "../Footer/Footer";
 
 const UPDATE_USER_ABOUT_URL = '/user/updateAboutInfo';
 
@@ -58,6 +59,7 @@ const UpdateUserAboutPage = () => {
                     Back to profile
                 </button>
             </div>
+            <Footer/>
         </>
     );
 };

@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom"
 import RoomView from "../components/RoomView/RoomView"
 import Navbar from "../components/Navbar/Navbar";
+import Footer from "../Footer/Footer";
 
 const RoomViewPage = () => {
     const { roomID } = useParams();
@@ -9,6 +10,7 @@ const RoomViewPage = () => {
         <>
             <Navbar />
             <RoomView roomID={roomID} />
+            <Footer/>
         </>
     );
 }

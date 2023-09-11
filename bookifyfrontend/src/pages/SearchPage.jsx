@@ -10,6 +10,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import {useFilterOptions} from "../context/FilterOptionsContext";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Footer from "../Footer/Footer";
 
 const SearchPage = () => {
     const { searchInfo } = useSearchContext();
@@ -153,6 +154,7 @@ const SearchPage = () => {
                     <h3>No search parameters provided</h3>
                 )
             }
+            <Footer/>
         </>
     );
 }

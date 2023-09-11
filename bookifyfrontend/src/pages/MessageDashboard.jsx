@@ -10,6 +10,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import * as React from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import Grid from "@mui/material/Grid";
+import Footer from "../Footer/Footer";
 
 const MessageDashboard = () => {
     const [composePanelActive, setComposePanelActive] = useState(false);
@@ -83,6 +84,7 @@ const MessageDashboard = () => {
                     />
                     ) : <MessageGrid orderDirection={orderDirection} />
             }
+            <Footer/>
         </div>
     );
 }
