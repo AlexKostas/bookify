@@ -1,13 +1,18 @@
 import LoginForm from "../components/LoginForm/LoginForm";
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const LoginPage = () => {
     return (
         <>
-            <Navbar hideButtons={true}/>
-            <LoginForm />
-            <Footer/>
+            <div className="page-container">
+            <Navbar />
+                <div className="content">
+                    <LoginForm />
+                </div>
+                <Footer />
+            </div>
         </>
     );
 }

@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar/Navbar";
 import RoomGrid from "../components/RoomGrid/RoomGrid";
 import {useEffect, useState} from "react";
 import FiltersPanel from "../components/FiltersPanel/FiltersPanel";
-import './styles/searchPage.css'
+import './styles/searchPage.css';
 import axios from "../api/axios";
 import {Pagination} from "@mui/material";
 import {useLocalStorage} from "../hooks/useLocalStorage";
@@ -11,6 +11,7 @@ import {useFilterOptions} from "../context/FilterOptionsContext";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const SearchPage = () => {
     const { searchInfo } = useSearchContext();
@@ -97,64 +98,68 @@ const SearchPage = () => {
 
     return (
         <>
-            <Navbar />
-            {
-                searchInfo ? (
-                    <>
-                        <h1>Search Results</h1>
-                        <div className="search-container">
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    {
+                        searchInfo ? (
+                            <>
+                                <h1>Search Results</h1>
+                                <div className="search-container">
 
-                            <div className="filter-container">
-                                <FiltersPanel onFiltersChanged={onOptionsChanged} />
-                            </div>
+                                    <div className="filter-container">
+                                        <FiltersPanel onFiltersChanged={onOptionsChanged} />
+                                    </div>
 
-                            <div className="contents">
-                                <div className="pagination-controls">
-                                    <Pagination
-                                        size="large"
-                                        count={totalPages}
-                                        page={currentPage}
-                                        onChange={handlePageChange}
-                                        className="pagination-button"
-                                        showFirstButton
-                                        showLastButton
-                                        variant="outlined"
-                                        color="secondary"
-                                    />
+                                    <div className="contents">
+                                        <div className="pagination-controls">
+                                            <Pagination
+                                                size="large"
+                                                count={totalPages}
+                                                page={currentPage}
+                                                onChange={handlePageChange}
+                                                className="pagination-button"
+                                                showFirstButton
+                                                showLastButton
+                                                variant="outlined"
+                                                color="secondary"
+                                            />
+                                        </div>
+
+                                        <br/>
+
+                                        <RoomGrid
+                                            rooms={rooms}
+                                            loading={loading}
+                                        />
+
+                                        <div className="pagination-controls">
+                                            <Pagination
+                                                size="large"
+                                                count={totalPages}
+                                                page={currentPage}
+                                                onChange={handlePageChange}
+                                                className="pagination-button"
+                                                showFirstButton
+                                                showLastButton
+                                                variant="outlined"
+                                                color="secondary"
+                                            />
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                                <br/>
-
-                                <RoomGrid
-                                    rooms={rooms}
-                                    loading={loading}
-                                />
-
-                                <div className="pagination-controls">
-                                    <Pagination
-                                        size="large"
-                                        count={totalPages}
-                                        page={currentPage}
-                                        onChange={handlePageChange}
-                                        className="pagination-button"
-                                        showFirstButton
-                                        showLastButton
-                                        variant="outlined"
-                                        color="secondary"
-                                    />
-                                </div>
-
-                            </div>
-                        </div>
 
 
-
-                    </>
-                ) : (
-                    <h3>No search parameters provided</h3>
-                )
-            }
-            <Footer/>
+                            </>
+                        ) : (
+                            <h3>No search parameters provided</h3>
+                        )
+                    }
+                </div>
+                <Footer/>
+            </div>
         </>
     );
 }

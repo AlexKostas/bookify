@@ -2,8 +2,9 @@ import useAuth from "../../hooks/useAuth";
 import Dropdown from "../Dropdown/Dropdown";
 import "./navbar.css";
 import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 
-const Navbar = ({image, hideButtons = false}) => {
+const Navbar = ({image}) => {
     const { auth } = useAuth();
 
     return (
@@ -15,19 +16,40 @@ const Navbar = ({image, hideButtons = false}) => {
                 {auth ? (
                     <Dropdown username={auth.user} image={image} />
                 ) : (
-                    !hideButtons && (
                         <div className="navItems">
                             <div className="buttons">
                                 <Link to="/register">
-                                    <button className="navButton">Register</button>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        style={{
+                                            backgroundColor: 'white',
+                                            color: '#003580',
+                                            borderColor: '#003580',
+                                            fontSize: '0.8rem',
+                                        }}
+                                    >
+                                        Register
+                                    </Button>
                                 </Link>
                                 <Link to="/login">
-                                    <button className="navButton">Login</button>
+                                    <Button
+                                        size="small"
+                                        variant="outlined"
+                                        style={{
+                                            backgroundColor: 'white',
+                                            color: '#003580',
+                                            borderColor: '#003580',
+                                            fontSize: '0.8rem',
+                                        }}
+                                    >
+                                        Login
+                                    </Button>
                                 </Link>
                             </div>
                         </div>
                     )
-                )}
+                }
             </div>
         </div>
     );

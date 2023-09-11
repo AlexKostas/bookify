@@ -11,6 +11,7 @@ import * as React from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const MessageDashboard = () => {
     const [composePanelActive, setComposePanelActive] = useState(false);
@@ -32,59 +33,63 @@ const MessageDashboard = () => {
 
     return (
         <div>
-            <Navbar />
-            <h1>Inbox</h1>
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Button
-                        variant="outlined"
-                        onClick={() => setComposePanelActive(true)}
-                        endIcon={<MessageIcon />}
-                        sx = {{ color: "white", textTransform: 'none', }}
-                    >
-                        Compose
-                    </Button>
-                </Grid>
-                <Grid item xs={12}>
-                    <FormControl sx={{ width: '12.5rem' }}>
-                        <InputLabel
-                            id="order-label"
-                            sx={{
-                                color: "white",
-                                backgroundColor: "dodgerblue",
-                            }}
-                        >
-                            Sort by
-                        </InputLabel>
-                        <Select
-                            id="order"
-                            labelId="order-label"
-                            value={orderDirection}
-                            onChange={handleOrderChange}
-                            size="small"
-                            sx = {{
-                                color: "white",
-                                '& .MuiSelect-select': {
-                                    fontSize: '20px', // Adjust the font size as needed
-                                },
-                            }}
-                        >
-                            <MenuItem value="DESC">Latest Messages First</MenuItem>
-                            <MenuItem value="ASC">Earliest Messages First</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Grid>
-            </Grid>
-            {
-                composePanelActive ?  (
-                    <ComposeMessage
-                            open = {composePanelActive}
-                            onClose={() => setComposePanelActive(false)}
-                            preloadedRecipient={recipient}
-                    />
-                    ) : <MessageGrid orderDirection={orderDirection} />
-            }
-            <Footer/>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <h1>Inbox</h1>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Button
+                                variant="outlined"
+                                onClick={() => setComposePanelActive(true)}
+                                endIcon={<MessageIcon />}
+                                sx = {{ color: "white", textTransform: 'none', }}
+                            >
+                                Compose
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControl sx={{ width: '12.5rem' }}>
+                                <InputLabel
+                                    id="order-label"
+                                    sx={{
+                                        color: "white",
+                                        backgroundColor: "dodgerblue",
+                                    }}
+                                >
+                                    Sort by
+                                </InputLabel>
+                                <Select
+                                    id="order"
+                                    labelId="order-label"
+                                    value={orderDirection}
+                                    onChange={handleOrderChange}
+                                    size="small"
+                                    sx = {{
+                                        color: "white",
+                                        '& .MuiSelect-select': {
+                                            fontSize: '20px', // Adjust the font size as needed
+                                        },
+                                    }}
+                                >
+                                    <MenuItem value="DESC">Latest Messages First</MenuItem>
+                                    <MenuItem value="ASC">Earliest Messages First</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                    {
+                        composePanelActive ?  (
+                            <ComposeMessage
+                                    open = {composePanelActive}
+                                    onClose={() => setComposePanelActive(false)}
+                                    preloadedRecipient={recipient}
+                            />
+                            ) : <MessageGrid orderDirection={orderDirection} />
+                    }
+                </div>
+                <Footer/>
+            </div>
         </div>
     );
 }

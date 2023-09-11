@@ -16,18 +16,22 @@ const HostDashboard = () => {
 
     return (
         <div>
-            <Navbar />
-            {
-                isInactiveHost ? 
-                    <h3>You have not currently been given host permissions. Please contact an admin for help</h3>
-                    :(
-                        <>
-                            <h1>Host Dashboard</h1>
-                            <RoomDashboard />
-                        </>             
-                        )
-            }
-            <Footer/>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    {
+                        isInactiveHost ?
+                            <h3>You have not currently been given host permissions. Please contact an admin for help</h3>
+                            :(
+                                <>
+                                    <h1>Host Dashboard</h1>
+                                    <RoomDashboard />
+                                </>
+                                )
+                    }
+                </div>
+                <Footer/>
+            </div>
         </div>
     );
 }

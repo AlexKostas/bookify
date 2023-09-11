@@ -6,6 +6,7 @@ import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const HomePage = () => {
     const endpointURL = '/recommendation/recommend';
@@ -36,13 +37,17 @@ const HomePage = () => {
 
     return (
         <>
-        <Navbar />
-        <SearchBar />
-        <br />
-        <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
-        <br />
-        <RoomGrid rooms={rooms} loading={loading} />
-        <Footer/>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <SearchBar />
+                    <br />
+                    <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
+                    <br />
+                    <RoomGrid rooms={rooms} loading={loading} />
+                </div>
+                <Footer/>
+            </div>
         </>   
     )
 }

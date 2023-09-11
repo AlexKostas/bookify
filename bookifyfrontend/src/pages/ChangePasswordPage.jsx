@@ -7,6 +7,7 @@ import "../components/RegistrationForm/registrationForm.css"
 import {useNavigate} from "react-router-dom";
 import ChangePasswordForm from "../components/RegistrationForm/ChangePasswordForm";
 import Footer from "../Footer/Footer";
+import './styles/page.css'
 
 
 const ChangePasswordPage = () => {
@@ -14,13 +15,17 @@ const ChangePasswordPage = () => {
 
     return (
         <>
-            <Navbar />
-            <ChangePasswordForm/>
-            <button onClick={() => navigate('/updateProfile')}>
-                <FontAwesomeIcon icon={faEdit} />
-                Back to Edit Profile
-            </button>
-            <Footer/>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <ChangePasswordForm/>
+                    <button onClick={() => navigate('/updateProfile')}>
+                        <FontAwesomeIcon icon={faEdit} />
+                        Back to Edit Profile
+                    </button>
+                </div>
+                <Footer/>
+            </div>
         </>
     );
 };

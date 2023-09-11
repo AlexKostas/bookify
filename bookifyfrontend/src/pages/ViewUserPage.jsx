@@ -3,15 +3,20 @@ import UserView from "../components/UserView/UserView"
 import Navbar from "../components/Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import React from "react";
+import './styles/page.css';
 
 const ViewUserPage = () => {
     const { username } = useParams();
 
     return (
         <>
-            <Navbar />
-            <UserView username={username} />
-            <Footer/>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <UserView username={username} />
+                </div>
+                <Footer/>
+            </div>
         </>
     );
 }
