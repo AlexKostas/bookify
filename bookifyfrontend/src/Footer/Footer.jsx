@@ -19,7 +19,13 @@ const Footer = () => {
                         }}
                         variant="h2"
                     >
-                        Attributions
+                        <span style={{
+                            textDecoration: 'none',
+                            borderBottom: '1px solid white',
+                            display: 'inline',
+                        }}>
+                            Attributions
+                        </span>
                     </Typography>
                 </Grid>
                 <Grid item xs={6}>
@@ -30,7 +36,13 @@ const Footer = () => {
                         }}
                         variant="h2"
                     >
-                        Creators
+                        <span style={{
+                            textDecoration: 'none',
+                            borderBottom: '1px solid white',
+                            display: 'inline',
+                        }}>
+                            Creators
+                        </span>
                     </Typography>
                 </Grid>
                 <Grid item xs={3}>
@@ -86,7 +98,8 @@ const Footer = () => {
                             fontSize: '18px',
                             textAlign: 'center',
                             mt: '0.5rem',
-                            fontStyle: 'console',
+                            fontFamily: 'Consolas, monospace',
+                            textShadow: '2px 2px 4px rgba(0, 0, 0, 4)',
                         }}
                         variant="h3"
                     >
@@ -97,6 +110,8 @@ const Footer = () => {
                             fontSize: '18px',
                             textAlign: 'center',
                             mt: '0.3rem',
+                            fontFamily: 'Consolas, monospace',
+                            textShadow: '2px 2px 4px rgba(0, 0, 0, 4)',
                         }}
                         variant="h3"
                     >
@@ -111,7 +126,13 @@ const Footer = () => {
                         }}
                         variant="h3"
                     >
-                        © 2023 Bookify. All Rights Reserved.
+                        <span style={{
+                            textDecoration: 'none',
+                            borderBottom: '1px solid white',
+                            display: 'inline',
+                        }}>
+                            © 2023 Bookify. All Rights Reserved.
+                        </span>
                     </Typography>
                 </Grid>
             </Grid>
