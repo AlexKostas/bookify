@@ -14,8 +14,9 @@ const Footer = () => {
                 <Grid item xs={6}>
                     <Typography
                         sx = {{
-                            fontSize: '20px',
+                            fontSize: '0.95rem',
                             textAlign: 'center',
+                            mb: '0.5%',
                         }}
                         variant="h2"
                     >
@@ -31,7 +32,7 @@ const Footer = () => {
                 <Grid item xs={6}>
                     <Typography
                         sx = {{
-                            fontSize: '20px',
+                            fontSize: '0.95rem',
                             textAlign: 'center',
                         }}
                         variant="h2"
@@ -40,6 +41,7 @@ const Footer = () => {
                             textDecoration: 'none',
                             borderBottom: '1px solid white',
                             display: 'inline',
+                            mb: '0.5%',
                         }}>
                             Creators
                         </span>
@@ -89,9 +91,9 @@ const Footer = () => {
                 <Grid item xs={6}>
                     <Typography
                         sx = {{
-                            fontSize: '18px',
+                            fontSize: '0.8rem',
                             textAlign: 'center',
-                            mt: '0.5rem',
+                            mt: '1%',
                             fontFamily: 'Consolas, monospace',
                             textShadow: '2px 2px 4px rgba(0, 0, 0, 4)',
                         }}
@@ -101,9 +103,9 @@ const Footer = () => {
                     </Typography>
                     <Typography
                         sx = {{
-                            fontSize: '18px',
+                            fontSize: '0.8rem',
                             textAlign: 'center',
-                            mt: '0.3rem',
+                            mt: '1%',
                             fontFamily: 'Consolas, monospace',
                             textShadow: '2px 2px 4px rgba(0, 0, 0, 4)',
                         }}
@@ -115,7 +117,7 @@ const Footer = () => {
                 <Grid item xs={12}>
                     <Typography
                         sx = {{
-                            fontSize: '16px',
+                            fontSize: '0.78rem',
                             textAlign: 'center'
                         }}
                         variant="h3"

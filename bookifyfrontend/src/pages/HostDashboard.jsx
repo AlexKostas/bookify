@@ -4,6 +4,7 @@ import RoomDashboard from "../components/RoomDashboard/RoomDashboard";
 import {useSearchContext} from "../context/SearchContext";
 import React, {useEffect} from "react";
 import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const HostDashboard = () => {
     const { auth } = useAuth();
