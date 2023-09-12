@@ -86,6 +86,7 @@ const Footer = () => {
                             fontSize: '18px',
                             textAlign: 'center',
                             mt: '0.5rem',
+                            fontStyle: 'console',
                         }}
                         variant="h3"
                     >

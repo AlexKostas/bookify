@@ -52,7 +52,7 @@ const SearchField = ( {onSelection} ) => {
                     ...params.InputProps,
                     startAdornment: (
                         <>
-                            <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
+                            <LocationOnIcon sx={{ color: 'gray', mr: 1, mb: 0.5 }} />
                             {params.InputProps.startAdornment}
                         </>
                     ),

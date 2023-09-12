@@ -12,18 +12,17 @@
 }
 
 .search-bar-root .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
 }
 
 .search-bar-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
 }
 
 .search-bar-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
 }
 
-.search-bar-root:focus .MuiOutlinedInput-notchedOutline {
-    border-color: gray; /* Set your desired border color for the focused state */
-    /* Add any other styles as needed */
+.search-bar-focused:focus .MuiOutlinedInput-notchedOutline {
+    border-color: gray !important;
 }
