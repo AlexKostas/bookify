@@ -178,7 +178,7 @@ const LoginForm = () => {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link to="/register" variant="body2" style={{ color: 'blue' }}>
+                                <Link to="/register" variant="body2" style={{ color: 'blue', fontSize: '0.9rem' }}>
                                     Need an Account? Sign up
                                 </Link>
                             </Grid>

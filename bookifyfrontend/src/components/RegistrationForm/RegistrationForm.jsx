@@ -402,7 +402,7 @@ const RegistrationForm = ({
                             {inRegistration && (
                                 <Grid container justifyContent="flex-end" >
                                     <Grid item>
-                                        <Link to="/login" variant="body2" style={{ color: 'blue'}} >
+                                        <Link to="/login" variant="body2" style={{ color: 'blue', fontSize: '0.9rem'}} >
                                             Already have an account? Sign in
                                         </Link>
                                     </Grid>
