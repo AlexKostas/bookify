@@ -26,3 +26,8 @@
 .search-bar-focused:focus .MuiOutlinedInput-notchedOutline {
     border-color: gray !important;
 }
+
+.location-icon {
+    margin-bottom: 1%;
+    margin-right: 2%;
+}

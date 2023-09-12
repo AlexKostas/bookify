@@ -52,10 +52,7 @@ const Footer = () => {
                             Material-UI
                         </a>.
                         <br/>
-                        Icons made by{' '}
-                        <a href="https://www.flaticon.com/authors/author-name" title="Author Name">
-                            Author Name
-                        </a>{' '}from{' '}
+                        Icons from{' '}
                         <a href="https://www.flaticon.com/" title="Flaticon">
                             www.flaticon.com
                         </a>.
@@ -65,10 +62,7 @@ const Footer = () => {
                             Font Awesome
                         </a>.
                         <br/>
-                        Icons made by{' '}
-                        <a href="https://iconscout.com/contributors/contributor-name" title="Contributor Name">
-                            Contributor Name
-                        </a>{' '}from{' '}
+                        Icons from{' '}
                         <a href="https://iconscout.com/" title="Iconscout">
                             Iconscout
                         </a>.

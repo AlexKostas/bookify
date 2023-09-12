@@ -1,17 +1,18 @@
 .footerContainer {
     background-color: #003580;
     width: 100%;
-    padding: 10px;
+    padding: 0.4rem;
     color: white;
+    margin-top: 2rem;
 }
 
 .attributionsLeft {
-    font-size: 14px;
+    font-size: 0.65rem;
     margin-left: 20%;
 }
 
 .attributionsRight {
-    font-size: 14px;
+    font-size: 0.65rem;
     margin-left: 20%;
     margin-right: 20%;
 }
