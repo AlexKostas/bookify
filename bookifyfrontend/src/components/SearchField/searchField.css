@@ -1,5 +1,4 @@
 .search-bar-root {
-    margin-top: 15px;
     background-color: #d9d9d9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -22,4 +21,9 @@
 
 .search-bar-root.Mui-focused .MuiOutlinedInput-notchedOutline {
     border-color: transparent;
+}
+
+.search-bar-root:focus .MuiOutlinedInput-notchedOutline {
+    border-color: gray; /* Set your desired border color for the focused state */
+    /* Add any other styles as needed */
 }

@@ -51,13 +51,16 @@ const SearchField = ( {onSelection} ) => {
                 InputProps={{
                     ...params.InputProps,
                     startAdornment: (
-                    <>
-                        <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
-                        {params.InputProps.startAdornment}
-                    </>
+                        <>
+                            <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
+                            {params.InputProps.startAdornment}
+                        </>
                     ),
+                    classes: {
+                        root: 'search-bar-root',
+                        focused: 'search-bar-focused',
+                    },
                 }}
-                className="search-bar-root"
                 />
             )}
         />

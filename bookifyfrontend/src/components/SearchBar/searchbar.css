@@ -56,6 +56,11 @@
     outline: none;
 }
 
+.headerSearchItem.location-bar {
+    display: flex;
+    align-items: center;
+}
+
 .headerSearchText {
     color: lightgray;
     cursor: pointer;
