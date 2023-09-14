@@ -24,6 +24,7 @@
 }
 
 .search-bar-focused:focus .MuiOutlinedInput-notchedOutline {
+    justify-content: center;
     border-color: gray !important;
 }
 
