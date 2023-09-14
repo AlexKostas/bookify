@@ -1,5 +1,4 @@
 .search-bar-root {
-    margin-top: 15px;
     background-color: #d9d9d9;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -13,13 +12,23 @@
 }
 
 .search-bar-root .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
 }
 
 .search-bar-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
 }
 
 .search-bar-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: transparent;
+    border-color: gray !important;
+}
+
+.search-bar-focused:focus .MuiOutlinedInput-notchedOutline {
+    justify-content: center;
+    border-color: gray !important;
+}
+
+.location-icon {
+    margin-bottom: 1%;
+    margin-right: 2%;
 }

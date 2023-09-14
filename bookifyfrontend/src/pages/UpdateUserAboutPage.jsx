@@ -8,6 +8,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import AboutInfoForm from "../components/AboutInfoForm/AboutInfoForm";
 import OldAboutInfoForm from "../components/AboutInfoForm/OldAboutInfoForm";
+import Footer from "../Footer/Footer";
+import './styles/page.css';
 
 const UPDATE_USER_ABOUT_URL = '/user/updateAboutInfo';
 
@@ -49,14 +51,17 @@ const UpdateUserAboutPage = () => {
 
     return (
         <>
-            <Navbar />
-            <div>
-                <AboutInfoForm username={auth.user} onSubmit={submitUpdateRequest} errorMessage={error}
-                                  success={success} />
-                <button onClick={() => navigate('/profile')}>
-                    <FontAwesomeIcon icon={faChevronLeft} />
-                    Back to profile
-                </button>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <AboutInfoForm username={auth.user} onSubmit={submitUpdateRequest} errorMessage={error}
+                                      success={success} />
+                    <button onClick={() => navigate('/profile')}>
+                        <FontAwesomeIcon icon={faChevronLeft} />
+                        Back to profile
+                    </button>
+                </div>
+                <Footer/>
             </div>
         </>
     );

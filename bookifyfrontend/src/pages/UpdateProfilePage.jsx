@@ -8,6 +8,10 @@ import {useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
+import Footer from "../Footer/Footer";
+import './styles/page.css';
+import Button from '@mui/material/Button';
+
 
 const UPDATE_URL = '/user/updateProfile';
 
@@ -67,19 +71,23 @@ const UpdateProfilePage = () => {
 
     return (
         <>
-            <Navbar />
-            <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
-                              success={success} />
-            <div>
-            <button onClick={() => navigate('/profile')}>
-                <FontAwesomeIcon icon={faChevronLeft} />
-                Back to profile
-            </button>
-
-            <button onClick={() => navigate('/changePassword')}>
-                <FontAwesomeIcon icon={faUnlock} />
-                Change Password
-            </button>
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
+                                      success={success} />
+                    <div>
+                        <button onClick={() => navigate('/profile')}>
+                            <FontAwesomeIcon icon={faChevronLeft} />
+                            Back to profile
+                        </button>
+                        <button onClick={() => navigate('/changePassword')}>
+                            <FontAwesomeIcon icon={faUnlock} />
+                            Change Password
+                        </button>
+                    </div>
+                </div>
+                <Footer/>
             </div>
         </>
     );
