@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useSearchContext} from "../context/SearchContext";
 import Footer from "../Footer/Footer";
 import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -23,17 +24,19 @@ const ProfilePage = () => {
     <>
         <div className="page-container">
             <Navbar image={profilePic} />
+            <div>
+                <Typography
+                    variant="h1"
+                    sx={{
+                        fontSize: "2.1rem",
+                        mt: "1rem"
+                    }}
+                >
+                    User Profile
+                </Typography>
+            </div>
             <div className="content">
-                <h1>Profile</h1>
                 <UserView username={auth.user} onProfilePicChanged={(image) => setProfilePic(image)}/>
-                <button onClick={() => navigate('/updateProfile')}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    Edit Profile
-                </button>
-                <button onClick={() => navigate('/updateAboutInfo')}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    Edit About Info
-                </button>
             </div>
             <Footer/>
         </div>

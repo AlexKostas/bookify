@@ -10,9 +10,12 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import EditIcon from '@mui/icons-material/Edit';
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
+import {faEdit, faUnlock} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import UserStats from "../UserStats/UserStats";
+import {useNavigate} from "react-router-dom";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 
 const UserView = ({ username, onProfilePicChanged }) => {
     const profilePicURL = `/upload/getProfilePic/${username}`;
@@ -20,6 +23,8 @@ const UserView = ({ username, onProfilePicChanged }) => {
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(null);
+
+    const navigate = useNavigate();
     const clearError = () => setError(null);
 
     const { imageData, loading, setImageData } = useImageFetcher(profilePicURL);
@@ -97,7 +102,7 @@ const UserView = ({ username, onProfilePicChanged }) => {
                 {error}
             </Alert>
         )}
-        <div className='container'>
+        <div className='profile-container'>
             {loading ? (
             <div className='loading-container'>
                 <CircularProgress size={80} className='circular-progress' />
@@ -145,20 +150,53 @@ const UserView = ({ username, onProfilePicChanged }) => {
             <p>Could not load profile picture</p>
             )}
             <h2 className="username-label">{username}</h2>
+            <div className="tabs-container">
+                <Tabs
+                    value={tabValue}
+                    onChange={(event, newValue) => setTabValue(newValue)}
+                    variant="fullWidth"
+                    indicatorColor="primary"
+                    textColor="primary"
+                >
+                    <Tab label="User Info" />
+                    <Tab label="User Stats" />
+                </Tabs>
+                {tabValue === 0 && <UserDetails username={username} />}
+                {tabValue === 1 && <UserStats username={username}/>}
+            </div>
+            <Grid container spacing={0} justify="center" className="custom-grid">
+                <Grid item xs={4}>
+                    <Button
+                        onClick={() => navigate('/updateProfile')}
+                        variant="contained"
+                        className="custom-grid-item"
+                    >
+                        <FontAwesomeIcon icon={faEdit} />
+                        Edit Profile
+                    </Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button
+                        onClick={() => navigate('/updateAboutInfo')}
+                        variant="contained"
+                        className="custom-grid-item"
+                    >
+                        <FontAwesomeIcon icon={faEdit} />
+                        Edit About Info
+                    </Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button
+                        onClick={() => navigate('/changePassword')}
+                        variant="contained"
+                        className="custom-grid-item"
+                    >
+                        <FontAwesomeIcon icon={faUnlock} />
+                        Change Password
+                    </Button>
+                </Grid>
+            </Grid>
         </div>
-
-        <Tabs
-            value={tabValue}
-            onChange={(event, newValue) => setTabValue(newValue)}
-            variant="fullWidth"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-            <Tab label="User Info" />
-            <Tab label="User Stats" />
-          </Tabs>
-          {tabValue === 0 && <UserDetails username={username} />}
-          {tabValue === 1 && <UserStats username={username}/>}
     </>
     );
 }

@@ -7,6 +7,7 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Footer from "../Footer/Footer";
 import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const HomePage = () => {
     const endpointURL = '/recommendation/recommend';
@@ -42,7 +43,14 @@ const HomePage = () => {
                 <div className="content">
                     <SearchBar />
                     <br />
-                    <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
+                    <Typography
+                        variant="h1"
+                        sx={{
+                            fontSize: "2.1rem",
+                        }}
+                    >
+                        {(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}
+                    </Typography>
                     <br />
                     <RoomGrid rooms={rooms} loading={loading} />
                 </div>

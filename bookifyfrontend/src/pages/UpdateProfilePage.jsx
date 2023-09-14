@@ -81,10 +81,6 @@ const UpdateProfilePage = () => {
                             <FontAwesomeIcon icon={faChevronLeft} />
                             Back to profile
                         </button>
-                        <button onClick={() => navigate('/changePassword')}>
-                            <FontAwesomeIcon icon={faUnlock} />
-                            Change Password
-                        </button>
                     </div>
                 </div>
                 <Footer/>
