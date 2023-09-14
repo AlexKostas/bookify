@@ -6,6 +6,7 @@
     border: 3px solid gray;
     border-radius: 30px;
     overflow-wrap: anywhere;
+    background-color: rgb(10, 124, 225);
 }
 
 .room-user-view-content {
@@ -37,7 +38,7 @@
 }
 
 .room-message-button {
-    background-color: #1d4cb9;
+    background-color: rgb(29, 76, 185);
     color: white;
     width: 90%;
     font-size: 1.2rem;
@@ -46,6 +47,11 @@
     justify-content: center;
     gap: 2%;
     cursor: pointer;
+    transition: 0.2s;
+}
+
+.room-message-button:hover {
+    background-color: rgb(49, 86, 190);
 }
 
 .user-rating-info {

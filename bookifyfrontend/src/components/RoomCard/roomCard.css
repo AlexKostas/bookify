@@ -1,14 +1,14 @@
 .room-card {
-    border: 1px solid #ccc;
+    border: 2px solid gray;
     border-radius: 8px;
     overflow: hidden;
-    background-color: transparent;
     cursor: pointer;
-    
+    background-color: rgb(10, 124, 225);
+    transition: 0.4s;
 }
 
 .room-card:hover {
-    background-color: #f5f5f5;
+    background-color: rgb(25, 140, 250);
 }
 
 .room-image {

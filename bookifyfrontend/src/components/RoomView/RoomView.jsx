@@ -105,13 +105,17 @@ const RoomView = ({ roomID }) => {
                         </Link>
 
                         <div className="room-info-reviews">
-                            <StarIcon fontSize="small" style={{color: "yellow"}}/> {room.rating?.toFixed(1)} · <ScrollLink
-                            to="reviews"
-                            smooth={true}
-                            duration={500}
-                        >
+                            <span className="star-icon">
+                                <StarIcon fontSize="small" style={{color: "black"}}/>
+                            </span>
+                            {room.rating?.toFixed(1)} ·
+                            <ScrollLink
+                                to="reviews"
+                                smooth={true}
+                                duration={500}
+                            >
                             <u className="review-link">{room.reviewCount} review{(room.reviewCount > 1 || room.reviewCount <= 0) && 's'}</u>
-                        </ScrollLink>
+                            </ScrollLink>
                         </div>
 
                         <div className="room-info-location">

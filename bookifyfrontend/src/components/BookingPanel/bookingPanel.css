@@ -3,9 +3,11 @@
     margin-top: 4%;
     width: 100%;
     height: auto;
-    border: 3px solid gray;
+    border: 1px solid black;
     border-radius: 30px;
     overflow-wrap: anywhere;
+    background-color: dodgerblue;
+    box-shadow: #888888;
 }
 
 .booking-content{

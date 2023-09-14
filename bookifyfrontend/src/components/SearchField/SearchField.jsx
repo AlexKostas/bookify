@@ -48,6 +48,7 @@ const SearchField = ( {onSelection} ) => {
                     {...params}
                     value={inputValue ? 'Location...' : ''}
                     forcePopupIcon={false}
+                    size = "small"
                     InputProps={{
                         ...params.InputProps,
                         startAdornment: (

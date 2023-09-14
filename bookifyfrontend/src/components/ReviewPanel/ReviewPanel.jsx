@@ -164,7 +164,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
                        )
                    }
 
-                   <Button onClick={() => scrollToDiv('reviewStart')}>Go to first review</Button>
+                   <Button sx={{color: "dodgerblue"}}onClick={() => scrollToDiv('reviewStart')}>Go to first review</Button>
 
                    </>
                    )

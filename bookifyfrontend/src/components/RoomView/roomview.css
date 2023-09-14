@@ -4,6 +4,7 @@
 
 .general-room-info {
     margin-left: 5%;
+    color: rgb(20, 20, 20);
 }
 
 .centered-container {
@@ -18,8 +19,9 @@
 .view-main {
     display: flex;
     flex-direction: column;
+    background-color: rgb(256,256,256);
+    border: 1px solid black;
 
-    border: 5px solid gray;
     border-radius: 20px;
 
     width: 94%;
@@ -50,9 +52,6 @@
 }
 
 .main-content-parent {
-    /*background-color: red;*/
-
-    /*width: 94%;*/
 
     height: auto;
 
@@ -61,24 +60,19 @@
     gap: 2%;
 
     border-radius: 2%;
-    /*position: relative;*/
 }
 
 .review-parent {
-    /*background-color: pink;*/
     margin-top: 3%;
-    border: 5px solid gray;
     border-radius: 30px;
     width: 94%;
 }
 
 .main-room-content {
-    /*background-color: blue;*/
     word-wrap: break-word;
 }
 
 .room-view-side-panel {
-    /*right: 4%;*/
 
     display: flex;
     flex-direction: column;
@@ -124,12 +118,16 @@ ul, ol {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 2%
+    gap: 2%;
+    color: rgb(20, 20, 20);
 }
 
 .review-link {
     cursor: pointer;
     margin-left: 8px;
+    color: rgb(20, 20, 20);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
 }
 
 .room-info-reviews, .room-info-host {
@@ -137,11 +135,15 @@ ul, ol {
     flex-direction: row;
     align-items: center;
     width: auto;
+    color: rgb(20, 20, 20);
 }
 
 .room-info-host {
     cursor: pointer;
+    color: rgb(20, 20, 20);
     margin-right: 1%;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
 }
 
 .room-info-profile-pic {
@@ -156,4 +158,8 @@ ul, ol {
 .slide-item {
     max-height: 50vh;
     object-fit: contain;
+}
+
+.star-icon {
+    color: #2c2929;
 }
