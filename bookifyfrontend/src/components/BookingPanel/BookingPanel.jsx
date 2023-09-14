@@ -11,6 +11,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import Lottie from 'react-lottie';
 import check from "../../images/tick.json";
+import Typography from "@mui/material/Typography";
 
 const BookingPanel = ({ room, roomID }) => {
     const [breakdownActive, setBreakdownActive] = useState(false);
@@ -118,7 +119,15 @@ const BookingPanel = ({ room, roomID }) => {
             <div className='booking-content'>
 
                 <div className="booking-dates-container">
-                    <h3>Dates</h3>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            color: 'white',
+                            fontSize: '2rem'
+                        }}
+                    >
+                        Dates
+                    </Typography>
                     <hr style={{width: "90%",  margin: 'auto'}} />
 
                     <button

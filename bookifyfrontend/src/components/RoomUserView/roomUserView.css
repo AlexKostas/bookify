@@ -3,10 +3,11 @@
     margin-top: 4%;
     width: 100%;
     height: auto;
-    border: 3px solid gray;
+    border: 1px solid gray;
     border-radius: 30px;
     overflow-wrap: anywhere;
-    background-color: rgb(10, 124, 225);
+    background-color: dodgerblue;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .room-user-view-content {
@@ -58,4 +59,5 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    color: white;
 }

@@ -31,9 +31,6 @@ const UserDetails = ({ username }) => {
     return (
         <div className="user-info">
             <Grid container spacing={2}>
-                <Grid item xs={12}>
-                <Typography variant="h6">Username: {user?.username}</Typography>
-                </Grid>
                 <Grid item xs={6}>
                 <Typography variant="body1">First Name: {user?.firstName}</Typography>
                 </Grid>

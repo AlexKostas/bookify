@@ -7,6 +7,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import StarIcon from '@mui/icons-material/Star';
 import useFetchItems from "../../hooks/useFetchItems";
 import {useEffect} from "react";
+import Typography from "@mui/material/Typography";
 
 const RoomUserView = ({ host }) => {
     const profilePicURL = `/upload/getProfilePic/${host}`;
@@ -24,7 +25,15 @@ const RoomUserView = ({ host }) => {
     return (
         <div className='room-user-view-container'>
             <div className='room-user-view-content'>
-                <h1>Host</h1>
+                <Typography
+                    variant="h1"
+                    sx={{
+                        color: 'white',
+                        fontSize: '2rem'
+                    }}
+                >
+                    Host
+                </Typography>
                 <hr style={{width: "90%",  margin: 'auto'}} />
 
 
@@ -46,7 +55,15 @@ const RoomUserView = ({ host }) => {
                             </Tooltip>
                     }
 
-                    <h3>{host}</h3>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            color: 'white',
+                            fontSize: '1.5rem'
+                        }}
+                    >
+                        {host}
+                    </Typography>
 
                     {
                         stats?.nHostReviews > 0 ?

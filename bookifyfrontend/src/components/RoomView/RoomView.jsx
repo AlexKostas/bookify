@@ -16,6 +16,7 @@ import {Link} from 'react-router-dom';
 import useImageFetcher from "../../hooks/useImageFetcher";
 import {CircularProgress} from "@mui/material";
 import useFetchImages from "../../hooks/useFetchImages";
+import Typography from "@mui/material/Typography";
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -88,7 +89,14 @@ const RoomView = ({ roomID }) => {
         <div className="room-view-container">
 
             <div className="general-room-info">
-                <h2>{room.name}</h2>
+                <Typography
+                    variant="h2"
+                    sx={{
+                        fontSize: "1.7rem"
+                    }}
+                >
+                    {room.name}
+                </Typography>
 
                 {
                     room &&
@@ -101,7 +109,7 @@ const RoomView = ({ roomID }) => {
                                 src={imageData}
                                 className='room-info-profile-pic'
                             />
-                            <u>{room.hostUsername}</u>
+                            <u className="room-info-host">{room.hostUsername}</u>
                         </Link>
 
                         <div className="room-info-reviews">

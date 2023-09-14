@@ -21,7 +21,7 @@
     flex-direction: column;
     background-color: rgb(256,256,256);
     border: 1px solid black;
-
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
     border-radius: 20px;
 
     width: 94%;
@@ -144,6 +144,7 @@ ul, ol {
     margin-right: 1%;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
+    font-size: 1.1rem;
 }
 
 .room-info-profile-pic {
