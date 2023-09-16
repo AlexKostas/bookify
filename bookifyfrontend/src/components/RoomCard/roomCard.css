@@ -3,7 +3,7 @@
     overflow: hidden;
     cursor: pointer;
     background-color: rgb(10, 124, 225);
-    border: 1px solid gray;
+    border: 1px solid dimgray;
     box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.2);
     transition: 0.4s;
 }

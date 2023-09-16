@@ -163,39 +163,46 @@ const UserView = ({ username, onProfilePicChanged }) => {
                 </Tabs>
                 {tabValue === 0 && <UserDetails username={username} />}
                 {tabValue === 1 && <UserStats username={username}/>}
+                {valid && (
+                    <div className="edit-buttons">
+                        <Grid container spacing={1} justify="center" className="custom-grid">
+                            <Grid item xs={4}>
+                                <Button
+                                    onClick={() => navigate('/updateProfile')}
+                                    variant="outlined"
+                                    size = "small"
+                                    fullWidth
+                                >
+                                    <FontAwesomeIcon icon={faEdit} />
+                                    Edit Profile
+                                </Button>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button
+                                    onClick={() => navigate('/updateAboutInfo')}
+                                    variant="outlined"
+                                    size = "small"
+                                    fullWidth
+                                >
+                                    <FontAwesomeIcon icon={faEdit} />
+                                    Edit About-Me Info
+                                </Button>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Button
+                                    onClick={() => navigate('/changePassword')}
+                                    variant="outlined"
+                                    size = "small"
+                                    fullWidth
+                                >
+                                    <FontAwesomeIcon icon={faUnlock} />
+                                    Change Password
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </div>
+                )}
             </div>
-            <Grid container spacing={0} justify="center" className="custom-grid">
-                <Grid item xs={4}>
-                    <Button
-                        onClick={() => navigate('/updateProfile')}
-                        variant="contained"
-                        className="custom-grid-item"
-                    >
-                        <FontAwesomeIcon icon={faEdit} />
-                        Edit Profile
-                    </Button>
-                </Grid>
-                <Grid item xs={4}>
-                    <Button
-                        onClick={() => navigate('/updateAboutInfo')}
-                        variant="contained"
-                        className="custom-grid-item"
-                    >
-                        <FontAwesomeIcon icon={faEdit} />
-                        Edit About Info
-                    </Button>
-                </Grid>
-                <Grid item xs={4}>
-                    <Button
-                        onClick={() => navigate('/changePassword')}
-                        variant="contained"
-                        className="custom-grid-item"
-                    >
-                        <FontAwesomeIcon icon={faUnlock} />
-                        Change Password
-                    </Button>
-                </Grid>
-            </Grid>
         </div>
     </>
     );

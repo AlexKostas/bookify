@@ -10,6 +10,12 @@
     flex-grow: 1;
 }
 
+.page-buttons-container {
+    position: relative;
+    width: 45%;
+    margin: 3% auto -2%;
+}
+
 .page-button {
     margin-left: 36%;
 }

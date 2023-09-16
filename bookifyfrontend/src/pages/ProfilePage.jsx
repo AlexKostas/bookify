@@ -3,8 +3,6 @@ import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
 import UserView from "../components/UserView/UserView";
 import {Link, useNavigate} from "react-router-dom";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useSearchContext} from "../context/SearchContext";
 import Footer from "../Footer/Footer";
 import './styles/page.css';
@@ -29,7 +27,10 @@ const ProfilePage = () => {
                     variant="h1"
                     sx={{
                         fontSize: "2.1rem",
-                        mt: "1rem"
+                        mt: "1rem",
+                        color: "#333",
+                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                        textAlign: "center",
                     }}
                 >
                     User Profile

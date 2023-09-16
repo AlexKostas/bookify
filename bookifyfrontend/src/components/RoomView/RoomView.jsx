@@ -92,7 +92,9 @@ const RoomView = ({ roomID }) => {
                 <Typography
                     variant="h2"
                     sx={{
-                        fontSize: "1.7rem"
+                        fontSize: "1.7rem",
+                        color: "#333",
+                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
                     }}
                 >
                     {room.name}

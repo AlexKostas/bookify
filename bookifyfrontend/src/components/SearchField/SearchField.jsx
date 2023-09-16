@@ -47,7 +47,6 @@ const SearchField = ( {onSelection} ) => {
                 <TextField
                     {...params}
                     value={inputValue ? 'Location...' : ''}
-                    forcePopupIcon={false}
                     size = "small"
                     InputProps={{
                         ...params.InputProps,
