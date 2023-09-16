@@ -37,10 +37,10 @@ const UserDetails = ({ username }) => {
                 <Grid item xs={6}>
                 <Typography variant="body1">Last Name: {user?.lastName}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                 <Typography variant="body1">Email: {user?.email}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                 <Typography variant="body1">Phone Number: {user?.phoneNumber}</Typography>
                 </Grid>
             </Grid>

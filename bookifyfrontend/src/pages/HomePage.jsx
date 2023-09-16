@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 import Typography from "@mui/material/Typography";
 

@@ -2,7 +2,7 @@ import UserGrid from '../components/UserGrid/UserGrid';
 import Navbar from '../components/Navbar/Navbar';
 import {useSearchContext} from "../context/SearchContext";
 import React, {useEffect} from "react";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css'
 
 const AdminPage = () => {
