@@ -46,9 +46,11 @@ public class ReviewService {
             throw new OperationNotSupportedException("Host user with id " + currentUser.getUserID() + " cannot review the room with id " +
                     room.getRoomID() + " because it belongs to their set of rooms.");
 
+        int stars = correctStarsRange(reviewDTO.stars(), 1, 5);
+
         Review review = reviewRepository.save(new Review(
                 0,
-                reviewDTO.stars(),
+                stars,
                 reviewDTO.comment(),
                 LocalDate.now(),
                 currentUser,
@@ -161,5 +163,13 @@ public class ReviewService {
 
     private Boolean hasReviewerVisitedRoom(User reviewer, Room roomReviewed) {
         return bookingRepository.countByUserAndRoom(reviewer, roomReviewed) > 0;
+    }
+
+    private int correctStarsRange(int reviewStars, int minStars, int maxStars) {
+        if( reviewStars < minStars )
+            return minStars;
+        if( reviewStars > maxStars )
+            return maxStars;
+        return reviewStars;
     }
 }

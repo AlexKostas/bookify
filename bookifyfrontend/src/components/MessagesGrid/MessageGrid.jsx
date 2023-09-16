@@ -123,22 +123,32 @@ const MessageGrid = ({ orderDirection }) => {
               ))) :
                   <div className="no-messages-container">
                     {
-                      loading ? <CircularProgress size={50} /> : <p style={{ textAlign: 'center' }}>No messages</p>
+                      loading ? <CircularProgress size={50} /> :
+                          <Typography
+                              sx={{
+                                fontSize: "2rem",
+                                color: "#333",
+                                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                              }}
+                          >
+                            No messages
+                          </Typography>
                     }
                   </div>
 
               }
             </Grid>
 
-            <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={handlePageChange}
-                color="primary"
-                className="pagination-container"
-                showFirstButton
-                showLastButton
-            />
+            <div className="pagination-container">
+              <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  color="primary"
+                  showFirstButton
+                  showLastButton
+              />
+            </div>
           </div>
         </Container>
 

@@ -140,16 +140,35 @@ const RegistrationForm = ({
                     >
                         {inRegistration ? (
                             <>
-                                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                                <Avatar sx={{ m: 1, mt: 2, bgcolor: 'secondary.main' }}>
                                     <LockOutlinedIcon />
                                 </Avatar>
-                                <Typography component="h1" variant="h5">
+                                <Typography
+                                    component="h1"
+                                    variant="h5"
+                                    sx={{
+                                        fontSize: "1.5rem",
+                                        color: "#333",
+                                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                                        textAlign: "center",
+                                    }}
+                                >
                                     Sign up
                                 </Typography>
                             </>
                         ) : (
                             <>
-                                <Typography component="h1" variant="h5">
+                                <Typography
+                                    component="h1"
+                                    variant="h5"
+                                    sx={{
+                                        fontSize: "1.5rem",
+                                        color: "#333",
+                                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                                        textAlign: "center",
+                                        mt: 1,
+                                    }}
+                                >
                                     Edit Profile
                                 </Typography>
                             </>

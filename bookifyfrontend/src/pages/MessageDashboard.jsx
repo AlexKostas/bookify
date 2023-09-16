@@ -12,6 +12,7 @@ import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Footer from "../components/Footer/Footer";
 import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const MessageDashboard = () => {
     const [composePanelActive, setComposePanelActive] = useState(false);
@@ -32,29 +33,43 @@ const MessageDashboard = () => {
     }, [recipient])
 
     return (
-        <div>
-            <div className="page-container">
-                <Navbar />
-                <div className="content">
-                    <h1>Inbox</h1>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
+        <div className="page-container">
+            <Navbar />
+            <div className="content">
+                <Typography
+                    component="h1"
+                    variant="h5"
+                    sx={{
+                        fontSize: "2rem",
+                        color: "#333",
+                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                        textAlign: "center",
+                        mt: 2,
+                    }}
+                >
+                    Inbox
+                </Typography>
+                <div className="page-buttons-container">
+                    <Grid container spacing={1}>
+                        <Grid item xs={4}>
                             <Button
-                                variant="outlined"
+                                variant="contained"
                                 onClick={() => setComposePanelActive(true)}
                                 endIcon={<MessageIcon />}
-                                sx = {{ color: "white", textTransform: 'none', }}
+                                sx = {{ textTransform: 'none'}}
+                                fullWidth
                             >
                                 Compose
                             </Button>
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={4}>
+                        </Grid>
+                        <Grid item xs={4}>
                             <FormControl sx={{ width: '12.5rem' }}>
                                 <InputLabel
                                     id="order-label"
                                     sx={{
-                                        color: "white",
-                                        backgroundColor: "dodgerblue",
+                                        backgroundColor: "white",
                                     }}
                                 >
                                     Sort by
@@ -66,9 +81,8 @@ const MessageDashboard = () => {
                                     onChange={handleOrderChange}
                                     size="small"
                                     sx = {{
-                                        color: "white",
                                         '& .MuiSelect-select': {
-                                            fontSize: '20px', // Adjust the font size as needed
+                                            fontSize: '1rem',
                                         },
                                     }}
                                 >
@@ -78,18 +92,18 @@ const MessageDashboard = () => {
                             </FormControl>
                         </Grid>
                     </Grid>
-                    {
-                        composePanelActive ?  (
-                            <ComposeMessage
-                                    open = {composePanelActive}
-                                    onClose={() => setComposePanelActive(false)}
-                                    preloadedRecipient={recipient}
-                            />
-                            ) : <MessageGrid orderDirection={orderDirection} />
-                    }
                 </div>
-                <Footer/>
+                {
+                    composePanelActive ?  (
+                        <ComposeMessage
+                                open = {composePanelActive}
+                                onClose={() => setComposePanelActive(false)}
+                                preloadedRecipient={recipient}
+                        />
+                        ) : <MessageGrid orderDirection={orderDirection} />
+                }
             </div>
+            <Footer/>
         </div>
     );
 }

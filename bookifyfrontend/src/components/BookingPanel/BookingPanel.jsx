@@ -176,7 +176,7 @@ const BookingPanel = ({ room, roomID }) => {
 
                     {
                         breakdownActive && (
-                            <div>
+                            <div  style={{ color: "white" }}>
                                 <p>
                                     {room?.pricePerNight?.toFixed(2)}$ / night for up to {room?.maxTenants} people
                                     {

@@ -2,6 +2,7 @@
     background-color: #003580;
     display: flex;
     justify-content: center;
+    min-height: 7vh;
 }
 
 .navContainer {
@@ -16,7 +17,7 @@
 
 .logo {
     font-weight: 500;
-    font-size: 1.4rem;
+    font-size: 1.5rem;
 }
 
 .navButton {
