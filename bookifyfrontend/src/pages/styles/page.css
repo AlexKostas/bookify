@@ -10,7 +10,10 @@
     flex-grow: 1;
 }
 
+.page-button {
+    margin-left: 36%;
+}
+
 body {
     background-color: white;
 }
-

@@ -2,6 +2,7 @@
     background-color: #003580;
     display: flex;
     justify-content: center;
+    min-height: 7vh;
 }
 
 .navContainer {

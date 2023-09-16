@@ -47,6 +47,8 @@ const HomePage = () => {
                         variant="h1"
                         sx={{
                             fontSize: "2.1rem",
+                            color: "#333",
+                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
                         }}
                     >
                         {(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}

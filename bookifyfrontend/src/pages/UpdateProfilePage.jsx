@@ -4,13 +4,12 @@ import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
 import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import {useNavigate} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronLeft, faUnlock} from "@fortawesome/free-solid-svg-icons";
+import {Link, useNavigate} from "react-router-dom";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
 import Footer from "../Footer/Footer";
 import './styles/page.css';
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 
 const UPDATE_URL = '/user/updateProfile';
@@ -74,13 +73,33 @@ const UpdateProfilePage = () => {
             <div className="page-container">
                 <Navbar />
                 <div className="content">
-                    <RegistrationForm initialUsername={auth.user} inRegistration={false} onSubmit={submitUpdateRequest} errorMessage={error}
-                                      success={success} />
-                    <div>
-                        <button onClick={() => navigate('/profile')}>
-                            <FontAwesomeIcon icon={faChevronLeft} />
-                            Back to profile
-                        </button>
+                    <RegistrationForm
+                        initialUsername={auth.user} inRegistration={false}
+                        onSubmit={submitUpdateRequest} errorMessage={error}
+                        success={success}
+                    />
+                    <div className="page-button">
+                        <Link to="/profile">
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                sx = {{
+                                    mt: 1.5,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    flexDirection: 'row',
+                                }}
+                            >
+                                <ArrowBackIcon
+                                    sx={{
+                                        fontSize: '1.2rem',
+                                        ml : "-7%",
+                                    }}
+                                />
+                                Back to Profile
+                            </Button>
+                        </Link>
                     </div>
                 </div>
                 <Footer/>
