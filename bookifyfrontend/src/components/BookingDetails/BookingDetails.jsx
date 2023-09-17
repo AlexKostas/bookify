@@ -14,6 +14,7 @@ import {CircularProgress} from "@mui/material";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleExclamation} from "@fortawesome/free-solid-svg-icons";
 import axios from "../../api/axios";
+import {toDate} from "date-fns";
 
 const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) => {
     const [checkInDate, setCheckInDate] = useState(dayjs());
@@ -32,10 +33,11 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
         try {
             setLoading(true);
 
+
             const response = await axios.post(endpointURL, JSON.stringify({
                 roomID: parseInt(roomID),
-                checkInDate,
-                checkOutDate,
+                checkInDate: checkInDate.toDate().toLocaleDateString("sv"),
+                checkOutDate: checkOutDate.toDate().toLocaleDateString("sv"),
                 numberOfTenants: people,
             }));
 
@@ -157,6 +159,8 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
 
                         <button
                             onClick={() => {
+                                if(loading) return;
+
                                 if(onSubmit) onSubmit(checkInDate, checkOutDate, people, numberOfNights);
                                 onClose();
                             }}

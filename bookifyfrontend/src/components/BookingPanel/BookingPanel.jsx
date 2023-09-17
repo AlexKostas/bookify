@@ -63,8 +63,8 @@ const BookingPanel = ({ room, roomID }) => {
             const endpointURL = '/booking/book';
             const response = await axiosPrivate.post(endpointURL, JSON.stringify({
                 roomID,
-                checkInDate: selectedCheckInDate,
-                checkOutDate: selectedCheckOutDate,
+                checkInDate: selectedCheckInDate.toDate().toLocaleDateString("sv"),
+                checkOutDate: selectedCheckOutDate.toDate().toLocaleDateString("sv"),
                 numberOfTenants: visitors,
             }));
 

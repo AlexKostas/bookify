@@ -121,8 +121,8 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
 
                                 const newAvailabilities = [...availabilities,
                                     {
-                                        startDate: dates[0].startDate.toISOString(),
-                                        endDate: dates[0].endDate.toISOString(),
+                                        startDate: dates[0].startDate.toLocaleDateString("sv"),
+                                        endDate: dates[0].endDate.toLocaleDateString("sv"),
                                         deletable: true
                                     }
                                 ];
