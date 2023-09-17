@@ -10,6 +10,7 @@ import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
+import com.bookify.room.RoomService;
 import com.bookify.utils.Constants;
 import com.bookify.utils.InappropriatePasswordException;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class UserService implements UserDetailsService {
     private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
     private final TokenService tokenService;
+    private final RoomService roomService;
 
     public User createUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
         String username = registrationDTO.username();
@@ -126,6 +128,9 @@ public class UserService implements UserDetailsService {
 
         // Generate and return a new token as user info is updated
         String newAccessToken = tokenService.generateNewJWTToken(user);
+
+        // If user is not a host anymore delete any previous rooms they may have had
+        if(!user.isHost()) roomService.deleteRoomsOfHost(user);
 
         return new LoginRegistrationResponseDTO(
                 newProfile.newUsername(),
