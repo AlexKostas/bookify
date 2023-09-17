@@ -3,11 +3,10 @@ import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
 import UserView from "../components/UserView/UserView";
 import {Link, useNavigate} from "react-router-dom";
-import {faEdit} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useSearchContext} from "../context/SearchContext";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const ProfilePage = () => {
     const { auth } = useAuth();
@@ -23,17 +22,22 @@ const ProfilePage = () => {
     <>
         <div className="page-container">
             <Navbar image={profilePic} />
+            <div>
+                <Typography
+                    variant="h1"
+                    sx={{
+                        fontSize: "2.1rem",
+                        mt: "1rem",
+                        color: "#333",
+                        textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                        textAlign: "center",
+                    }}
+                >
+                    User Profile
+                </Typography>
+            </div>
             <div className="content">
-                <h1>Profile</h1>
                 <UserView username={auth.user} onProfilePicChanged={(image) => setProfilePic(image)}/>
-                <button onClick={() => navigate('/updateProfile')}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    Edit Profile
-                </button>
-                <button onClick={() => navigate('/updateAboutInfo')}>
-                    <FontAwesomeIcon icon={faEdit} />
-                    Edit About Info
-                </button>
             </div>
             <Footer/>
         </div>

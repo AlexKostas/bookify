@@ -258,6 +258,18 @@ const UserGrid = () => {
                     id="fileType"
                     value={selectedFileType}
                     onChange={(event) => setSelectedFileType(event.target.value)}
+                    size="small"
+                    sx={{
+                        minWidth: 120,
+                        // color: 'white',
+                        // '& .MuiSelect-icon': {
+                        //     color: 'white',
+                        // },
+                        // backgroundColor: 'primary.main',
+                        // '&:hover': {
+                        //     backgroundColor: 'primary.dark',
+                        // },
+                    }}
                 >
                     <MenuItem value="JSON">JSON</MenuItem>
                     <MenuItem value="XML">XML</MenuItem>

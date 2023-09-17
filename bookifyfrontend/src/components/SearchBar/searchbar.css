@@ -51,7 +51,7 @@
 }
 
 .headerIcon {
-    color: lightgray;
+    color: #888888;
     margin-bottom: 1%;
     margin-right: 2%;
 }
@@ -73,7 +73,7 @@
 }
 
 .headerSearchText {
-    color: lightgray;
+    color: #888888;
     cursor: pointer;
 }
 
@@ -89,7 +89,7 @@
     position: absolute;
     top: 70%;
     background-color: #ffffff;
-    color: gray;
+    color: #888888;
     border-radius: 5px;
     -webkit-box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
     box-shadow: 0px 0px 10px -5px rgba(0, 0, 0, 0.4);
