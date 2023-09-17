@@ -4,7 +4,7 @@ import useAuth from '../hooks/useAuth';
 import UserView from "../components/UserView/UserView";
 import {Link, useNavigate} from "react-router-dom";
 import {useSearchContext} from "../context/SearchContext";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 import Typography from "@mui/material/Typography";
 

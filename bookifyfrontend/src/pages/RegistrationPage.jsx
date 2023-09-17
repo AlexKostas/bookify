@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 
 const REGISTER_URL = '/registration/register';

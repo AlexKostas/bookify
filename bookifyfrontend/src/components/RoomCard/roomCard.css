@@ -6,6 +6,7 @@
     border: 1px solid dimgray;
     box-shadow: 3px 3px 7px rgba(0, 0, 0, 0.2);
     transition: 0.4s;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.25);
 }
 
 .room-card:hover {

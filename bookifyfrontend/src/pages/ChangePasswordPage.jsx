@@ -6,7 +6,7 @@ import {faEdit} from "@fortawesome/free-solid-svg-icons";
 import "../components/RegistrationForm/registrationForm.css"
 import {Link, useNavigate} from "react-router-dom";
 import ChangePasswordForm from "../components/RegistrationForm/ChangePasswordForm";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css'
 import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";

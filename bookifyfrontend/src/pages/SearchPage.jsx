@@ -10,7 +10,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import {useFilterOptions} from "../context/FilterOptionsContext";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 
 const SearchPage = () => {

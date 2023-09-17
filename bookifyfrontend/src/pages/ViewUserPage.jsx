@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import UserView from "../components/UserView/UserView"
 import Navbar from "../components/Navbar/Navbar";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import React from "react";
 import './styles/page.css';
 import Typography from "@mui/material/Typography";

@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import CreateRoom from "../components/CreateRoom/CreateRoom";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 
 const CreateRoomPage = () => {

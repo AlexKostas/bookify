@@ -6,7 +6,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {Link, useNavigate} from "react-router-dom";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 import Button from "@mui/material/Button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

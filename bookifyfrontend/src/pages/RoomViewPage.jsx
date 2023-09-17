@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
 import RoomView from "../components/RoomView/RoomView"
 import Navbar from "../components/Navbar/Navbar";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 
 const RoomViewPage = () => {

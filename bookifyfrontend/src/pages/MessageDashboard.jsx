@@ -10,7 +10,7 @@ import MessageIcon from '@mui/icons-material/Message';
 import * as React from "react";
 import {FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import Footer from "../Footer/Footer";
+import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 import Typography from "@mui/material/Typography";
 
