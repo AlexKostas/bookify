@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -108,6 +109,7 @@ public class ImageStorage {
             Files.delete(Path.of(imagePath));
         } catch (IOException e) {
             log.error("Could not delete file {}", imagePath);
+            log.error(Arrays.toString(e.getStackTrace()));
         }
     }
 

@@ -181,9 +181,6 @@ public class RoomService{
         host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
         userRepository.save(host);          // updates the host
 
-        // delete any bookings for given room
-        bookingRepository.deleteByRoom(roomToDelete);
-
         // delete availability rows of given room
         availabilityRepository.deleteByRoom(roomToDelete);
 

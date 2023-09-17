@@ -29,8 +29,8 @@ const BookingPanel = ({ room, roomID }) => {
 
     const isTenant = auth?.roles.includes('tenant');
     const allInfoProvided = selectedCheckInDate && selectedCheckOutDate;
-    const sameHost = auth?.user === room.hostUsername;
-    const bookButtonActive = auth && isTenant && allInfoProvided && !sameHost;
+    const sameHost = auth?.user === room?.hostUsername;
+    const bookButtonActive = auth && isTenant && allInfoProvided && !sameHost && room
 
     const defaultOptions = {
         loop: false,
@@ -226,7 +226,7 @@ const BookingPanel = ({ room, roomID }) => {
                         onSubmit={onSubmit}
                         onClose={() => setDetailsActive(false)}
                         roomID={roomID}
-                        minStay={room.minimumStay}
+                        minStay={room?.minimumStay}
                         initData={{
                             selectedCheckInDate,
                             selectedCheckOutDate,

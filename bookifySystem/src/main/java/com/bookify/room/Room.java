@@ -5,7 +5,9 @@ import com.bookify.images.Image;
 import com.bookify.reviews.Review;
 import com.bookify.room_amenities.Amenity;
 import com.bookify.room_type.RoomType;
+import com.bookify.rooms_viewed.ViewedRoom;
 import com.bookify.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -93,12 +95,16 @@ public class Room {
     private User roomHost;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Booking> bookings;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ViewedRoom> viewedRooms;
 
     public Room(String name, String summary, String description, String notes, String address, String neighborhood,
                 String neighborhoodOverview, String transitInfo, String city, String state, String country,

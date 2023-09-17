@@ -24,7 +24,7 @@ const RoomView = ({ roomID }) => {
     const [shouldRedraw, setShouldRedraw] = useState(true); // MUST BE INITIALIZED TO TRUE
     const [images, setImages] = useState([]);
 
-    const profilePicURL = `/upload/getProfilePic/${room.hostUsername}`;
+    const profilePicURL = `/upload/getProfilePic/${room?.hostUsername}`;
     const { imageData } = useImageFetcher(profilePicURL);
     const { fetchImages, loading } = useFetchImages();
 
@@ -64,15 +64,15 @@ const RoomView = ({ roomID }) => {
     }, [ROOM_URL, room]);
 
     const downloadImages = async () => {
-        let urls = [`/roomPhotos/get/${room.thumbnailGuid}`]
-        urls = [...urls, ...room.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
+        let urls = [`/roomPhotos/get/${room?.thumbnailGuid}`]
+        urls = [...urls, ...room?.photosGUIDs.map(item => `/roomPhotos/get/${item}`)];
         const downloadedImages = await fetchImages(urls);
         setImages(downloadedImages || []);
     }
 
 
     useEffect(() => {
-        if(!room || !room.photosGUIDs) return;
+        if(!room || !room?.photosGUIDs) return;
 
         downloadImages();
     }, [room]);
@@ -88,29 +88,29 @@ const RoomView = ({ roomID }) => {
         <div className="room-view-container">
 
             <div className="general-room-info">
-                <h2>{room.name}</h2>
+                <h2>{room?.name}</h2>
 
                 {
                     room &&
                     <div className="room-info-items">
 
                         <Link
-                            to={`/user/${room.hostUsername}`}
+                            to={`/user/${room?.hostUsername}`}
                             className="room-info-host">
                             <img
                                 src={imageData}
                                 className='room-info-profile-pic'
                             />
-                            <u>{room.hostUsername}</u>
+                            <u>{room?.hostUsername}</u>
                         </Link>
 
                         <div className="room-info-reviews">
-                            <StarIcon fontSize="small" style={{color: "yellow"}}/> {room.rating?.toFixed(1)} · <ScrollLink
+                            <StarIcon fontSize="small" style={{color: "yellow"}}/> {room?.rating?.toFixed(1)} · <ScrollLink
                             to="reviews"
                             smooth={true}
                             duration={500}
                         >
-                            <u className="review-link">{room.reviewCount} review{(room.reviewCount > 1 || room.reviewCount <= 0) && 's'}</u>
+                            <u className="review-link">{room?.reviewCount} review{(room?.reviewCount > 1 || room?.reviewCount <= 0) && 's'}</u>
                         </ScrollLink>
                         </div>
 
@@ -120,7 +120,7 @@ const RoomView = ({ roomID }) => {
                                 smooth={true}
                                 duration={500}
                             >
-                                <u className="review-link">{capitalizeWords(room?.neighborhood ?? '')}, {room.city}, {room.state}, {room.country}</u>
+                                <u className="review-link">{capitalizeWords(room?.neighborhood ?? '')}, {room?.city}, {room?.state}, {room?.country}</u>
                             </ScrollLink>
                         </div>
 
@@ -157,7 +157,7 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Summary</h3>
                                 {room?.summary ? (
-                                    <p>{room.summary}</p>
+                                    <p>{room?.summary}</p>
                                 ) : (
                                     <p>No summary provided</p>
                                 )}
@@ -166,7 +166,7 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Description</h3>
                                 {room?.description ? (
-                                    <p>{room.description}</p>
+                                    <p>{room?.description}</p>
                                 ) : (
                                     <p>No description provided</p>
                                 )}
@@ -176,13 +176,13 @@ const RoomView = ({ roomID }) => {
                                 <h3 className="room-section-title">Space</h3>
                                 <ul>
                                     <ul>
-                                        <li>Bedrooms: {room?.nBedrooms ? room.nBedrooms : "—"}</li>
-                                        <li>Beds: {room?.nBeds ? room.nBeds : "—"}</li>
-                                        <li>Bathrooms: {room?.nBaths ? room.nBaths : "—"}</li>
-                                        <li>Total surface area: {room?.surfaceArea ? `${room.surfaceArea} sq. feet` : "—"}</li>
-                                        <li>Room Type: {room?.roomType ? room.roomType : "—"}</li>
-                                        <li>Maximum number of tenants: {room?.maxTenants ? room.maxTenants : "—"}</li>
-                                        <li>Number of accommodates: {room?.accommodates ? room.accommodates : "—"}</li>
+                                        <li>Bedrooms: {room?.nBedrooms ? room?.nBedrooms : "—"}</li>
+                                        <li>Beds: {room?.nBeds ? room?.nBeds : "—"}</li>
+                                        <li>Bathrooms: {room?.nBaths ? room?.nBaths : "—"}</li>
+                                        <li>Total surface area: {room?.surfaceArea ? `${room?.surfaceArea} sq. feet` : "—"}</li>
+                                        <li>Room Type: {room?.roomType ? room?.roomType : "—"}</li>
+                                        <li>Maximum number of tenants: {room?.maxTenants ? room?.maxTenants : "—"}</li>
+                                        <li>Number of accommodates: {room?.accommodates ? room?.accommodates : "—"}</li>
                                     </ul>
                                 </ul>
                             </section>
@@ -201,7 +201,7 @@ const RoomView = ({ roomID }) => {
                                                 <Popup>
                                                     {room?.name && (
                                                         <div style={{  maxWidth: '200px', textAlign: 'center' }}>
-                                                            <div style={{ fontWeight: 'bold' }}>{room.name}</div>
+                                                            <div style={{ fontWeight: 'bold' }}>{room?.name}</div>
                                                             <div>
                                                                 Latitude: {latitude.toFixed(6)}, Longitude: {longitude.toFixed(6)}
                                                             </div>
@@ -213,20 +213,20 @@ const RoomView = ({ roomID }) => {
                                     )}
                                 </div>
                                 <ul>
-                                    <li>Address: {room?.address ? room.address : "No address provided"}</li>
-                                    <li>City: {room?.city ? room.city : "No city provided"}</li>
-                                    <li>State: {room?.state ? room.state : "No state provided"}</li>
-                                    <li>Country: {room?.country ? room.country : "No country provided"}</li>
-                                    <li>Zipcode: {room?.zipcode ? room.zipcode : "No zipcode provided"}</li>
+                                    <li>Address: {room?.address ? room?.address : "No address provided"}</li>
+                                    <li>City: {room?.city ? room?.city : "No city provided"}</li>
+                                    <li>State: {room?.state ? room?.state : "No state provided"}</li>
+                                    <li>Country: {room?.country ? room?.country : "No country provided"}</li>
+                                    <li>Zipcode: {room?.zipcode ? room?.zipcode : "No zipcode provided"}</li>
                                 </ul>
                             </section>
 
 
                             <section className="room-section">
                                 <h3 className="room-section-title">Neighborhood</h3>
-                                <h4>{room?.neighborhood ? room.neighborhood : "No neighborhood provided"}</h4>
+                                <h4>{room?.neighborhood ? room?.neighborhood : "No neighborhood provided"}</h4>
                                 {room?.neighborhoodOverview ? (
-                                    <p>{room.neighborhoodOverview}</p>
+                                    <p>{room?.neighborhoodOverview}</p>
                                 ) : (
                                     <p>No neighborhood overview provided</p>
                                 )}
@@ -235,7 +235,7 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Transit Info</h3>
                                 {room?.transitInfo ? (
-                                    <p>{room.transitInfo}</p>
+                                    <p>{room?.transitInfo}</p>
                                 ) : (
                                     <p>No transit information provided</p>
                                 )}
@@ -244,13 +244,13 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Amenities</h3>
                                 <div>
-                                    {room?.amenityNames && room.amenityNames.length > 0 ? (
+                                    {room?.amenityNames && room?.amenityNames.length > 0 ? (
                                         <ul>
-                                            {room.amenityNames.map((amenity, index) => (
+                                            {room?.amenityNames.map((amenity, index) => (
                                                 <li key={index}>
-                                                    {room.amenityDescriptions[index] ? (
+                                                    {room?.amenityDescriptions[index] ? (
                                                         <Tooltip
-                                                            title={room.amenityDescriptions[index]}
+                                                            title={room?.amenityDescriptions[index]}
                                                             placement="right"
                                                             classes={{ tooltip: 'centered-tooltip' }}
                                                             arrow
@@ -272,7 +272,7 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Rules</h3>
                                 {room?.rules ? (
-                                    <p>{room.rules}</p>
+                                    <p>{room?.rules}</p>
                                 ) : (
                                     <p>No rules provided</p>
                                 )}
@@ -281,7 +281,7 @@ const RoomView = ({ roomID }) => {
                             <section className="room-section">
                                 <h3 className="room-section-title">Notes</h3>
                                 {room?.notes ? (
-                                    <p>{room.notes}</p>
+                                    <p>{room?.notes}</p>
                                 ) : (
                                     <p>No notes</p>
                                 )}
@@ -291,7 +291,7 @@ const RoomView = ({ roomID }) => {
 
                         <div className="room-view-side-panel">
                             <BookingPanel roomID={roomID} room={room} />
-                            <RoomUserView host={room.hostUsername} />
+                            <RoomUserView host={room?.hostUsername} />
                         </div>
 
                     </div>
@@ -303,9 +303,9 @@ const RoomView = ({ roomID }) => {
 
                     <ReviewPanel
                         roomID={roomID}
-                        maxReviews={room.reviewCount}
+                        maxReviews={room?.reviewCount}
                         onReviewsChanged={() => setShouldRedraw(true)}
-                        roomHost={room.hostUsername}
+                        roomHost={room?.hostUsername}
                     />
 
                 </div>

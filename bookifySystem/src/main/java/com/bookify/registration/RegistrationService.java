@@ -113,8 +113,6 @@ public class RegistrationService {
         } while(refreshTokenRepository.findById(token).isPresent());
 
         Instant expirationTime = Instant.now().plus(Configuration.REFRESH_TOKEN_DURATION_MINUTES, ChronoUnit.MINUTES);
-        //TODO: maybe hash the refresh token in the future
-        //TODO: maybe we should allow multiple refresh tokens for each user (logging in from different devices)
         RefreshToken newToken = new RefreshToken(token, expirationTime);
 
         if(user.getRefreshToken() != null)

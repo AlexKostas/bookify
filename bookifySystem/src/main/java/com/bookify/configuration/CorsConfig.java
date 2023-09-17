@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//TODO: Remove this if and when the frontend is served by the backend
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
     @Override
