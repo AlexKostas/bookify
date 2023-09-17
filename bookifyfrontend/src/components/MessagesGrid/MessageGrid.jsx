@@ -127,7 +127,6 @@ const MessageGrid = ({ orderDirection }) => {
                           <Typography
                               sx={{
                                 fontSize: "2rem",
-                                color: "#333",
                                 textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
                               }}
                           >
@@ -147,6 +146,11 @@ const MessageGrid = ({ orderDirection }) => {
                   color="primary"
                   showFirstButton
                   showLastButton
+                  sx={{
+                    '& .MuiPaginationItem-icon': {
+                      color: 'white', // Set the color of the arrows to white
+                    },
+                  }}
               />
             </div>
           </div>

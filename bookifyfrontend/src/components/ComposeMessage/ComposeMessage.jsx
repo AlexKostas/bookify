@@ -14,6 +14,8 @@ import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
 import SendIcon from '@mui/icons-material/Send';
 import CustomDialogTitle from "./CustomDialogTitle";
+import Tooltip from "@mui/material/Tooltip";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
     const [recipient, setRecipient] = useState('');
@@ -23,7 +25,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
 
     const axiosPrivate = useAxiosPrivate();
 
-    const validSend = recipient;
+    const validSend = recipient && topic && messageBody;
 
     const clearError = () => setError(null);
 
@@ -126,6 +128,23 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                                     }}
                                 />
                             </Grid>
+                            <Grid item xs = {1}>
+                            </Grid>
+                            <Grid item xs = {1}>
+                                {!validSend && (
+                                    <Tooltip
+                                        title="All fields must be filled"
+                                        placement="bottom-start"
+                                        sx = {{
+                                            ml : "1.3rem",
+                                            mt : "0.3rem",
+                                        }}
+                                        arrow
+                                    >
+                                        <InfoOutlinedIcon/>
+                                    </Tooltip>
+                                )}
+                            </Grid>
                             <Grid item xs={12} >
                                 <TextField
                                     id="message-body"
@@ -145,15 +164,15 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                             </Grid>
                         </Grid>
                         <Grid item xs={5}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            sx={{ mt: 1.5, mb: 0, ml: 88 }}
-                            endIcon={<SendIcon />}
-                            disabled={!validSend}
-                        >
-                            Send
-                        </Button>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                sx={{ mt: 1.5, mb: 0, ml: 88 }}
+                                endIcon={<SendIcon />}
+                                disabled={!validSend}
+                            >
+                                Send
+                            </Button>
                         </Grid>
                     </Box>
                 </DialogContent>

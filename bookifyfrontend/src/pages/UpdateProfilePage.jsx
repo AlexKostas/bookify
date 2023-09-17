@@ -84,7 +84,6 @@ const UpdateProfilePage = () => {
                                 size="small"
                                 variant="outlined"
                                 sx = {{
-                                    mt: 1.5,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',

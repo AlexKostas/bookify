@@ -37,34 +37,31 @@ const MessageDashboard = () => {
             <Navbar />
             <div className="content">
                 <Typography
-                    component="h1"
-                    variant="h5"
+                    variant="h4"
                     sx={{
                         fontSize: "2rem",
+                        padding: "1rem",
                         color: "#333",
                         textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
                         textAlign: "center",
-                        mt: 2,
                     }}
                 >
                     Inbox
                 </Typography>
                 <div className="page-buttons-container">
                     <Grid container spacing={1}>
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <Button
                                 variant="contained"
                                 onClick={() => setComposePanelActive(true)}
                                 endIcon={<MessageIcon />}
-                                sx = {{ textTransform: 'none'}}
-                                fullWidth
                             >
                                 Compose
                             </Button>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                         </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={2}>
                             <FormControl sx={{ width: '12.5rem' }}>
                                 <InputLabel
                                     id="order-label"

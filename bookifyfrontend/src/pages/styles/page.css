@@ -12,12 +12,15 @@
 
 .page-buttons-container {
     position: relative;
-    width: 45%;
+    width: 62%;
     margin: 3% auto -2%;
 }
 
 .page-button {
-    margin-left: 36%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    text-align: center;
 }
 
 body {

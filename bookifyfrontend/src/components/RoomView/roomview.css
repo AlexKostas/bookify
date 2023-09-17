@@ -94,9 +94,8 @@ ul, ol {
 
 .room-view-map-container {
     width: 100%;
-
+    margin-left: 5%;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
@@ -104,8 +103,8 @@ ul, ol {
     width: 60%;
     height: 40vh;
 
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 1%;
+    margin-bottom: 2%;
 }
 
 .review-parent {

@@ -15,7 +15,7 @@
 }
 
 .message-card:hover {
-    background-color: gray;
+    background-color: darkgray;
     transform: scale(1.02);
 }
 
@@ -25,10 +25,12 @@
 }
 
 .grid{
+    background-color: dodgerblue;
     width: 100%;
     margin: 0 auto;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
     height: 42vh;
+    border-radius: 10px;
     position: relative;
 }
 
@@ -74,6 +76,7 @@
 }
 
 .no-messages-container {
+    color: white;
     width: 100%;
     min-height: 20vh;
     display: flex;
