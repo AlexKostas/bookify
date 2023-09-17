@@ -39,7 +39,7 @@ const SearchField = ( {onSelection} ) => {
     return (
         <Autocomplete
             options={suggestions}
-            getOptionLabel={(option) => option}
+            getOptionLabel={(option) => `${option[0]}, ${option[1]}, ${option[2]}`}
             onChange={handleSelect}
             onInputChange={handleInputChange}
             className="autocomplete-bar"

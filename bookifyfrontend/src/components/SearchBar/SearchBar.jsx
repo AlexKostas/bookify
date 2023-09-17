@@ -16,7 +16,7 @@ import {useLocalStorage} from "../../hooks/useLocalStorage";
 import {useFilterOptions} from "../../context/FilterOptionsContext";
 
 const SearchBar = ({ type }) => {
-    const [destination, setDestination] = useState("");
+    const [destinationItems, setDestinationItems] = useState("");
     const {setItem} = useLocalStorage();
     const [openDate, setOpenDate] = useState(false);
     const [dates, setDates] = useState([
@@ -33,7 +33,7 @@ const SearchBar = ({ type }) => {
     const [error, setError] = useState(false);
 
     const navigate = useNavigate();
-    const {searchInfo, setSearchInfo} = useSearchContext();
+    const {setSearchInfo} = useSearchContext();
     const { resetState } = useFilterOptions();
 
     const dateRef = useRef();
@@ -49,26 +49,18 @@ const SearchBar = ({ type }) => {
     };
 
     const handleSearch = () => {
-        if (destination === "" || dates[0].startDate === undefined || dates[0].endDate === undefined) {
+        if (destinationItems === "" || dates[0].startDate === undefined || dates[0].endDate === undefined) {
             setError(true);
             return;
         }
 
-        const parts = destination.split(', ');
-
-        const city = parts[0];
-        const state = parts[1];
-        const country = parts[2];
-        console.log({city, state, country})
-
         const newSearchInfo = {
-            location: destination,
             checkInDate: dates[0].startDate,
             checkOutDate: dates[0].endDate,
             tenants: options.people,
-            city,
-            state,
-            country
+            city: destinationItems[0],
+            state: destinationItems[1],
+            country: destinationItems[2],
         }
 
         setSearchInfo(newSearchInfo);
@@ -80,7 +72,7 @@ const SearchBar = ({ type }) => {
     };
 
     const onLocationSelection = (value) => {
-        setDestination(value);
+        setDestinationItems(value);
     }
 
     const handleClickOutside = (event) => {
@@ -102,7 +94,7 @@ const SearchBar = ({ type }) => {
 
     useEffect(() => {
         setError(false);
-    }, [destination, dates, options]);
+    }, [destinationItems, dates, options]);
 
     let headerSearchError = 'headerSearchError';
     return (
