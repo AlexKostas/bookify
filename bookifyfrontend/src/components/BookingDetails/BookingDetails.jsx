@@ -44,7 +44,6 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
 
             const isAvailable = response?.data.available;
             setAvailable(isAvailable);
-            console.log(isAvailable);
             !isAvailable ? setError('Room is unavailable in the given date range') : setError('');
         }
         catch (err){
@@ -65,7 +64,7 @@ const BookingDetails = ( {open, onSubmit, onClose, roomID, minStay, initData} ) 
     useEffect(() => {
         setError('');
 
-        const numberOfDays = checkOutDate.isSame(checkInDate) ? 0 : checkOutDate.diff(checkInDate, 'day') + 1;
+        const numberOfDays = checkOutDate.isSame(checkInDate) ? 0 : checkOutDate.diff(checkInDate, 'day');
         setNumberOfNights(numberOfDays);
 
         if(numberOfDays < minStay){

@@ -113,7 +113,8 @@ const BookingPanel = ({ room, roomID }) => {
         setSelectedCheckOutDate(tempCheckoutDate);
         setVisitors(searchInfo.tenants);
 
-        const numberOfNights = (!tempCheckInDate ||tempCheckoutDate.isSame(tempCheckInDate)) ? 0 : tempCheckoutDate.diff(tempCheckInDate, 'day') + 1;
+        const numberOfNights = (!tempCheckInDate || tempCheckoutDate.isSame(tempCheckInDate)) ? 0 : tempCheckoutDate.diff(tempCheckInDate, 'day');
+
         setNights(numberOfNights);
     }, [searchInfo]);
 
