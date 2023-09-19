@@ -6,16 +6,6 @@ from datetime import datetime
 guid = 0
 usernames = set()
 
-def disable_foreign_key_checks(connection):
-    cursor = connection.cursor()
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
-    connection.commit()
-
-def enable_foreign_key_checks(connection):
-    cursor = connection.cursor()
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
-    connection.commit()
-
 def check_user_exists(connection, user_id):
     cursor = connection.cursor()
 
@@ -40,11 +30,19 @@ def createUniqueUsername(connection, username):
     else: 
         return username
 
-def delete_users(connection):    
+def delete_users(connection):  
+    print("-- Deleting Users --")
+
     cursor = connection.cursor()
 
+    admin_id_query = "SELECT app_user_id FROM users WHERE username = 'admin'"
+    cursor.execute(admin_id_query)
+    admin_id = cursor.fetchone()[0]
+
     delete_query = "DELETE FROM users WHERE username <> 'admin'"
+    delete_user_role_query = f"DELETE r FROM user_role_relationship r WHERE r.app_user_id <> {admin_id}"
     cursor.execute(delete_query)
+    cursor.execute(delete_user_role_query)
     connection.commit()
 
     cursor.close()
@@ -242,26 +240,3 @@ def insert_reviews(connection, csv_file):
 
     connection.commit()
     cursor.close()
-
-if __name__ == "__main__":
-    try:
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='admin',
-            password='1234',
-            database='db_bookify'
-        )
-        disable_foreign_key_checks(connection)
-        delete_users(connection)
-        delete_reviews(connection)
-        connection.cursor().execute("SET AUTOCOMMIT = 0;")
-        connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
-
-        tenant_role_id, host_role_id = get_role_ids(connection)
-        insert_users_from_csv(connection, tenant_role_id, 'reviews.csv')
-        insert_host_users(connection, host_role_id)
-        insert_reviews(connection, 'reviews.csv')
-        enable_foreign_key_checks(connection)
-        connection.close()
-    except mysql.connector.Error as e:
-        print(f"Error connecting to MySQL: {e}")

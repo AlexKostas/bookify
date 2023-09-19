@@ -7,17 +7,6 @@ import re
 current_date = datetime.datetime.now()
 dates = [current_date + datetime.timedelta(days=x) for x in range(0, 30)]
 location_data = dict()
-ids = set()
-
-def setup_ids():
-    global ids
-    
-    with open('listings.csv', 'r', newline='', encoding='utf8') as csvfile:
-        reader = csv.DictReader(csvfile)
-
-        for row in reader:
-            ids.add(row['id'])
-
 
 def load_location_data():
     with open('locations.json', 'r') as jsonfile:
@@ -27,21 +16,11 @@ def load_location_data():
 
         location_data = {item['room_id']: item for item in data}
 
-def disable_foreign_key_checks(connection):
-    cursor = connection.cursor()
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
-    connection.commit()
-
-def enable_foreign_key_checks(connection):
-    cursor = connection.cursor()
-    cursor.execute("SET FOREIGN_KEY_CHECKS = 1")
-    connection.commit()
-
 def delete_rooms(connection):
     print("-- Deleting Rooms --")
 
     cursor = connection.cursor()
-    cursor.execute(f"DELETE FROM rooms where room_id in ({','.join(ids)})")
+    cursor.execute(f"DELETE FROM rooms")
     connection.commit()
     cursor.close()
 
@@ -49,7 +28,7 @@ def delete_availability(connection):
     print("-- Deleting Availability --")
 
     cursor = connection.cursor()
-    cursor.execute(f"DELETE FROM availability where room_id in ({','.join(ids)})")
+    cursor.execute(f"DELETE FROM availability")
     connection.commit()
     cursor.close()
 
@@ -144,29 +123,3 @@ def insert_listings(connection, csv_file):
 
     connection.commit()
     cursor.close()
-
-if __name__ == "__main__":
-    try:
-        connection = mysql.connector.connect(
-            host='localhost',
-            user='admin',
-            password='1234',
-            database='db_bookify'
-        )
-        disable_foreign_key_checks(connection)
-
-        load_location_data()
-        setup_ids()
-
-        delete_availability(connection)
-        delete_rooms(connection)
-
-        connection.cursor().execute("SET AUTOCOMMIT = 0;")
-        connection.cursor().execute("set global innodb_flush_log_at_trx_commit=2;")
-
-        insert_listings(connection, 'listings.csv')
-        enable_foreign_key_checks(connection)
-        connection.close()
-
-    except mysql.connector.Error as e:
-        print(f"Error connecting to MySQL: {e}")

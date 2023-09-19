@@ -46,8 +46,8 @@ const SearchPage = () => {
                 JSON.stringify(
                     {
                         tenants: searchInfo.tenants,
-                        startDate: searchInfo.checkInDate,
-                        endDate: searchInfo.checkOutDate,
+                        startDate: searchInfo.checkInDate.toLocaleDateString("sv"),
+                        endDate: searchInfo.checkOutDate.toLocaleDateString("sv"),
                         city: searchInfo.city,
                         state: searchInfo.state,
                         country: searchInfo.country,

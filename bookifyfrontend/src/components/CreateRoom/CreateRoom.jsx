@@ -77,7 +77,7 @@ const CreateRoom = ({ roomID }) => {
 
     const generalSet = newRoom?.name && newRoom?.summary && newRoom?.description;
     const locationSet = newRoom?.address && newRoom?.neighborhood && newRoom?.city && newRoom?.state && newRoom?.country
-        && newRoom?.zipcode && newRoom.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
+        && newRoom?.zipcode && newRoom?.latitude && newRoom.longitude && newRoom.transitInfo && newRoom.neighborhoodOverview
     const availabilitySet = newRoom?.availability?.length > 0;
     const spaceSet = newRoom?.nBeds > 0 && newRoom?.nBaths && newRoom?.surfaceArea > 1 && newRoom?.roomTypeID >= 0 && newRoom?.nBedrooms > 0;
     const pricingSet = newRoom?.pricePerNight > 0 && newRoom?.maxTenants > 0 && newRoom?.extraCostPerTenant;

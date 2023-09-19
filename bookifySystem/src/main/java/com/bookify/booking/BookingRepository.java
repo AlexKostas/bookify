@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
-    void deleteByRoom(Room room);
 
     List<Booking> findAllByRoom(Room room);
 

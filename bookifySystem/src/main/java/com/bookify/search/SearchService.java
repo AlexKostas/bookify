@@ -52,7 +52,7 @@ public class SearchService {
         Set<Amenity> amenitiesFilter = new HashSet<>();
         for(int amenityID : searchDTO.amenitiesIDs()){
             Optional<Amenity> amenityOptional = amenityRepository.findById(amenityID);
-            if(!amenityOptional.isPresent()){
+            if(amenityOptional.isEmpty()){
                 log.warn("Skipping amenity with id " + amenityID + ". REASON: Amenity not found");
                 continue;
             }
@@ -64,7 +64,7 @@ public class SearchService {
         for(Integer roomTypeID: searchDTO.roomTypesIDs()){
             Optional<RoomType> roomTypeOptional = roomTypeRepository.findById(roomTypeID);
 
-            if(!roomTypeOptional.isPresent()){
+            if(roomTypeOptional.isEmpty()){
                 log.warn("Skipping room type with id " + roomTypeID + ". REASON: Room type not found");
                 continue;
             }
@@ -113,16 +113,7 @@ public class SearchService {
         return new PageImpl<>(finalResult, pageable, searchResult.getTotalElements());
     }
 
-    public List<String> getAutocompleteLocationSuggestions(String input){
-        List<String[]> result = roomRepository.findAutocompleteLocationSuggestions(input);
-
-        List<String> suggestions = new ArrayList<>();
-        for(String[] row : result){
-            assert(row.length == 3);
-            String suggestion = row[0] + ", " + row[1] + ", " + row[2];
-            suggestions.add(suggestion);
-        }
-
-        return suggestions;
+    public List<String[]> getAutocompleteLocationSuggestions(String input){
+        return roomRepository.findAutocompleteLocationSuggestions(input);
     }
 }

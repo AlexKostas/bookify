@@ -75,6 +75,7 @@ public class RecommendationService {
         }
 
         Map<Long, Integer> userDictionary;
+        Map<Integer, Integer> roomDictionary;
         double[][] userMatrix;
         double[][] roomMatrix;
 
@@ -82,6 +83,7 @@ public class RecommendationService {
             log.info("-- Reading algorithm results from disk --");
 
             userDictionary = ioUtility.readUserDictionaryFromDisk();
+            roomDictionary = ioUtility.readRoomDictionaryFromDisk();
             userMatrix = ioUtility.readUserMatrixFromDisk();
             roomMatrix = ioUtility.readRoomMatrixFromDisk();
 
@@ -100,7 +102,7 @@ public class RecommendationService {
         }
 
         int userRow = userDictionary.get(currentUser.getUserID());
-        return produceBestRecommendations(userRow, userMatrix, roomMatrix);
+        return produceBestRecommendations(userRow, userMatrix, roomMatrix, roomDictionary);
     }
 
     public List<SearchPreviewDTO> getTopRatedRooms() {
@@ -113,24 +115,36 @@ public class RecommendationService {
                 .toList();
     }
 
-    private List<SearchPreviewDTO> produceBestRecommendations(int userRow, double[][] userMatrix, double[][] roomMatrix){
+    private List<SearchPreviewDTO> produceBestRecommendations(int userRow, double[][] userMatrix, double[][] roomMatrix,
+                                                              Map<Integer, Integer> roomDictionary){
         log.info("--Generating recommendations--");
 
-        List<Integer> roomsIDs = roomRepository.findAllRoomIds();
-        int numberOfRooms = roomsIDs.size();
+        int numberOfRooms = roomDictionary.size();
 
-        RoomRatingPair[] ratings = new RoomRatingPair[numberOfRooms];
-        for(int i = 0; i < numberOfRooms; i++) {
-            double rating = MatrixUtility.dotProduct(userMatrix, roomMatrix, userRow, i);
-            ratings[i] = new RoomRatingPair(rating, roomsIDs.get(i));
+        // Generate likely rating values of given user for each room id according to matrix factorization results.
+        List<RoomRatingPair> ratings = new ArrayList<>(numberOfRooms);
+        // Populating the list with dummy elements so the following loop can work without going out of list's bounds
+        for (int i = 0; i < numberOfRooms; i++) ratings.add(null);
+
+        for(Map.Entry<Integer, Integer> room : roomDictionary.entrySet()) {
+            double rating = MatrixUtility.dotProduct(userMatrix, roomMatrix, userRow, room.getValue());
+            ratings.set(room.getValue(), new RoomRatingPair(rating, room.getKey()));
         }
 
-        Arrays.sort(ratings, (o1, o2) -> Double.compare(o2.rating, o1.rating));
+        // Sort room ids by best rating
+        ratings.sort((o1, o2) -> Double.compare(o2.rating, o1.rating));
 
+        // Remove rooms that no longer exist from recommendations
+        Set<Integer> roomIDs = roomRepository.findAllRoomIdsSet();
+        ratings.removeIf(e -> !roomIDs.contains(e.roomID));
+
+        // Pull the rooms that will be recommended from the database. Make sure we don't recommend more rooms than
+        // we have
         List<Room> recommendations = new ArrayList<>();
-        for(int i = 0; i < Math.min(numberOfRecommendations, numberOfRooms); i++)
-            recommendations.add(roomRepository.findById(ratings[i].roomID).get());
+        for(int i = 0; i < Math.min(numberOfRecommendations, ratings.size()); i++)
+            recommendations.add(roomRepository.findById(ratings.get(i).roomID).get());
 
+        // Create the final search preview DTOs for the rooms to be recommended
         return recommendations.stream().map((room)-> utility.mapRoomToDTO(room, 1, 3))
                 .toList();
     }

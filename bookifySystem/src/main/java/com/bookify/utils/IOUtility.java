@@ -47,6 +47,10 @@ public class IOUtility {
         return (Map<Long, Integer>) readObjectFromDisk(dataDirectoryPath + Constants.userDictionaryFilename);
     }
 
+    public Map<Integer, Integer> readRoomDictionaryFromDisk() throws IOException, ClassNotFoundException {
+        return (Map<Integer, Integer>) readObjectFromDisk(dataDirectoryPath + Constants.roomDictionaryFilename);
+    }
+
     public double[][] readUserMatrixFromDisk() throws IOException, ClassNotFoundException {
         return (double[][]) readObjectFromDisk(dataDirectoryPath + Constants.userMatrixFilename);
     }

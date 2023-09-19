@@ -40,7 +40,7 @@ public class SearchController {
     @GetMapping("/autocomplete")
     public ResponseEntity<?> autocomplete(@RequestParam String input) {
         try {
-            List<String> suggestions = searchService.getAutocompleteLocationSuggestions(input);
+            List<String[]> suggestions = searchService.getAutocompleteLocationSuggestions(input);
             return ResponseEntity.ok(suggestions);
         }
         catch (Exception e){

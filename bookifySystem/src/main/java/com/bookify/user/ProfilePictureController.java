@@ -20,7 +20,7 @@ public class ProfilePictureController {
     private final ProfilePictureService profilePictureService;
 
     @PostMapping("/uploadProfilePic/{username}")
-    @PreAuthorize("hasRole('admin') or #username == authentication.name")
+    @PreAuthorize("#username == authentication.name")
     public ResponseEntity<?> uploadProfilePic(@PathVariable String username, @RequestParam("file")MultipartFile image) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(profilePictureService.uploadProfilePicture(username, image));
@@ -50,7 +50,7 @@ public class ProfilePictureController {
     }
 
     @DeleteMapping("/deleteProfilePic/{username}")
-    @PreAuthorize("hasRole('admin') or #username == authentication.name")
+    @PreAuthorize("#username == authentication.name")
     public ResponseEntity<?> deleteProfilePic(@PathVariable String username){
         try {
             return ResponseEntity.ok(profilePictureService.deleteProfilePicture(username));

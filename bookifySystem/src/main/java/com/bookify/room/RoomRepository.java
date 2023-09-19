@@ -21,6 +21,9 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
     @Query("SELECT r.roomID FROM Room r")
     List<Integer> findAllRoomIds();
 
+    @Query("SELECT r.roomID FROM Room r")
+    Set<Integer> findAllRoomIdsSet();
+
     // Unfortunately, due to the way JPA works it is not allowed to use named parameters in the order by clause
     // and although it works, it is non-standard, throws exceptions and could break at any moment. Since there is
     // no way to conveniently parameterize the order direction, two separate queries are needed. BE CAREFUL TO MAKE ANY

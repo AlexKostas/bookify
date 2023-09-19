@@ -1,17 +1,19 @@
 package com.bookify.user;
 
+import com.bookify.authentication.RefreshTokenRepository;
 import com.bookify.authentication.TokenService;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
 import com.bookify.images.ImageRepository;
 import com.bookify.registration.LoginRegistrationResponseDTO;
 import com.bookify.registration.RegistrationDTO;
-import com.bookify.reviews.Review;
 import com.bookify.reviews.ReviewRepository;
 import com.bookify.role.Role;
 import com.bookify.role.RoleRepository;
+import com.bookify.room.RoomService;
 import com.bookify.utils.Constants;
 import com.bookify.utils.InappropriatePasswordException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +22,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.naming.OperationNotSupportedException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +37,8 @@ public class UserService implements UserDetailsService {
     private final ReviewRepository reviewRepository;
     private final ImageRepository imageRepository;
     private final TokenService tokenService;
+    private final RoomService roomService;
+    private final ProfilePictureService profilePictureService;
 
     public User createUser(RegistrationDTO registrationDTO) throws OperationNotSupportedException {
         String username = registrationDTO.username();
@@ -60,10 +67,8 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(usernameOrEmail);
 
-        if(user.isPresent()) return user.get();
-
-        return userRepository.findByEmail(usernameOrEmail).orElseThrow(() -> new UsernameNotFoundException(
-                "Username/Email " + usernameOrEmail +" does not exist"));
+        return user.orElseGet(() -> userRepository.findByEmail(usernameOrEmail).orElseThrow(() -> new UsernameNotFoundException(
+                "Username/Email " + usernameOrEmail + " does not exist")));
     }
 
     public Optional<User> loadUserOptionalByUsernameOrEmail(String usernameOrEmail){
@@ -127,6 +132,9 @@ public class UserService implements UserDetailsService {
         // Generate and return a new token as user info is updated
         String newAccessToken = tokenService.generateNewJWTToken(user);
 
+        // If user is not a host anymore delete any previous rooms they may have had
+        if(!user.isHost()) roomService.deleteRoomsOfHost(user);
+
         return new LoginRegistrationResponseDTO(
                 newProfile.newUsername(),
                 newAccessToken,
@@ -142,19 +150,21 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(String username) throws UsernameNotFoundException, UnsupportedOperationException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist"));
 
         if(user.isAdmin()) throw new UnsupportedOperationException("Can not delete admin user");
 
-        List<Review> reviews = reviewRepository.findAllByReviewerUserID(user.getUserID());
-        for(Review review : reviews)
-            review.setReviewer(null);
+        if(!user.getProfilePicture().getImageGuid().equals(Configuration.DEFAULT_PROFILE_PIC_NAME))
+            profilePictureService.deleteProfilePicture(user.getUsername());
+        if(user.isHost()) roomService.deleteRoomsOfHost(user);
 
-        reviewRepository.saveAll(reviews);
-
-        userRepository.delete(user);
+        // Since some entities associated with the user (for example messages and reviews) can not be deleted, we are
+        // performing a soft delete (disabling login and ignoring them when querying the users table)
+        user.delete();
+        userRepository.save(user);
     }
 
     public LoginRegistrationResponseDTO changePassword(ChangePasswordDTO changePasswordDTO)
@@ -162,7 +172,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByUsername(changePasswordDTO.username())
                 .orElseThrow(() -> new UsernameNotFoundException("User " + changePasswordDTO.username() + " does not exist"));
 
-        String encodedOldPassword = passwordEncoder.encode(changePasswordDTO.oldPassword());
         String encodedNewPassword = passwordEncoder.encode(changePasswordDTO.newPassword());
 
         if(!passwordEncoder.matches(changePasswordDTO.oldPassword(), user.getPassword()))

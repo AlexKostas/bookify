@@ -44,7 +44,7 @@ public class ProfilePictureService {
         return imageStorage.loadImageFile(user.getProfilePicture());
     }
 
-    public String deleteProfilePicture(String username) throws UnsupportedOperationException, ClassNotFoundException {
+    public String deleteProfilePicture(String username) throws UnsupportedOperationException {
         User user = userRepository.findByUsername(username).get();
         Image oldProfilePic = user.getProfilePicture();
 

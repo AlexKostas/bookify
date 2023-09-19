@@ -93,6 +93,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                     endpointURL={'/amenities/getAllAmenities'}
                     onFiltersChanged={onAmenitiesChanged}
                     defaultData={selectedAmenities}
+                    enableDescriptions={false}
                 />
 
                 <br/>
@@ -102,6 +103,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                     endpointURL={'/roomType/getAll'}
                     onFiltersChanged={onRoomTypesChanged}
                     defaultData={selectedRoomTypes}
+                    enableDescriptions={false}
                 />
 
                 <br/>

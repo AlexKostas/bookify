@@ -36,16 +36,16 @@ const RoomCard = ({room}) => {
         if(!auth || !auth.user) return;
 
         try {
-            await axiosPrivate.post(`/room/viewRoom/${room.roomID}`)
+            await axiosPrivate.post(`/room/viewRoom/${room?.roomID}`)
         }catch (error){
             console.log(error)
         }
     }
 
     useEffect(() => {
-      if (!room.thumbnail) return;
+      if (!room?.thumbnail) return;
 
-      const url = `/roomPhotos/get/${room.thumbnail}`
+      const url = `/roomPhotos/get/${room?.thumbnail}`
       fetchImage(url);
     }, [room]);
 
@@ -64,29 +64,29 @@ const RoomCard = ({room}) => {
             {[...Array(emptyStars)].map((_, index) => (
             <FontAwesomeIcon key={index} icon={faStar} className="empty-star" />
             ))}
-            ({room.reviewCount})
+            ({room?.reviewCount})
         </>
         );
   };
 
   return (
-    <Link to={`/room/${room.roomID}`} onClick={() => sendViewedMessage()} style={{ textDecoration: 'none' }}>
+    <Link to={`/room/${room?.roomID}`} onClick={() => sendViewedMessage()} style={{ textDecoration: 'none' }}>
       <div className="room-card">
         {
           loading ? (<CircularProgress />) : 
-            (<img src={imageData} alt={room.name} className="room-image" />)
+            (<img src={imageData} alt={room?.name} className="room-image" />)
         }
         <div className="room-details">
-          <h3>{room.name}</h3>
-          <div className="rating">{renderStars(room.rating)}</div>
+          <h3>{room?.name}</h3>
+          <div className="rating">{renderStars(room?.rating)}</div>
 
           <div className='listing-info'>
             <p>
-              {room.bedCount} <FontAwesomeIcon icon={faBed} />
+              {room?.bedCount} <FontAwesomeIcon icon={faBed} />
             </p>
-            <p>{room.roomType}</p>
+            <p>{room?.roomType}</p>
           </div>
-          <p>Total Price: ${room.price.toFixed(2)}</p>
+          <p>Total Price: ${room?.price.toFixed(2)}</p>
         </div>
       </div>
     </Link>

@@ -2,7 +2,6 @@ package com.bookify.room;
 
 import com.bookify.availability.Availability;
 import com.bookify.availability.AvailabilityRepository;
-import com.bookify.booking.BookingRepository;
 import com.bookify.booking.BookingService;
 import com.bookify.configuration.Configuration;
 import com.bookify.images.Image;
@@ -21,6 +20,7 @@ import com.bookify.utils.UtilityComponent;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,23 +31,18 @@ import org.springframework.stereotype.Service;
 import javax.naming.OperationNotSupportedException;
 import java.time.LocalDate;
 import java.util.*;
-import lombok.extern.slf4j.Slf4j;
 
 import static com.bookify.utils.Constants.MAX_AVAILABILITY_DAYS_PER_ROOM;
-
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class RoomService{
 
-    //TODO: when host leaves/changes roles make sure his room entries are deleted/disabled
-
     private final RoomRepository roomRepository;
     private final AmenityRepository amenityRepository;
     private final UserRepository userRepository;
     private final RoomTypeRepository roomTypeRepository;
-    private final BookingRepository bookingRepository;
     private final BookingService bookingService;
     private final RoomAuthenticationUtility roomAuthenticationUtility;
     private final ImageRepository imageRepository;
@@ -167,6 +162,15 @@ public class RoomService{
         return new PageImpl<>(result, pageable, rooms.getTotalElements());
     }
 
+    // This function is safe to use even if given user is not a host
+    public void deleteRoomsOfHost(User host){
+        assert(host != null);
+
+        List<Room> roomsToDelete = host.getRooms().stream().toList();
+        for(Room room : roomsToDelete)
+            deleteRoomFromDatabase(room);
+    }
+
     @Transactional
     public void deleteRoom(Integer roomID) throws IllegalAccessException {
         Room roomToDelete = roomRepository.findById(roomID)
@@ -175,25 +179,7 @@ public class RoomService{
         assert(roomToDelete.getRoomID() == roomID);
 
         roomAuthenticationUtility.verifyRoomEditingPrivileges(roomToDelete);
-
-        User host = roomToDelete.getRoomHost();
-
-        host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
-        userRepository.save(host);          // updates the host
-
-        // delete any bookings for given room
-        bookingRepository.deleteByRoom(roomToDelete);
-
-        // delete availability rows of given room
-        availabilityRepository.deleteByRoom(roomToDelete);
-
-        // delete images of given room
-        imageStorage.deleteImages(roomToDelete.getPhotos());
-        if(!roomToDelete.getThumbnail().getImageGuid().equals(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME))
-            imageStorage.deleteImage(roomToDelete.getThumbnail());
-
-        // finally delete the room
-        roomRepository.delete(roomToDelete);
+        deleteRoomFromDatabase(roomToDelete);
     }
 
     public void viewRoom(Integer roomID) {
@@ -263,6 +249,31 @@ public class RoomService{
     private Room loadRoomDataById(int roomId) throws EntityNotFoundException {
         return roomRepository.findById(roomId).orElseThrow(() ->
                 new EntityNotFoundException("Room " + roomId + " does not exist"));
+    }
+
+    private void deleteRoomFromDatabase(Room roomToDelete){
+        User host = roomToDelete.getRoomHost();
+
+        host.unassignRoom(roomToDelete);    // deletes room from the set of rooms of given host
+        userRepository.save(host);          // updates the host
+
+        // delete availability rows of given room
+        availabilityRepository.deleteByRoom(roomToDelete);
+
+        // delete images of given room
+        imageStorage.deleteImages(roomToDelete.getPhotos());
+
+        // if the thumbnail is not the default, delete it. Otherwise, remove relation to default thumbnail so
+        // that the room can be erased
+        if(!roomToDelete.getThumbnail().getImageGuid().equals(Configuration.DEFAULT_ROOM_THUMBNAIL_NAME))
+            imageStorage.deleteImage(roomToDelete.getThumbnail());
+        else {
+            roomToDelete.setThumbnail(null);
+            roomRepository.save(roomToDelete);
+        }
+
+        // finally delete the room
+        roomRepository.delete(roomToDelete);
     }
 
     private Set<Amenity> generateAmenitiesSet(List<Integer> amenityIDs){

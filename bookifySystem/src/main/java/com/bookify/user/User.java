@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
-@AllArgsConstructor
 @Table(name="users")
 public class User implements UserDetails {
     @Id
@@ -65,9 +64,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "roomHost", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Room> rooms;
 
+    private boolean isDeleted;
+
     public User(){
         super();
         this.roles = new HashSet<>();
+        this.isDeleted = false;
     }
 
     public User(String username, String firstName, String lastName, String email, String phoneNumber, String password, Image profilePicture, Set<Role> roles, String preferredRoles) {
@@ -84,6 +86,7 @@ public class User implements UserDetails {
         this.aboutInfo = "";
 
         this.refreshToken = null;
+        this.isDeleted = false;
     }
 
     public List<String> getRoleAuthorityList(){
@@ -121,6 +124,10 @@ public class User implements UserDetails {
     public void rejectHost(){
         assert(isInactiveHost());
         roles.removeIf(role -> role.getAuthority().equals(Constants.INACTIVE_HOST_ROLE));
+    }
+
+    public void delete(){
+        isDeleted = true;
     }
 
     public void assignRoom(Room room){
@@ -162,7 +169,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return !isDeleted;
     }
 
     private boolean hasRole(String roleName){
