@@ -23,6 +23,7 @@ const BookingPanel = ({ room, roomID }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [backdropOpen, setBackdropOpen] = useState(false);
+    const [succesfulReservation, setSuccesfulReservation] = useState({});
 
     const axiosPrivate = useAxiosPrivate();
     const { auth } = useAuth();
@@ -69,6 +70,8 @@ const BookingPanel = ({ room, roomID }) => {
                 numberOfTenants: visitors,
             }));
 
+            setSuccesfulReservation(response?.data ?? null);
+
             setSelectedCheckInDate(null);
             setSelectedCheckOutDate(null);
             setNights(0);
@@ -110,7 +113,8 @@ const BookingPanel = ({ room, roomID }) => {
         setSelectedCheckOutDate(tempCheckoutDate);
         setVisitors(searchInfo.tenants);
 
-        const numberOfNights = (!tempCheckInDate ||tempCheckoutDate.isSame(tempCheckInDate)) ? 0 : tempCheckoutDate.diff(tempCheckInDate, 'day') + 1;
+        const numberOfNights = (!tempCheckInDate || tempCheckoutDate.isSame(tempCheckInDate)) ? 0 : tempCheckoutDate.diff(tempCheckInDate, 'day');
+
         setNights(numberOfNights);
     }, [searchInfo]);
 
@@ -255,6 +259,38 @@ const BookingPanel = ({ room, roomID }) => {
                 {
                     backdropOpen && <Lottie options={defaultOptions} height={200} width={200}/>
                 }
+                <div className="reservation-details">
+                    <div className="reservation-grid-container">
+                        <div className="reservation-grid-item">
+                            <h2>Booking Number</h2>
+                            <p>{succesfulReservation?.bookingNumber}</p>
+                        </div>
+                        <div className="reservation-grid-item">
+                            <h2>Room Name</h2>
+                            <p>{succesfulReservation?.roomName}</p>
+                        </div>
+                    </div>
+                    <div className="reservation-grid-container">
+                        <div className="reservation-grid-item">
+                            <h2>Check-In Date</h2>
+                            <p>{succesfulReservation?.checkInDate}</p>
+                        </div>
+                        <div className="reservation-grid-item">
+                            <h2>Check-Out Date</h2>
+                            <p>{succesfulReservation?.checkOutDate}</p>
+                        </div>
+                    </div>
+                    <div className="reservation-grid-container">
+                        <div className="reservation-grid-item">
+                            <h2>Total Price</h2>
+                            <p>{succesfulReservation?.price}</p>
+                        </div>
+                        <div className="reservation-grid-item">
+                            <h2>Number of Tenants</h2>
+                            <p>{succesfulReservation?.numberOfTenants}</p>
+                        </div>
+                    </div>
+                </div>
             </Backdrop>
         </div>
     )

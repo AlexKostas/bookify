@@ -94,3 +94,47 @@
 .reservation-success-icon.fade-out {
     opacity: 0;
 }
+
+.reservation-details {
+    border: 1px solid #ccc;
+    background-color: transparent;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    display: grid;
+    overflow: auto;
+}
+
+.reservation-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+    border-collapse: collapse;
+    width: 100%; /* Ensure the grid takes up the full width */
+    padding: 5px;
+}
+
+.reservation-grid-item {
+    padding: 10px;
+    border: 1px solid #ccc; /* Border for each grid item */
+    border-radius: 5px;
+    background-color: transparent;
+    text-align: center;
+}
+
+.reservation-grid-item h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+    display: inline;
+}
+
+.reservation-grid-item p {
+    margin: 0.5rem 0 0;
+    font-size: 1.2rem;
+    color: white;
+}

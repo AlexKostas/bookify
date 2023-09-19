@@ -31,7 +31,7 @@ public class BookingService {
     private final UtilityComponent utility;
 
     @Transactional
-    public byte[] book(BookingRequestDTO bookRequest) throws IllegalAccessException, IOException {
+    public BookingResponseDTO book(BookingRequestDTO bookRequest) throws IllegalAccessException, IOException {
         User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(bookRequest.roomID())
@@ -75,7 +75,7 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
-        BookingResponseDTO bookingResponse = new BookingResponseDTO(
+        return new BookingResponseDTO(
                 booking.getBookingNumber(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate(),
@@ -84,8 +84,6 @@ public class BookingService {
                 booking.getPrice(),
                 booking.getNumberOfTenants()
         );
-
-        return generateBookingPDF(bookingResponse, currentUser);
     }
 
     public List<LocalDate> getBookedDaysForRoom(Room room){
@@ -108,43 +106,5 @@ public class BookingService {
             result.add(booking.getBookedRange());
 
         return result;
-    }
-
-    private byte[] generateBookingPDF(BookingResponseDTO bookingDTO, User user) throws IOException {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
-
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-                contentStream.showText("Bookify");
-                contentStream.newLine();
-                contentStream.endText();
-
-                contentStream.beginText();
-                contentStream.newLineAtOffset(100, 700);
-                contentStream.showText("Booking Number: " + bookingDTO.bookingNumber());
-                contentStream.newLine();
-                contentStream.showText("Full Name: " + user.getFirstName() + " " + user.getLastName());
-                contentStream.newLine();
-                contentStream.showText("Check-In Date: " + bookingDTO.checkInDate());
-                contentStream.newLine();
-                contentStream.showText("Check-Out Date: " + bookingDTO.checkOutDate());
-                contentStream.newLine();
-                contentStream.showText("Booking Date: " + bookingDTO.bookingDate());
-                contentStream.newLine();
-                contentStream.showText("Room Name: " + bookingDTO.roomName());
-                contentStream.newLine();
-                contentStream.showText("Price: " + bookingDTO.price());
-                contentStream.newLine();
-                contentStream.showText("Number of Tenants: " + bookingDTO.numberOfTenants());
-                contentStream.endText();
-            }
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            document.save(outputStream);
-            return outputStream.toByteArray();
-        }
     }
 }
