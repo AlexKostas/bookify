@@ -22,13 +22,9 @@ public class BookingController {
     @PreAuthorize("hasRole('tenant')")
     public ResponseEntity<?> book(@RequestBody BookingRequestDTO bookRequest){
         try{
-            byte[] pdfBytes = bookingService.book(bookRequest);
-            HttpHeaders headers = new HttpHeaders();
+            BookingResponseDTO bookingResult = bookingService.book(bookRequest);
 
-            headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("attachment", "reservation_confirmation.pdf");
-
-            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+            return new ResponseEntity<>(bookingResult, HttpStatus.OK);
         }
         catch (IllegalArgumentException | EntityNotFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

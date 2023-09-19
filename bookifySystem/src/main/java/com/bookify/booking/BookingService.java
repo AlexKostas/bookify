@@ -31,7 +31,7 @@ public class BookingService {
     private final UtilityComponent utility;
 
     @Transactional
-    public byte[] book(BookingRequestDTO bookRequest) throws IllegalAccessException, IOException {
+    public BookingResponseDTO book(BookingRequestDTO bookRequest) throws IllegalAccessException, IOException {
         User currentUser = utility.getCurrentAuthenticatedUser();
 
         Room room = roomRepository.findById(bookRequest.roomID())
@@ -75,7 +75,7 @@ public class BookingService {
 
         bookingRepository.save(booking);
 
-        BookingResponseDTO bookingResponse = new BookingResponseDTO(
+        return new BookingResponseDTO(
                 booking.getBookingNumber(),
                 booking.getCheckInDate(),
                 booking.getCheckOutDate(),
@@ -84,8 +84,6 @@ public class BookingService {
                 booking.getPrice(),
                 booking.getNumberOfTenants()
         );
-
-        return generateBookingPDF(bookingResponse, currentUser);
     }
 
     public List<LocalDate> getBookedDaysForRoom(Room room){
