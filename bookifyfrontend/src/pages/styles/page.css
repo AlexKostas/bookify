@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex-grow: 1;
+}
+
+.page-buttons-container {
+    position: relative;
+    width: 62%;
+    margin: 3% auto -2%;
+}
+
+.page-button {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+body {
+    background-color: white;
+}

@@ -92,7 +92,7 @@ const ReviewCard = ( {review, usersReview = false, onEdit, onDelete} ) => {
 
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <h4>{review.username}</h4>
-                            <h5 style={{color: "lightgray"}}>on {dayjs(review.date).format("MM/DD/YYYY")}</h5>
+                            <h5 style={{color: "gray"}}>on {dayjs(review.date).format("MM/DD/YYYY")}</h5>
                         </div>
 
 

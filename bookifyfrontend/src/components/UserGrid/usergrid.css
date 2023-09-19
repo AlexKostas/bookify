@@ -11,7 +11,8 @@
 }
 
 .data-grid {
-    margin: 0 auto;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    padding: 0.5%;
     width: 90%;
 }
 

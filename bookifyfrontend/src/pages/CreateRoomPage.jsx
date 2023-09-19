@@ -4,6 +4,8 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import CreateRoom from "../components/CreateRoom/CreateRoom";
+import Footer from "../components/Footer/Footer";
+import './styles/page.css';
 
 const CreateRoomPage = () => {
     const location = useLocation();
@@ -15,9 +17,13 @@ const CreateRoomPage = () => {
 
     return (
         <>
-            <Navbar />
-
-            <CreateRoom roomID={roomID} />
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <CreateRoom roomID={roomID} />
+                </div>
+                <Footer/>
+            </div>
         </>
     )
 }

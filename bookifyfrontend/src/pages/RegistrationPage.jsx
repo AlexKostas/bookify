@@ -5,6 +5,8 @@ import useAuth from "../hooks/useAuth";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 import RegistrationForm from "../components/RegistrationForm/RegistrationForm";
+import Footer from "../components/Footer/Footer";
+import './styles/page.css';
 
 const REGISTER_URL = '/registration/register';
 
@@ -66,9 +68,14 @@ const RegistrationPage = () => {
 
     return (
         <>
-            <Navbar hideButtons={true} />
-            <RegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
-                              success={success} />
+            <div className="page-container">
+            <Navbar />
+                <div className="content">
+                    <RegistrationForm onSubmit={submitRegistrationRequest} errorMessage={error}
+                                      success={success} />
+                </div>
+                <Footer />
+            </div>
         </>
     )
 }

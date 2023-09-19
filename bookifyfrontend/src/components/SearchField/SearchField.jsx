@@ -45,19 +45,25 @@ const SearchField = ( {onSelection} ) => {
             className="autocomplete-bar"
             renderInput={(params) => (
                 <TextField
-                {...params}
-                value={inputValue ? 'Location...' : ''}
-                forcePopupIcon={false}
-                InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                    <>
-                        <LocationOnIcon sx={{ color: 'gray', mr: 1 }} />
-                        {params.InputProps.startAdornment}
-                    </>
-                    ),
-                }}
-                className="search-bar-root"
+                    {...params}
+                    value={inputValue ? 'Location...' : ''}
+                    size = "small"
+                    InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                            <>
+                                <LocationOnIcon
+                                    sx={{ color: 'gray'}}
+                                    className="location-icon"
+                                />
+                                {params.InputProps.startAdornment}
+                            </>
+                        ),
+                        classes: {
+                            root: 'search-bar-root',
+                            focused: 'search-bar-focused',
+                        },
+                    }}
                 />
             )}
         />

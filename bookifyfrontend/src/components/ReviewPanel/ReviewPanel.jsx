@@ -164,7 +164,13 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
                        )
                    }
 
-                   <Button onClick={() => scrollToDiv('reviewStart')}>Go to first review</Button>
+                   <Button
+                       variant="outlined"
+                       size="small"
+                       onClick={() => scrollToDiv('reviewStart')}
+                   >
+                       Go to first review
+                   </Button>
 
                    </>
                    )

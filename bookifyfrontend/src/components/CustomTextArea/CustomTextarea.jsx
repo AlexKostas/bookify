@@ -11,11 +11,13 @@ export default function CustomTextarea({ placeholder, minRows = 2, maxRows = 10,
         initValue && setInputValue(initValue);
     }, [initValue]);
 
+    const errorFlag = (!!(emptyError && emptyError !== ''))
+
     return <div>
         <TextField
             id="outlined-multiline-flexible"
             label={placeholder}
-            error={emptyError && emptyError!==''}
+            error={errorFlag}
             helperText={emptyError}
             multiline
             placeholder={placeholder || ''}

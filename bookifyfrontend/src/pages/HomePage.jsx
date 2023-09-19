@@ -5,6 +5,9 @@ import {useEffect, useState} from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import Footer from "../components/Footer/Footer";
+import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const HomePage = () => {
     const endpointURL = '/recommendation/recommend';
@@ -35,12 +38,26 @@ const HomePage = () => {
 
     return (
         <>
-        <Navbar />
-        <SearchBar />
-        <br />
-        <h1>{(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}</h1>
-        <br />
-        <RoomGrid rooms={rooms} loading={loading} />
+            <div className="page-container">
+                <Navbar />
+                <div className="content">
+                    <SearchBar />
+                    <br />
+                    <Typography
+                        variant="h1"
+                        sx={{
+                            fontSize: "2.1rem",
+                            color: "#333",
+                            textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                        }}
+                    >
+                        {(auth && auth.user) ? 'Rooms you may like' : 'Top rated'}
+                    </Typography>
+                    <br />
+                    <RoomGrid rooms={rooms} loading={loading} />
+                </div>
+                <Footer/>
+            </div>
         </>   
     )
 }
