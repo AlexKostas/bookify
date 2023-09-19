@@ -24,14 +24,12 @@ public interface UserRepository extends JpaRepository<User, Long>  {
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.authority = '" + Constants.ADMIN_ROLE + "'")
     User findAdmin();
 
-    User findByRoles_Authority(String authority);
-
     @Query("SELECT u FROM User u JOIN u.roles r WHERE r.authority = '" + Constants.INACTIVE_HOST_ROLE + "' AND u.isDeleted = false")
     Page<User> findAllInactiveHosts(Pageable pageable);
 
     @Query("SELECT u FROM User  u JOIN u.roles r where r.authority = :roleAuthority and u.isDeleted = false")
     List<User> findAllByRolesAuthority(String roleAuthority);
 
-    @Query("SELECT u.userID FROM User u WHERE u.isDeleted = false ")
+    @Query("SELECT u.userID FROM User u")
     List<Long> findAllUserIds();
 }
