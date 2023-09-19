@@ -44,7 +44,9 @@ public class MessageService {
     }
 
     public void sendMessageFromAdmin(String recipientUsername, String topic, String message){
-        User admin = userRepository.findByRoles_Authority(Constants.ADMIN_ROLE);
+        User admin = userRepository.findAdmin();
+        assert(admin != null);
+
         Optional<User> recipientOptional = userRepository.findByUsername(recipientUsername);
 
         assert(recipientOptional.isPresent());

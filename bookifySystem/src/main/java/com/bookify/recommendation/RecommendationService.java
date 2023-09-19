@@ -138,7 +138,6 @@ public class RecommendationService {
         Set<Integer> roomIDs = roomRepository.findAllRoomIdsSet();
         ratings.removeIf(e -> !roomIDs.contains(e.roomID));
 
-
         // Pull the rooms that will be recommended from the database. Make sure we don't recommend more rooms than
         // we have
         List<Room> recommendations = new ArrayList<>();
