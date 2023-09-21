@@ -94,6 +94,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                                 <TextField
                                     name="recipient"
                                     required
+                                    autoFocus={true}
                                     fullWidth
                                     size="small"
                                     type="text"
