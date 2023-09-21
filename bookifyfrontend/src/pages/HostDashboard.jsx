@@ -62,6 +62,7 @@ const HostDashboard = () => {
                             :(
                                 <>
                                     <h1>Host Dashboard</h1>
+                                    <br/>
                                     <RoomDashboard />
                                 </>
                                 )

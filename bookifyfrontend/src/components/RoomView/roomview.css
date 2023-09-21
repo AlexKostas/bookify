@@ -153,6 +153,7 @@ ul, ol {
     margin-right: 5%;
     margin-left: 4%;
     margin-bottom: 3%;
+    object-fit: cover;
 }
 
 .slide-item {

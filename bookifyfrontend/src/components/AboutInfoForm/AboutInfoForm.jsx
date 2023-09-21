@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react";
-import { Link } from "react-router-dom";
 import "./aboutInfoForm.css";
 import useGetUserStats from "../../hooks/useGetUserStats";
 import {faEdit} from "@fortawesome/free-solid-svg-icons";
@@ -9,21 +8,15 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import {InputAdornment, Stack} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import {Visibility, VisibilityOff} from "@material-ui/icons";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import CustomTextarea from "../CustomTextArea/CustomTextarea";
 import TextField from "@mui/material/TextField";
-import MessageIcon from "@mui/icons-material/Message";
-
 
 const theme = createTheme();
 
 const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                               errorMessage = '', success = false}) => {
-    const userRef = useRef();
+
     const [aboutInfo, setAboutInfo] = useState(initialAboutInfo);
 
     const handleSubmit = async (e) => {
@@ -83,6 +76,7 @@ const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                             <TextField
                                 id="about-info"
                                 multiline
+                                autoFocus={true}
                                 minRows={5}
                                 maxRows={7}
                                 value={aboutInfo}

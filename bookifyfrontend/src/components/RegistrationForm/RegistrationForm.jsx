@@ -31,7 +31,6 @@ const RegistrationForm = ({
                                  success = false
 }) => {
 
-    const userRef = useRef();
     const errRef = useRef();
 
     const [user, setUser] = useState('');
@@ -70,10 +69,6 @@ const RegistrationForm = ({
 
     const validEdit = user && firstName && lastName && email && phoneNumber &&
                           validName && validFirstName && validLastName && validEmail && validPhone;
-
-    useEffect(() => {
-        userRef.current.focus();
-    }, [])
 
     useEffect(() => {
         if (!userData) return;
@@ -184,6 +179,7 @@ const RegistrationForm = ({
                                 <Grid item xs={12} >
                                     <TextField
                                         required
+                                        autoFocus={true}
                                         fullWidth
                                         id="userName"
                                         label="Username"
@@ -210,7 +206,6 @@ const RegistrationForm = ({
                                     <TextField
                                         type="text"
                                         id="firstname"
-                                        ref={userRef}
                                         autoComplete="off"
                                         value={firstName}
                                         required
@@ -235,7 +230,6 @@ const RegistrationForm = ({
                                     <TextField
                                         type="text"
                                         id="lastname"
-                                        ref={userRef}
                                         autoComplete="off"
                                         value={lastName}
                                         required
@@ -356,7 +350,6 @@ const RegistrationForm = ({
                                         label="Phone Number"
                                         type="text"
                                         id="phonenumber"
-                                        ref={userRef}
                                         autoComplete="off"
                                         onChange={(e) => {
                                             setPhoneNumber(e.target.value);

@@ -34,7 +34,7 @@ const ChangePasswordForm = () => {
     const navigate = useNavigate();
     const errRef = useRef();
     const isFirstRender = useRef(true);
-    const [user, setUser] = useState();
+    const [user] = useState();
 
     const [pwd, setPwd] = useState('');
     const [validPwd, setValidPwd] = useState(true);
@@ -116,7 +116,6 @@ const ChangePasswordForm = () => {
         setPwd('');
         setMatchPwd('');
         setOldPwd('');
-
     }
 
     return (
@@ -150,6 +149,7 @@ const ChangePasswordForm = () => {
                             <Grid item xs={12}>
                                 <TextField
                                     required
+                                    autoFocus={true}
                                     fullWidth
                                     id="old_password"
                                     label="Old Password"

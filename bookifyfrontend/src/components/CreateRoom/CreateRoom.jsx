@@ -282,6 +282,7 @@ const CreateRoom = ({ roomID }) => {
                                             <TextField
                                                 error={!newRoom?.name}
                                                 value={newRoom?.name}
+                                                autoFocus={true}
                                                 onChange={(event) => setNewRoom({...newRoom, name: event.target.value})}
                                                 id="outlined-error-helper-text"
                                                 label="Name"
@@ -625,6 +626,7 @@ const CreateRoom = ({ roomID }) => {
                                             />
                                         </Grid>
                                     </Grid>
+                                    <br />
                                     <div>
                                         <Button
                                             onClick={() => setAmenitiesActive(true)}

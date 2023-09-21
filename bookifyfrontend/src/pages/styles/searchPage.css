@@ -2,13 +2,12 @@
     display: grid;
     width: 100%;
     grid-template-columns: 20% 79.5%;
-    gap: 1%;
+    gap: 0.8%;
     align-items: start;
 }
 
 .filter-container {
     padding: 20px;
-
 }
 
 .contents {

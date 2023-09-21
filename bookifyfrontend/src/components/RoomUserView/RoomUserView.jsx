@@ -69,7 +69,7 @@ const RoomUserView = ({ host }) => {
                         stats?.nHostReviews > 0 ?
                         <div className="user-rating-info">
                             Rating: {stats.hostRating.toFixed(1)} <StarIcon fontSize="small" style={{color: "yellow"}}/> ({stats.nHostReviews})
-                        </div> : <span>No host reviews</span>
+                        </div> : <span style={{color: "white"}}>No host reviews</span>
                     }
                 </button>
 
