@@ -57,6 +57,7 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
+    @JsonIgnore
     private String rolePreference;
 
     @JsonBackReference
@@ -89,6 +90,7 @@ public class User implements UserDetails {
         this.isDeleted = false;
     }
 
+    @JsonIgnore
     public List<String> getRoleAuthorityList(){
         List<String> result = new ArrayList<>();
         for(Role role : roles)
@@ -97,18 +99,22 @@ public class User implements UserDetails {
         return result;
     }
 
+    @JsonIgnore
     public String getScope(){
         return getAuthorities().stream().
                 map(GrantedAuthority::getAuthority).
                 collect(Collectors.joining(" "));
     }
 
+    @JsonIgnore
     public boolean isAdmin(){
         return hasRole(Constants.ADMIN_ROLE);
     }
 
+    @JsonIgnore
     public boolean isHost() { return hasRole(Constants.HOST_ROLE); }
 
+    @JsonIgnore
     public boolean isInactiveHost(){
         return hasRole(Constants.INACTIVE_HOST_ROLE);
     }
@@ -142,6 +148,7 @@ public class User implements UserDetails {
         refreshToken = newToken;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -152,21 +159,25 @@ public class User implements UserDetails {
         return username;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return !isDeleted;

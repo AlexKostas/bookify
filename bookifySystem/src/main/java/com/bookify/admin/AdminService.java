@@ -10,9 +10,9 @@ import com.bookify.user.UserRepository;
 import com.bookify.utils.Constants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.underscore.U;
-import com.thoughtworks.xstream.XStream;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +112,7 @@ public class AdminService {
     private String getJsonStr(List<?> entityList) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.registerModule(new Hibernate6Module().enable(Hibernate6Module.Feature.FORCE_LAZY_LOADING));
 
         return objectMapper.writeValueAsString(entityList);
     }
