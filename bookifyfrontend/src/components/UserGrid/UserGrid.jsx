@@ -43,7 +43,7 @@ const UserGrid = () => {
 
             setSuccess(`User ${username} deleted successfully`);
             setError(null);
-            setTimeout(() => {setSuccess(null)}, 5000);
+            setTimeout(() => {setSuccess(null)}, 3000);
         }
         catch(error){
             console.log(error);
@@ -56,7 +56,7 @@ const UserGrid = () => {
             }
 
             setSuccess(null);
-            setTimeout(clearError, 5000);
+            setTimeout(clearError, 3000);
         }
     }
 
@@ -82,7 +82,7 @@ const UserGrid = () => {
             }
 
             setSuccess(null);
-            setTimeout(clearError, 5000);
+            setTimeout(clearError, 3000);
         }
     }
 
@@ -95,7 +95,7 @@ const UserGrid = () => {
 
             setSuccess(`Host ${username} rejected successfully`);
             setError(null);
-            setTimeout(() => {setSuccess(null)}, 5000);
+            setTimeout(() => {setSuccess(null)}, 3000);
         }
         catch(error){
             console.log(error);
@@ -108,32 +108,32 @@ const UserGrid = () => {
             }
 
             setSuccess(null);
-            setTimeout(clearError, 5000);
+            setTimeout(clearError, 3000);
         }
     }
 
-    const downloadFile = (content, fileType) => {
+    const downloadFile = (content, fileType, filename) => {
         if (fileType === 'json')
             content = JSON.stringify(content, null, 2);
 
         const blob = new Blob([content], {type: `application/${fileType}`})
         const url = URL.createObjectURL(blob);
 
-        // Create a custom link and call it so we can download the file from the browser
+        // Create a custom link and call it, so we can download the file from the browser
         const a = document.createElement('a');
         a.href = url;
-        a.download = `data.${fileType}`;
+        a.download = `${filename}.${fileType}`;
         a.click();
 
         URL.revokeObjectURL(url);
     }
 
-    const handleExport = async (endpointURL) => {
+    const handleExport = async (endpointURL, filename) => {
         try{
             setFileLoading(true);
 
             const response = await axiosPrivate.get(endpointURL);
-            downloadFile(response.data, selectedFileType.toLowerCase());
+            downloadFile(response.data, selectedFileType.toLowerCase(), filename);
         }
         catch(error){
             console.log(error);
@@ -238,7 +238,7 @@ const UserGrid = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleExport(`admin/getData${selectedFileType}`)}
+                    onClick={() => handleExport(`admin/getData${selectedFileType}`, 'room_data')}
                     startIcon={<CloudDownloadIcon />}
                     disabled={fileLoading}
                 >
@@ -247,7 +247,7 @@ const UserGrid = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleExport(`admin/getHostRev${selectedFileType}`)}
+                    onClick={() => handleExport(`admin/getHostRev${selectedFileType}`, 'host_reviews')}
                     startIcon={<CloudDownloadIcon />}
                     disabled={fileLoading}
                 >
