@@ -1,6 +1,6 @@
 import mysql.connector
 from setup import delete_users, delete_reviews, get_role_ids, insert_users_from_csv, insert_host_users, insert_reviews
-from setupRooms import delete_rooms, delete_availability, load_location_data, insert_listings
+from setupRooms import delete_rooms, delete_availability, delete_bookings, load_location_data, insert_listings
 
 def disable_foreign_key_checks(connection):
     cursor = connection.cursor()
@@ -28,6 +28,7 @@ if __name__ == "__main__":
         delete_reviews(connection)
         delete_availability(connection)
         delete_rooms(connection)
+        delete_bookings(connection)
 
         load_location_data()
 
