@@ -110,7 +110,6 @@ public class UserService implements UserDetailsService {
         );
     }
 
-
     public LoginRegistrationResponseDTO updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
             OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
