@@ -143,7 +143,7 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
 
                 <br/>
                 <div className="sort">
-                    <span>Order By Price</span>
+                    <span>Order By Price:</span>
                     <Select
                         labelId="select-label"
                         id="dropdown"
