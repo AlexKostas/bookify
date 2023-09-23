@@ -22,7 +22,11 @@ const SearchBar = ({ type }) => {
     const [dates, setDates] = useState([
         {
             startDate: new Date(),
-            endDate: new Date(),
+            endDate: (() => {
+                const nextDay = new Date();
+                nextDay.setDate(nextDay.getDate() + 3);
+                return nextDay;
+            })(),
             key: "selection",
         },
     ]);
