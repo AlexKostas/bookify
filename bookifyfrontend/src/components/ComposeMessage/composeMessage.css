@@ -15,3 +15,7 @@
 .recipient-input, .topic-input {
     width: 80%
 }
+
+.message-error {
+    margin-top: 2%;
+}

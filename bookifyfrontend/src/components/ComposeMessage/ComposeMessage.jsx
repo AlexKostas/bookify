@@ -76,10 +76,12 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                 <DialogContent>
                     {
                         error && (
-                            <Alert severity="error" onClose={clearError}>
-                                <AlertTitle>Error</AlertTitle>
-                                {error}
-                            </Alert>
+                            <div className="message-error">
+                                <Alert severity="error" onClose={clearError}>
+                                    <AlertTitle>Error</AlertTitle>
+                                    {error}
+                                </Alert>
+                            </div>
                         )
                     }
 
@@ -137,6 +139,7 @@ const ComposeMessage = ({open, onClose, preloadedRecipient}) => {
                                         title="All fields must be filled"
                                         placement="bottom-start"
                                         sx = {{
+                                            opacity: "0.5",
                                             ml : "1.3rem",
                                             mt : "0.3rem",
                                         }}
