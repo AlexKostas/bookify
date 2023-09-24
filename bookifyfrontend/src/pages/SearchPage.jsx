@@ -111,7 +111,7 @@ const SearchPage = () => {
                                     </div>
 
                                     <div className="contents">
-                                        <div className="pagination-controls">
+                                        {rooms?.length > 0 && <div className="pagination-controls">
                                             <Pagination
                                                 size="large"
                                                 count={totalPages}
@@ -123,7 +123,7 @@ const SearchPage = () => {
                                                 variant="outlined"
                                                 color="secondary"
                                             />
-                                        </div>
+                                        </div>}
 
                                         <br/>
 
@@ -132,7 +132,7 @@ const SearchPage = () => {
                                             loading={loading}
                                         />
 
-                                        <div className="pagination-controls">
+                                        {rooms?.length >0 && <div className="pagination-controls">
                                             <Pagination
                                                 size="large"
                                                 count={totalPages}
@@ -144,7 +144,7 @@ const SearchPage = () => {
                                                 variant="outlined"
                                                 color="secondary"
                                             />
-                                        </div>
+                                        </div>}
 
                                     </div>
                                 </div>
