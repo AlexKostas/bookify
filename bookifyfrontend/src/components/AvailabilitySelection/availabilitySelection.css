@@ -31,7 +31,6 @@
     overflow: auto;
     gap: 1vh;
     width: calc(100% - 1rem);
-    height: calc(100% - 1rem);
     align-items: center;
 }
 
@@ -81,12 +80,12 @@
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     display: flex;
-    height: 50vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 2vh;
     padding: 0.8rem;
+    height: fit-content;
 }
 
 .date-selection-buttons{
