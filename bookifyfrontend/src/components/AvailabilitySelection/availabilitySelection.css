@@ -91,5 +91,7 @@
 
 .date-selection-buttons{
     display: flex;
+    gap: 2.5rem;
     flex-direction: row;
+    align-items: center;
 }

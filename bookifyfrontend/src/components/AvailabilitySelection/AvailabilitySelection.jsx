@@ -6,6 +6,7 @@ import {DateRange} from "react-date-range";
 import './availabilitySelection.css';
 import dayjs from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
+import Button from "@mui/material/Button";
 
 const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges }) => {
     const [availabilities, setAvailabilities] = useState([]);
@@ -115,14 +116,15 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                     />
 
                     <div className="date-selection-buttons">
-                        <button
+                        <Button
                             onClick={() => setShowDate(false)}
-                            className="selection-cancel-button"
+                            size="small"
+                            variant="contained"
+                            color="error"
                         >
                             Cancel
-                        </button>
-
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => {
                                 console.log(dates);
 
@@ -140,10 +142,12 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                                 })));
                                 setShowDate(false);
                             }}
-                            className="selection-confirm-button"
+                            size="small"
+                            variant="contained"
+                            color="success"
                         >
                             Confirm
-                        </button>
+                        </Button>
                     </div>
                 </div>
             }
