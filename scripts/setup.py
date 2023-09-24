@@ -84,7 +84,7 @@ def insert_users_from_csv(connection, tenant_role_id, csv_file):
             usernames.add(username)
 
             insert_user_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier, is_deleted, first_name, last_name, email, phone_number, member_since, about_info) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            user_values = (id, createUniqueUsername(connection, username), '1234', 'default', False, "Firstname", "Lastname", "user@gmail.com", 6988564156, datetime.now(), "This user was added automatically by the setup script")
+            user_values = (id, createUniqueUsername(connection, username), '1234', 'default', False, "Firstname", "Lastname", "user@gmail.com", 6988564156, datetime.now(), "This user was added automatically by the setup script.")
 
             insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
             user_role_values = (id, tenant_role_id)
@@ -121,7 +121,7 @@ def insert_host_users(connection, host_role_id):
             usernames.add(username)
 
             insert_host_query = "INSERT INTO users (app_user_id, username, password, profile_picture_image_identifier, is_deleted, first_name, last_name, email, phone_number, member_since, about_info) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            host_values = (id, createUniqueUsername(connection, username), '1234', 'default', False, "Firstname", "Lastname", "user@gmail.com", 6988564156, datetime.now(), "This user was added automatically by the setup script")
+            host_values = (id, createUniqueUsername(connection, username), '1234', 'default', False, "Firstname", "Lastname", "user@gmail.com", 6988564156, datetime.now(), "This user was added automatically by the setup script.")
 
             insert_user_role_query = "INSERT INTO user_role_relationship (app_user_id, app_role_id) VALUES (%s, %s)"
             user_role_values = (id, host_role_id)
