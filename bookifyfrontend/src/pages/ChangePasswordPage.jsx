@@ -27,7 +27,6 @@ const ChangePasswordPage = () => {
                                 size="small"
                                 variant="outlined"
                                 sx = {{
-                                    mt: 6,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',

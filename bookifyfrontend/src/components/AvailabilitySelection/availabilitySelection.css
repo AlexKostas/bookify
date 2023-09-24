@@ -77,29 +77,19 @@
 }
 
 .date-selection-holder {
+    border: 1px solid darkgray;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
     display: flex;
+    height: 50vh;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 2vh;
-    height: fit-content;
+    padding: 0.8rem;
 }
 
 .date-selection-buttons{
     display: flex;
     flex-direction: row;
-    gap: 30%;
-    justify-content: space-around;
-}
-
-.selection-confirm-button {
-    background-color: #1f4ffc;
-    color: white;
-    cursor: pointer;
-}
-
-.selection-cancel-button {
-    background-color: red;
-    color: white;
-    cursor: pointer;
 }

@@ -42,6 +42,7 @@ const AboutInfoForm = ({   username='', initialAboutInfo = '', onSubmit,
                 <Box
                     sx={{
                         marginTop: 8,
+                        mb: 4,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
