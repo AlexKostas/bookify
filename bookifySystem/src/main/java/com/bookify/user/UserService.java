@@ -201,7 +201,7 @@ public class UserService implements UserDetailsService {
                 Objects.equals(newUsername, Constants.ANONYMOUS_USER_PRINCIPAL))
             throw new IllegalArgumentException("Username " + newUsername + " is taken");
 
-        userOptional = userRepository.findByEmail(newEmail);
+        userOptional = userRepository.findByEmailIncludeDeleted(newEmail);
         if(userOptional.isPresent() && !userOptional.get().getEmail().equals(oldEmail))
             throw new IllegalArgumentException("Email " + newEmail + " is taken");
     }
