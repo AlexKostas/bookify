@@ -91,7 +91,7 @@ const LoginForm = () => {
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Wrong username or password');
             } else {
                 setErrMsg('Login Failed');
             }
@@ -131,6 +131,7 @@ const LoginForm = () => {
                             <Grid item xs={12} >
                                 <TextField
                                     fullWidth
+                                    autoFocus={true}
                                     id="userName"
                                     label="Username or Email"
                                     name="username"

@@ -13,6 +13,9 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>  {
 
+    @Query("SELECT u FROM User u WHERE u.username = :username")
+    Optional<User> findByUsernameIncludeDeleted(String username);
+
     @Query("SELECT u FROM User u WHERE u.username = :username AND u.isDeleted = false")
     Optional<User> findByUsername(String username);
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.isDeleted = false")
