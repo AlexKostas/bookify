@@ -335,42 +335,42 @@ const UserGrid = () => {
             </div>
             ) : (
                 <>
-                    <div className='data-grid' style={{ height: 400 }}>
-                    {success ? (
-                    <Alert severity="success" onClose={() => { setSuccess(null) }}>
-                        <AlertTitle>Success</AlertTitle>
-                        {success}
-                    </Alert>
-                    ) : error && (
-                    <Alert severity="error" onClose={clearError}>
-                        <AlertTitle>Error</AlertTitle>
-                        {error}
-                    </Alert>
-                    )}
+                    <div className='data-grid-container' style={{ height: 400 }}>
+                        {success ? (
+                        <Alert severity="success" onClose={() => { setSuccess(null) }}>
+                            <AlertTitle>Success</AlertTitle>
+                            {success}
+                        </Alert>
+                        ) : error && (
+                        <Alert severity="error" onClose={clearError}>
+                            <AlertTitle>Error</AlertTitle>
+                            {error}
+                        </Alert>
+                        )}
+                        <div className='data-grid' style={{ height: 400 }}>
+                            <DataGrid
+                                rows={users}
+                                columns={columns.concat(actionColumn)}
+                                rowCount={totalItems}
+                                pageSizeOptions={[5, 10, 20]}
+                                disableColumnMenu
+                                getRowId={(row) => row.id}
+                                paginationMode="server"
+                                paginationModel={paginationModel}
+                                onPaginationModelChange={setPaginationModel}
+                                disableRowSelectionOnClick
+                                defaultColumn={{ align: 'center' }}
+                                autoWidth
+                                showCellVerticalBorder={true}
+                                showColumnVerticalBorder={true}
 
-                    <DataGrid
-                        rows={users}
-                        columns={columns.concat(actionColumn)}
-                        rowCount={totalItems}
-                        pageSizeOptions={[5, 10, 20]}
-                        disableColumnMenu
-                        getRowId={(row) => row.id}
-                        paginationMode="server"
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        disableRowSelectionOnClick
-                        defaultColumn={{ align: 'center' }} 
-                        autoWidth
-                        showCellVerticalBorder={true}
-                        showColumnVerticalBorder={true}
+                                slots = {
+                                    {toolbar: CustomToolbar}
+                                }
+                            />
 
-                        slots = {
-                            {toolbar: CustomToolbar}
-                        }
-                    />
-                
+                        </div>
                     </div>
-                    
                     <div className='checkbox-container'>
                         <FormControlLabel
                             control={<Checkbox checked={isChecked} onChange={handleCheckboxChange} />}

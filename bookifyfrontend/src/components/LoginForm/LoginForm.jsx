@@ -132,7 +132,7 @@ const LoginForm = () => {
                                 <TextField
                                     fullWidth
                                     id="userName"
-                                    label="Username"
+                                    label="Username or Email"
                                     name="username"
                                     autoComplete="off"
                                     value={username}
