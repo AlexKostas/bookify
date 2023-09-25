@@ -6,6 +6,7 @@ import {DateRange} from "react-date-range";
 import './availabilitySelection.css';
 import dayjs from "dayjs";
 import Tooltip from "@mui/material/Tooltip";
+import Button from "@mui/material/Button";
 
 const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges }) => {
     const [availabilities, setAvailabilities] = useState([]);
@@ -37,7 +38,7 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
         <div className="selection-holder">
 
             <div className="main-content">
-
+                <div className="availability-dates">
                 {
                     availabilities.length > 0 ? (
                         availabilities.map((availability, index) => (
@@ -58,7 +59,7 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                                                 setShowDate(false);
 
                                                 const newAvailabilities = availabilities.length > 1 ?
-                                                    availabilities.splice(index, 1) : [];
+                                                    availabilities.toSpliced(index, 1) : [];
 
                                                 setAvailabilities(newAvailabilities);
                                                 if(onAvailabilityChanged) onAvailabilityChanged(newAvailabilities);
@@ -72,25 +73,32 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                             </div>
                         ))
 
-                    ) : <span>Click to add availability</span>
+                    ) :
+                        <div className="add-message">
+                            <span>Click to add availability</span>
+                        </div>
                 }
-
-                <IconButton
-                    onClick={() => {
-                        setShowDate(true);
-                        //Reset date
-                        setDates([
-                            {
-                                startDate: new Date(),
-                                endDate: new Date(),
-                                key: "selection",
-                            },
-                        ])
-                    }}
-                    className="selection-add-button"
-                >
-                    <AddIcon />
-                </IconButton>
+                </div>
+                <div className="selection-add-button">
+                    <IconButton
+                        onClick={() => {
+                            setShowDate(true);
+                            //Reset date
+                            setDates([
+                                {
+                                    startDate: new Date(),
+                                    endDate: new Date(),
+                                    key: "selection",
+                                },
+                            ])
+                        }}
+                        sx = {{
+                            color: "white",
+                        }}
+                    >
+                        <AddIcon />
+                    </IconButton>
+                </div>
             </div>
 
             {
@@ -108,14 +116,15 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                     />
 
                     <div className="date-selection-buttons">
-                        <button
+                        <Button
                             onClick={() => setShowDate(false)}
-                            className="selection-cancel-button"
+                            size="small"
+                            variant="contained"
+                            color="error"
                         >
                             Cancel
-                        </button>
-
-                        <button
+                        </Button>
+                        <Button
                             onClick={() => {
                                 console.log(dates);
 
@@ -133,10 +142,12 @@ const AvailabilitySelection = ({ onAvailabilityChanged, bookedDays, bookedRanges
                                 })));
                                 setShowDate(false);
                             }}
-                            className="selection-confirm-button"
+                            size="small"
+                            variant="contained"
+                            color="success"
                         >
                             Confirm
-                        </button>
+                        </Button>
                     </div>
                 </div>
             }

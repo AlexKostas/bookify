@@ -282,6 +282,7 @@ const CreateRoom = ({ roomID }) => {
                                             <TextField
                                                 error={!newRoom?.name}
                                                 value={newRoom?.name}
+                                                autoFocus={true}
                                                 onChange={(event) => setNewRoom({...newRoom, name: event.target.value})}
                                                 id="outlined-error-helper-text"
                                                 label="Name"
@@ -524,6 +525,12 @@ const CreateRoom = ({ roomID }) => {
                                                 type="number"
                                                 fullWidth
                                                 label="Beds"
+                                                InputProps={{
+                                                    startAdornment:
+                                                        <InputAdornment position="start">
+                                                            <i className="fa-solid fa-bed" style={{ opacity: 0.7 }}></i>
+                                                        </InputAdornment>,
+                                                }}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 1,
@@ -568,6 +575,12 @@ const CreateRoom = ({ roomID }) => {
                                                 type="number"
                                                 fullWidth
                                                 label="Bathrooms"
+                                                InputProps={{
+                                                    startAdornment:
+                                                        <InputAdornment position="start">
+                                                            <i className="fa-solid fa-bath" style={{ opacity: 0.7 }}></i>
+                                                        </InputAdornment>,
+                                                }}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 0,
@@ -625,6 +638,7 @@ const CreateRoom = ({ roomID }) => {
                                             />
                                         </Grid>
                                     </Grid>
+                                    <br />
                                     <div>
                                         <Button
                                             onClick={() => setAmenitiesActive(true)}
@@ -635,7 +649,7 @@ const CreateRoom = ({ roomID }) => {
                                         <Button
                                             onClick={() => setRoomTypeActive(true)}
                                         >
-                                            Select room type
+                                            Select room type *
                                         </Button>
                                     </div>
                                 </AccordionDetails>
@@ -686,6 +700,12 @@ const CreateRoom = ({ roomID }) => {
                                                 type="number"
                                                 fullWidth
                                                 label="Max Tenants"
+                                                InputProps={{
+                                                    startAdornment:
+                                                        <InputAdornment position="start">
+                                                            <i className='fas fa-user-friends' style={{ opacity: 0.7 }}></i>
+                                                        </InputAdornment>,
+                                                }}
                                                 inputProps={{
                                                     step: 1,
                                                     min: 1,

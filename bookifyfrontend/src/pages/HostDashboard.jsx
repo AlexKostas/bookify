@@ -35,6 +35,7 @@ const HostDashboard = () => {
                                         textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
                                         textAlign: "center",
                                         mt: 4,
+                                        mb: 4,
                                     }}
                                 >
                                     You have not currently been given host permissions. Please contact an admin for help.
@@ -44,7 +45,6 @@ const HostDashboard = () => {
                                         size="small"
                                         variant="outlined"
                                         sx = {{
-                                            mt: 2,
                                             display: 'flex',
                                             alignItems: 'center',
                                         }}
@@ -62,6 +62,7 @@ const HostDashboard = () => {
                             :(
                                 <>
                                     <h1>Host Dashboard</h1>
+                                    <br/>
                                     <RoomDashboard />
                                 </>
                                 )

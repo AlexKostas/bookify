@@ -124,14 +124,9 @@ const MessageGrid = ({ orderDirection }) => {
                   <div className="no-messages-container">
                     {
                       loading ? <CircularProgress size={50} /> :
-                          <Typography
-                              sx={{
-                                fontSize: "2rem",
-                                textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
-                              }}
-                          >
+                          <h2>
                             No messages
-                          </Typography>
+                          </h2>
                     }
                   </div>
 

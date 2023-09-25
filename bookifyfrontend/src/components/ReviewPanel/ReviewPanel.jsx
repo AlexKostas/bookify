@@ -13,6 +13,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
     const [composeActive, setComposeActive] = useState(false);
     const [usersReview, setUsersReview] = useState(null);
     const [nextReview, setNextReview] = useState(0);
+    const [loadingNew, setLoadingNew] = useState(false);
 
     const axiosPrivate = useAxiosPrivate();
 
@@ -29,6 +30,7 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
 
     const fetchUsersReview = async () => {
         if(!canReview) return;
+        setLoadingNew(true)
 
         try{
             const response = await axiosPrivate.get(`/reviews/getReviewOfUser/${roomID}`);
@@ -36,6 +38,9 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
         }
         catch(error){
             if(error.response?.status === 404) setUsersReview(null);
+        }
+        finally {
+            setLoadingNew(false);
         }
     }
 
@@ -122,7 +127,9 @@ const ReviewPanel = ({ roomID, maxReviews, onReviewsChanged, roomHost }) => {
                                 onDelete={deleteReview}
                             />
 
-                        </div>
+                        </div> :
+
+                        loadingNew ? <CircularProgress size={80} />
 
                         : <button
                             onClick={() => setComposeActive(true)}

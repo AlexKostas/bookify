@@ -1,14 +1,18 @@
 package com.bookify.configuration;
 
 import com.bookify.authentication.KeyProperties;
+import com.bookify.user.UserRepository;
 import com.bookify.utils.Constants;
+import com.bookify.authentication.UserNotDeletedFilter;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import jakarta.servlet.Filter;
 import lombok.AllArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -37,6 +41,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfiguration {
 
     private final KeyProperties keys;
+    private final UserRepository userRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -68,6 +73,20 @@ public class SecurityConfiguration {
 
 
         return http.build();
+    }
+
+    // Adds our custom UserNotDeleted filter to the Security Filter Chain AFTER all of Spring Security's filters
+    @Bean
+    public FilterRegistrationBean<Filter> afterAuthFilterRegistrationBean() {
+        FilterRegistrationBean<Filter> registrationBean = new FilterRegistrationBean<>();
+
+        // Register our custom filter
+        UserNotDeletedFilter afterAuthFilter = new UserNotDeletedFilter(userRepository);
+        registrationBean.setFilter(afterAuthFilter);
+
+        //CAUTION: this needs to be a number greater than than spring.security.filter.order
+        registrationBean.setOrder(30);
+        return registrationBean;
     }
 
     @Bean

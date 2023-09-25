@@ -77,7 +77,7 @@ const Footer = () => {
                             OpenStreetMap
                         </a>{' '}contributors.
                         <br/>
-                        Map data ©{' '}
+                        Map data and Reverse Geocoding ©{' '}
                         <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">
                             Geoapify
                         </a>.

@@ -1,10 +1,11 @@
 import './filtersPanel.css'
 import CheckboxSelection from "../CheckboxSelection/CheckboxSelection";
 import {useEffect, useState} from "react";
-import {Slider, Stack} from "@mui/material";
+import {MenuItem, Select, Slider, Stack} from "@mui/material";
 import MuiInput from '@mui/material/Input';
 import { styled } from '@mui/material/styles';
 import {useFilterOptions} from "../../context/FilterOptionsContext";
+import * as React from "react";
 
 const Input = styled(MuiInput)`
   width: 40%;
@@ -141,19 +142,31 @@ const FiltersPanel = ( {onFiltersChanged} ) => {
                 </Stack>
 
                 <br/>
-
                 <div className="sort">
-                    <label>
-                        Order By Price:
-                        <select value={orderDirection} defaultValue={orderDirection || 'ASC'}
-                                onChange={(event) => handleSortingChange(event.target.value)}
-                        >
-                            <option value="ASC">Ascending</option>
-                            <option value="DESC">Descending</option>
-                        </select>
-                    </label>
-                </div>
+                    <span>Order By Price:</span>
+                    <Select
+                        labelId="select-label"
+                        id="dropdown"
+                        size = "small"
+                        value={orderDirection}
+                        defaultValue={orderDirection || 'ASC'}
+                        onChange={(event) => handleSortingChange(event.target.value)}
+                        sx = {{
+                            '& .MuiSelect-icon': {
+                                color: 'white',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: 'white !important',
+                            },
+                            color: "white",
+                            width: "65%",
+                        }}
+                    >
 
+                        <MenuItem value="ASC">Ascending</MenuItem>
+                        <MenuItem value="DESC">Descending</MenuItem>
+                    </Select>
+                </div>
                 <br/>
             </div>
 

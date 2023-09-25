@@ -110,7 +110,6 @@ public class UserService implements UserDetailsService {
         );
     }
 
-
     public LoginRegistrationResponseDTO updateUser(UpdateUserProfileDTO newProfile) throws UsernameNotFoundException,
             OperationNotSupportedException {
         User user = userRepository.findByUsername(newProfile.oldUsername())
@@ -193,16 +192,16 @@ public class UserService implements UserDetailsService {
     }
 
     private void checkUsernameAndEmailValidity(String newUsername, String newEmail, String oldUsername, String oldEmail) {
-        Optional<User> userOptional = userRepository.findByUsername(newUsername);
+        Optional<User> userOptional = userRepository.findByUsernameIncludeDeleted(newUsername);
 
-        // Username anonymousUser defined in the ANONYMOUS_USER_PRINCIPAL constant is not allowed because it is used
+        // Username 'anonymousUser' defined in the ANONYMOUS_USER_PRINCIPAL constant is not allowed because it is used
         // internally by the Spring Security framework to define an unauthenticated user. Our application makes use
         // of this assumption, therefore to avoid any confusion this specific name is forbidden
         if((userOptional.isPresent() && !userOptional.get().getUsername().equals(oldUsername)) ||
                 Objects.equals(newUsername, Constants.ANONYMOUS_USER_PRINCIPAL))
             throw new IllegalArgumentException("Username " + newUsername + " is taken");
 
-        userOptional = userRepository.findByEmail(newEmail);
+        userOptional = userRepository.findByEmailIncludeDeleted(newEmail);
         if(userOptional.isPresent() && !userOptional.get().getEmail().equals(oldEmail))
             throw new IllegalArgumentException("Email " + newEmail + " is taken");
     }

@@ -6,7 +6,6 @@ import FiltersPanel from "../components/FiltersPanel/FiltersPanel";
 import './styles/searchPage.css';
 import axios from "../api/axios";
 import {Pagination} from "@mui/material";
-import {useLocalStorage} from "../hooks/useLocalStorage";
 import {useFilterOptions} from "../context/FilterOptionsContext";
 import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
@@ -112,7 +111,7 @@ const SearchPage = () => {
                                     </div>
 
                                     <div className="contents">
-                                        <div className="pagination-controls">
+                                        {rooms?.length > 0 && <div className="pagination-controls">
                                             <Pagination
                                                 size="large"
                                                 count={totalPages}
@@ -124,7 +123,7 @@ const SearchPage = () => {
                                                 variant="outlined"
                                                 color="secondary"
                                             />
-                                        </div>
+                                        </div>}
 
                                         <br/>
 
@@ -133,7 +132,7 @@ const SearchPage = () => {
                                             loading={loading}
                                         />
 
-                                        <div className="pagination-controls">
+                                        {rooms?.length >0 && <div className="pagination-controls">
                                             <Pagination
                                                 size="large"
                                                 count={totalPages}
@@ -145,7 +144,7 @@ const SearchPage = () => {
                                                 variant="outlined"
                                                 color="secondary"
                                             />
-                                        </div>
+                                        </div>}
 
                                     </div>
                                 </div>

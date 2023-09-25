@@ -27,8 +27,18 @@
     align-items: center;
 }
 
+.data-grid-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 h1 {
     text-align: center;
+}
+.MuiAlert-root {
+    width: 90%;
+    max-width: 90%;
 }
 
 .MuiDataGrid-root .MuiDataGrid-columnHeader {

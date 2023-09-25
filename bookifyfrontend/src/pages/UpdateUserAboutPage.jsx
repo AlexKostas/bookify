@@ -4,10 +4,7 @@ import Navbar from '../components/Navbar/Navbar';
 import useAuth from '../hooks/useAuth';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import {Link, useNavigate} from "react-router-dom";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronLeft} from "@fortawesome/free-solid-svg-icons";
 import AboutInfoForm from "../components/AboutInfoForm/AboutInfoForm";
-import OldAboutInfoForm from "../components/AboutInfoForm/OldAboutInfoForm";
 import Footer from "../components/Footer/Footer";
 import './styles/page.css';
 import Button from "@mui/material/Button";
@@ -64,7 +61,6 @@ const UpdateUserAboutPage = () => {
                                 size="small"
                                 variant="outlined"
                                 sx = {{
-                                    mt: 1.5,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',

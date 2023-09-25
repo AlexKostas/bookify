@@ -195,7 +195,7 @@ const RoomView = ({ roomID }) => {
                                         <li>Beds: {room?.nBeds ? room?.nBeds : "—"}</li>
                                         <li>Bathrooms: {room?.nBaths ? room?.nBaths : "—"}</li>
                                         <li>Total surface area: {room?.surfaceArea ? `${room?.surfaceArea} sq. feet` : "—"}</li>
-                                        <li>Room Type: {room?.roomType ? room?.roomType : "—"}</li>
+                                        <li>Room type: {room?.roomType ? room?.roomType : "—"}</li>
                                         <li>Maximum number of tenants: {room?.maxTenants ? room?.maxTenants : "—"}</li>
                                         <li>Number of accommodates: {room?.accommodates ? room?.accommodates : "—"}</li>
                                     </ul>

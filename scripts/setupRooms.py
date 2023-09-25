@@ -5,7 +5,7 @@ import csv
 import re
 
 current_date = datetime.datetime.now()
-dates = [current_date + datetime.timedelta(days=x) for x in range(0, 30)]
+dates = [current_date + datetime.timedelta(days=x) for x in range(0, 90)]
 location_data = dict()
 
 def load_location_data():
@@ -30,6 +30,24 @@ def delete_availability(connection):
     cursor = connection.cursor()
     cursor.execute(f"DELETE FROM availability")
     connection.commit()
+    cursor.close()
+
+def delete_bookings(connection):
+    cursor = connection.cursor()
+
+    print("-- Deleting Bookings --")    
+    cursor.execute(f"DELETE FROM booking")
+    connection.commit()
+
+    print("-- Deleting Viewed Rooms --")
+    cursor.execute(f"DELETE FROM viewed_room")
+    connection.commit()
+
+    print("-- Deleting Searches --")
+
+    cursor.execute(f"DELETE FROM searches")
+    connection.commit()
+    
     cursor.close()
 
 def insert_listings(connection, csv_file):

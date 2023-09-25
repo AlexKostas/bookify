@@ -74,7 +74,7 @@ public class RegistrationService {
         if(token.isExpired()) throw new CredentialsExpiredException("Refresh token has expired");
 
         User user = token.getUser();
-        if(user == null) throw new BadCredentialsException("User assigned to this token has been removed");
+        if(user == null || user.isDeleted()) throw new BadCredentialsException("User assigned to this token has been removed");
 
         String newAccessToken = tokenService.generateJWTToken(user.getScope(), user.getUsername());
         return new LoginRegistrationResponseDTO(

@@ -7,7 +7,7 @@
     border-radius: 30px;
     overflow-wrap: anywhere;
     background-color: dodgerblue;
-    box-shadow: #888888;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .booking-content{

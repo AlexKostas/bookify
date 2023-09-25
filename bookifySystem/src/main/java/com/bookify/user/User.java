@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,13 +20,17 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
-@Table(name="users")
+@Table(name="users", indexes = {
+        @Index(name = "username_index", columnList = "username", unique = true),
+        @Index(name = "email_index", columnList = "email")
+})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="app_user_ID")
     private Long userID;
 
+    @Column(unique = true)
     private String username;
     private String firstName;
     private String lastName;
@@ -57,6 +60,7 @@ public class User implements UserDetails {
             inverseJoinColumns = {@JoinColumn(name="app_role_ID")})
     private Set<Role> roles;
 
+    @JsonIgnore
     private String rolePreference;
 
     @JsonBackReference
@@ -89,6 +93,7 @@ public class User implements UserDetails {
         this.isDeleted = false;
     }
 
+    @JsonIgnore
     public List<String> getRoleAuthorityList(){
         List<String> result = new ArrayList<>();
         for(Role role : roles)
@@ -97,18 +102,22 @@ public class User implements UserDetails {
         return result;
     }
 
+    @JsonIgnore
     public String getScope(){
         return getAuthorities().stream().
                 map(GrantedAuthority::getAuthority).
                 collect(Collectors.joining(" "));
     }
 
+    @JsonIgnore
     public boolean isAdmin(){
         return hasRole(Constants.ADMIN_ROLE);
     }
 
+    @JsonIgnore
     public boolean isHost() { return hasRole(Constants.HOST_ROLE); }
 
+    @JsonIgnore
     public boolean isInactiveHost(){
         return hasRole(Constants.INACTIVE_HOST_ROLE);
     }
@@ -142,6 +151,7 @@ public class User implements UserDetails {
         refreshToken = newToken;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
@@ -152,21 +162,25 @@ public class User implements UserDetails {
         return username;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !isDeleted;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return !isDeleted;
