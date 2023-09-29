@@ -17,6 +17,7 @@ import useImageFetcher from "../../hooks/useImageFetcher";
 import {CircularProgress} from "@mui/material";
 import useFetchImages from "../../hooks/useFetchImages";
 import Typography from "@mui/material/Typography";
+import MyCustomArrows from './MyCustomArrows';
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -88,7 +89,7 @@ const RoomView = ({ roomID }) => {
     return (
         <div className="room-view-container">
 
-            <div className="general-room-info">
+            <div className="general-room-info" id="view-room-start">
                 <Typography
                     variant="h2"
                     sx={{
@@ -153,7 +154,15 @@ const RoomView = ({ roomID }) => {
                         {
                             loading ? <CircularProgress size={100} /> :
                                 <div className="box">
-                                    <Carousel useKeyboardArrows={true}>
+                                    <Carousel
+                                        useKeyboardArrows={true}
+                                        renderArrowPrev={(onClick) => (
+                                            <MyCustomArrows direction="left" onClick={onClick} />
+                                        )}
+                                        renderArrowNext={(onClick) => (
+                                            <MyCustomArrows direction="right" onClick={onClick} />
+                                        )}
+                                    >
                                         {images.map((URL, index) => (
                                             <div className="slide">
                                                 <img className="slide-item" alt="sample_file" src={URL} key={index} />
@@ -313,6 +322,15 @@ const RoomView = ({ roomID }) => {
 
                 </div>
 
+                <div className="back-to-top">
+                    <ScrollLink
+                        to="view-room-start"
+                        smooth={true}
+                        duration={500}
+                    >
+                        <u className="back-to-top-link">Back to top</u>
+                    </ScrollLink>
+                </div>
 
                 <div className="review-parent" id="reviews">
 
