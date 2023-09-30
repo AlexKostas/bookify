@@ -22,7 +22,7 @@ const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const NAME_REGEX = /^[A-Za-z]{2,24}$/;
 const EMAIL_REGEX = /^[A-Za-z0-9+_.-]+@(.+)$/;
 const PHONE_REGEX = /^\d{10,}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const RegistrationForm = ({
                                  inRegistration = true,

@@ -129,6 +129,18 @@ ul, ol {
     text-underline-offset: 2px;
 }
 
+.back-to-top-link {
+    cursor: pointer;
+    color: dodgerblue;
+    font-size: 1.1rem;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+}
+
+.back-to-top {
+    margin-top: 1rem;
+}
+
 .room-info-reviews, .room-info-host {
     display: flex;
     flex-direction: row;

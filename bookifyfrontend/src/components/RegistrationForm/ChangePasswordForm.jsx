@@ -22,7 +22,7 @@ import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 
 const PASSWORD_UPDATE_URL = "/user/changePassword";
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{4,24}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const theme = createTheme();
 

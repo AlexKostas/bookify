@@ -11,6 +11,7 @@ import useAuth from "../hooks/useAuth";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import Footer from "../components/Footer/Footer";
 import './styles/page.css';
+import Typography from "@mui/material/Typography";
 
 const SearchPage = () => {
     const { searchInfo } = useSearchContext();
@@ -103,7 +104,16 @@ const SearchPage = () => {
                     {
                         searchInfo ? (
                             <>
-                                <h1>Search Results</h1>
+                            <Typography
+                                variant="h1"
+                                sx={{
+                                    fontSize: "2.1rem",
+                                    color: "#333",
+                                    textShadow: "1px 1px 2px rgba(0, 0, 0, 0.1)",
+                                }}
+                            >
+                                Search Results
+                            </Typography>
                                 <div className="search-container">
 
                                     <div className="filter-container">
