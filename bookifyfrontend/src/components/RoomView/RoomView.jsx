@@ -316,16 +316,6 @@ const RoomView = ({ roomID }) => {
 
                 </div>
 
-                <div className="back-to-top">
-                    <ScrollLink
-                        to="view-room-start"
-                        smooth={true}
-                        duration={500}
-                    >
-                        <u className="back-to-top-link">Back to top</u>
-                    </ScrollLink>
-                </div>
-
                 <div className="review-parent" id="reviews">
 
                     <ReviewPanel
@@ -335,6 +325,16 @@ const RoomView = ({ roomID }) => {
                         roomHost={room?.hostUsername}
                     />
 
+                </div>
+
+                <div className="back-to-top">
+                    <ScrollLink
+                        to="view-room-start"
+                        smooth={true}
+                        duration={500}
+                    >
+                        <u className="back-to-top-link">Back to top</u>
+                    </ScrollLink>
                 </div>
             </div>
 
