@@ -17,7 +17,7 @@ import useImageFetcher from "../../hooks/useImageFetcher";
 import {CircularProgress} from "@mui/material";
 import useFetchImages from "../../hooks/useFetchImages";
 import Typography from "@mui/material/Typography";
-import MyCustomArrows from './MyCustomArrows';
+import './customCarouselStyles.css'
 
 const RoomView = ({ roomID }) => {
     const ROOM_URL = `/room/getRoom/${roomID}`;
@@ -156,12 +156,6 @@ const RoomView = ({ roomID }) => {
                                 <div className="box">
                                     <Carousel
                                         useKeyboardArrows={true}
-                                        renderArrowPrev={(onClick) => (
-                                            <MyCustomArrows direction="left" onClick={onClick} />
-                                        )}
-                                        renderArrowNext={(onClick) => (
-                                            <MyCustomArrows direction="right" onClick={onClick} />
-                                        )}
                                     >
                                         {images.map((URL, index) => (
                                             <div className="slide">
